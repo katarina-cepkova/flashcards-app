@@ -34,7 +34,7 @@ namespace Flashcards.Core.Entities
 
 
         /// <summary>Equality by <see cref="Id"/>; unsaved (null-id) flashcards are never equal.</summary>
-        public bool Equals(Flashcard? other) => other is not null && Id is not null && Id == other.Id;
+        public bool Equals(Flashcard? other) => other is not null && Id is not null && other.Id == Id;
 
 
         /// <inheritdoc/>
