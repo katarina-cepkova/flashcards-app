@@ -20,8 +20,6 @@ namespace Flashcards.Data.Database
             SqliteCommand command = connection.CreateCommand();
             // creating Topics and Flashcards tables - skipped if they already exist
             command.CommandText = """
-                PRAGMA foreign_keys = ON;
-
                 CREATE TABLE IF NOT EXISTS Topics (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Name TEXT NOT NULL,
@@ -44,7 +42,7 @@ namespace Flashcards.Data.Database
                     CreatedAt TEXT NOT NULL,
                     LastReviewedAt TEXT,
                     NextReviewAt TEXT,
-                    FOREIGN KEY(TopicId) REFERENCES Topics(Id)
+                    FOREIGN KEY(TopicId) REFERENCES Topics(Id) ON DELETE CASCADE
                 );
 
                 """;

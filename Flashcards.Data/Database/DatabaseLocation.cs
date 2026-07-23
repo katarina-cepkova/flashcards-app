@@ -5,7 +5,7 @@ public static class DatabaseLocation
     private const string FolderName = "FlashcardsDatabase";
     private const string FileName = "flashcards.db";
 
-    public static string ConnectionString => $"Data Source={DbPath}";
+    public static string ConnectionString => $"Data Source={DbPath};Foreign Keys=True";
 
     public static string DbPath { get; } = BuildDbPath();
 
