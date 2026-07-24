@@ -22,7 +22,7 @@ namespace Flashcards.Data.Database
             command.CommandText = """
                 CREATE TABLE IF NOT EXISTS Topics (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Name TEXT NOT NULL,
+                    Name TEXT NOT NULL UNIQUE,
                     CreatedAt TEXT NOT NULL
                 );
 
