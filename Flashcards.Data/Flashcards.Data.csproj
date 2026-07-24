@@ -11,7 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flashcards.Core\Flashcards.Core.csproj" />
+	<InternalsVisibleTo Include="Flashcards.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Flashcards.Core\Flashcards.Core.csproj" />
+  </ItemGroup>
+	
 </Project>
