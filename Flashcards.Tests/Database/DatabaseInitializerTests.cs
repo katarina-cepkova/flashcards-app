@@ -10,8 +10,9 @@ public class DatabaseInitializerTests : IDisposable
     // creates a unique path per test so parallel test runs never share a db file
     private string CreateTempDbPath()
     {
-        // Path.GetTempPath() -> returns pah do temp folder of the current user (e.g. C:\Users\User\AppData\Local\Temp\
-        // Guid = Globally Unique Identifier - 128bit number - 
+        // Path.GetTempPath() -> returns path do temp folder of the current user (e.g. C:\Users\User\AppData\Local\Temp\
+        // Guid.NewGuid() -> generates a random 128-bit Globally Unique Identifier,
+        // used here to avoid filename collisions between test runs  
         string path = Path.Combine(Path.GetTempPath(), $"flashcards_test_{Guid.NewGuid()}", "flashcards.db");
         _tempPaths.Add(path);
         return path;
