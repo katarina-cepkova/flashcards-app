@@ -29,15 +29,11 @@ namespace Flashcards.Data.Repositories
 
             List<Topic> topics = new List<Topic>();
             using SqliteDataReader reader = await command.ExecuteReaderAsync();
+
+            TopicOrdinals ordinals = TopicOrdinals.FromReader(reader);
             while (await reader.ReadAsync())
             {
-                topics.Add(new Topic
-                {
-                    Id = reader.GetInt64(reader.GetOrdinal("Id")),
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    CreatedAt = reader.GetDateTime("CreatedAt")  // our extension: parses the TEXT column with InvariantCulture
-                }
-                );
+                topics.Add(reader.ToTopic(ordinals));
             }
             return topics;
         }
@@ -59,12 +55,8 @@ namespace Flashcards.Data.Repositories
             // Id is the primary key, so at most one row can match — if, not while
             if (await reader.ReadAsync())
             {
-                return new Topic
-                {
-                    Id = reader.GetInt64(reader.GetOrdinal("Id")),
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    CreatedAt = reader.GetDateTime("CreatedAt")  // our extension: parses the TEXT column with InvariantCulture
-                };
+                TopicOrdinals ordinals = TopicOrdinals.FromReader(reader);
+                return reader.ToTopic(ordinals);
 
             }
             return null;
@@ -86,12 +78,8 @@ namespace Flashcards.Data.Repositories
             using SqliteDataReader reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                return new Topic
-                {
-                    Id = reader.GetInt64(reader.GetOrdinal("Id")),
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    CreatedAt = reader.GetDateTime("CreatedAt")  // our extension: parses the TEXT column with InvariantCulture
-                };
+                TopicOrdinals ordinals = TopicOrdinals.FromReader(reader);
+                return reader.ToTopic(ordinals);
 
             }
             return null;
@@ -140,10 +128,7 @@ namespace Flashcards.Data.Repositories
             checkSourceCommand.CommandText = "SELECT 1 FROM Topics WHERE Id=$source;";
             checkSourceCommand.Parameters.AddWithValue("$source", sourceTopicId);
             object? sourceExists = await checkSourceCommand.ExecuteScalarAsync();
-            if (sourceExists is null)
-            {
-                throw new EntityNotFoundException($"Source topic {sourceTopicId} does not exist.");
-            }
+            _ = sourceExists ?? throw new EntityNotFoundException($"Source topic {sourceTopicId} does not exist.");
 
             // BeginTransactionAsync is declared on the common DbConnection base class and
             // returns DbTransaction, not SqliteTransaction directly — a known limitation
@@ -153,7 +138,7 @@ namespace Flashcards.Data.Repositories
 
             try
             {
-                SqliteCommand updateCommand = connection.CreateCommand();
+                using SqliteCommand updateCommand = connection.CreateCommand();
                 updateCommand.Transaction = transaction;
                 updateCommand.CommandText = "UPDATE Flashcards SET TopicId=$target WHERE TopicId=$source;";
                 updateCommand.Parameters.AddWithValue("$target", targetTopicId);
@@ -205,7 +190,7 @@ namespace Flashcards.Data.Repositories
             try
             {
                 int rowsAffected = await command.ExecuteNonQueryAsync();
-                EnsureRowAffected(rowsAffected, id);
+                RepositoryHelpers.EnsureRowsAffected(rowsAffected, id);
             }
             catch (SqliteException ex) when (ex.SqliteErrorCode == 19) // UNIQUE violation on Name
             {
@@ -229,19 +214,7 @@ namespace Flashcards.Data.Repositories
             command.Parameters.AddWithValue("$id", id);
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
-            EnsureRowAffected(rowsAffected, id);
-        }
-
-
-        /// <summary>
-        /// Throws <see cref="EntityNotFoundException"/> if no row was affected by the last command.
-        /// </summary>
-        private static void EnsureRowAffected(int rowsAffected, long id)
-        {
-            if (rowsAffected == 0)
-            {
-                throw new EntityNotFoundException($"Topic {id} does not exist.");
-            }
+            RepositoryHelpers.EnsureRowsAffected(rowsAffected, id);
         }
     }
 }
