@@ -1,7 +1,5 @@
 ﻿using Flashcards.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Data.Sqlite;
 
 namespace Flashcards.Core.Repositories
 {
@@ -28,33 +26,48 @@ namespace Flashcards.Core.Repositories
         /// <summary>
         /// Creates a new flashcard within a topic.
         /// </summary>
+        /// <param name="transaction">
+        /// The active transaction under which the insert is executed. The connection
+        /// used is taken from <see cref="SqliteTransaction.Connection"/>; the caller
+        /// (typically <see cref="SaveChangesAsync"/>) owns the transaction's lifetime.
+        /// </param>
         /// <param name="flashcard">
         /// The flashcard to create. Its <see cref="Flashcard.Id"/> is ignored and assigned by the store;
         /// <see cref="Flashcard.TopicId"/> must reference an existing topic.
         /// </param>
         /// <returns>The identifier assigned to the newly created flashcard.</returns>
-        Task<long> AddAsync(Flashcard flashcard);
+        Task<long> AddAsync(SqliteTransaction transaction, Flashcard flashcard);
 
         /// <summary>
         /// Persists changes to an existing flashcard's content, formatting, color,
         /// and review state.
         /// </summary>
+        /// <param name="transaction">
+        /// The active transaction under which the update is executed. The connection
+        /// used is taken from <see cref="SqliteTransaction.Connection"/>; the caller
+        /// (typically <see cref="SaveChangesAsync"/>) owns the transaction's lifetime.
+        /// </param>
         /// <param name="flashcard">
         /// The flashcard with updated values. Its <see cref="Flashcard.Id"/> identifies
         /// which stored flashcard to update.
         /// </param>
-        Task UpdateAsync(Flashcard flashcard);
+        Task UpdateAsync(SqliteTransaction transaction, Flashcard flashcard);
 
         /// <summary>
         /// Marks a flashcard as deleted without removing its stored data.
         /// </summary>
+        /// <param name="transaction">
+        /// The active transaction under which the soft delete is executed. The connection
+        /// used is taken from <see cref="SqliteTransaction.Connection"/>; the caller
+        /// (typically <see cref="SaveChangesAsync"/>) owns the transaction's lifetime.
+        /// </param>
         /// <param name="id">The identifier of the flashcard to delete.</param>
         /// <remarks>
         /// This is a soft delete: it sets <see cref="Flashcard.IsDeleted"/> rather than
         /// removing the row, so <see cref="GetByTopicAsync"/> excludes it afterwards
         /// while the data remains recoverable if needed.
         /// </remarks>
-        Task DeleteAsync(long id);
+        Task DeleteAsync(SqliteTransaction transaction, long id);
 
         /// <summary>
         /// Persists a full set of in-progress changes to a topic's flashcards in a single
