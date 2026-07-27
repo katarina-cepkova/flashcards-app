@@ -13,7 +13,7 @@ namespace Flashcards.Core.Repositories
         /// Retrieves all non-deleted flashcards belonging to a topic.
         /// </summary>
         /// <param name="topicId">The identifier of the topic whose flashcards are retrieved.</param>
-        /// <returns>A read-only list of the topic's flashcards, in ascending order of flashcard ids.</returns>
+        /// <returns>A read-only list of the topic's flashcards, in ascending order by flashcard ids.</returns>
         Task<IReadOnlyList<Flashcard>> GetByTopicIdAsync(long topicId);
 
         /// <summary>
