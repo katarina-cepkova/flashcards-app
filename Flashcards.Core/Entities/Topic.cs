@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flashcards.Core.Entities
+﻿namespace Flashcards.Core.Entities
 {
     /// <summary>
     /// A named collection of flashcards (e.g. a subject or vocabulary set).

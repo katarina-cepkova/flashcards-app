@@ -5,7 +5,7 @@ using Flashcards.Data.Repositories;
 using Microsoft.Data.Sqlite;
 
 
-namespace Flashcards.Tests.Database
+namespace Flashcards.Tests.Repositories
 {
     public class SqliteTopicRepositoryTests : IAsyncLifetime
     {

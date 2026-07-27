@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data.Common;
-using Flashcards.Core.Entities;
+﻿using Flashcards.Core.Entities;
 using Flashcards.Core.Repositories;
 using Flashcards.Data.Database;
 using Microsoft.Data.Sqlite;

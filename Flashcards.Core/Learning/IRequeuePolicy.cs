@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flashcards.Core.Learning
+﻿namespace Flashcards.Core.Learning
 {
     public interface IRequeuePolicy
     {

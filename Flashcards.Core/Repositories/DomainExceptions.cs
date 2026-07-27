@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flashcards.Core.Repositories
+﻿namespace Flashcards.Core.Repositories
 {
     /// <summary>
     /// Thrown when a repository operation references an entity that does not exist.

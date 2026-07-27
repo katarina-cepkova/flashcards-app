@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flashcards.Core.Entities
+﻿namespace Flashcards.Core.Entities
 {
     /// <summary>
     /// A single flashcard belonging to a <see cref="Topic"/>, with independently

@@ -2,8 +2,6 @@
 using Flashcards.Core.Learning;
 
 namespace Flashcards.Tests.Learning
-
-
 {
     public class LearningQueueTests
     {
