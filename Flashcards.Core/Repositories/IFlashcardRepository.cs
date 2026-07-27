@@ -76,6 +76,6 @@ namespace Flashcards.Core.Repositories
         /// remaining cards are updated.
         /// </summary>
         /// <param name="flashcards">The full working set of flashcards from an edit session.</param>
-        Task SaveChangesAsync(IReadOnlyList<Flashcard> flashcards);
+        Task<IReadOnlyList<Flashcard>> SaveChangesAsync(IReadOnlyList<Flashcard> flashcards);
     }
 }
