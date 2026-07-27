@@ -116,6 +116,21 @@ namespace Flashcards.Data.Repositories
 
 
         /// <summary>
+        /// Checks whether a topic with the given id exists, without loading its data.
+        /// </summary>
+        /// <exception cref="EntityNotFoundException">No topic with the given id exists.</exception>
+        private static async Task EnsureTopicExistsAsync(SqliteConnection connection, long topicId, string topicType)
+        {
+            using SqliteCommand command = connection.CreateCommand();
+            command.CommandText = "SELECT 1 FROM Topics WHERE Id=$id;";
+            command.Parameters.AddWithValue("$id", topicId);
+
+            object? exists = await command.ExecuteScalarAsync();
+            _ = exists ?? throw new EntityNotFoundException($"{topicType} topic {topicId} does not exist.");
+        }
+
+
+        /// <summary>
         /// Reassigns all flashcards from the source topic to the target topic, then deletes the source topic.
         /// </summary>
         /// <exception cref="EntityNotFoundException">Source or target topic does not exist.</exception>
@@ -124,11 +139,8 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            using SqliteCommand checkSourceCommand = connection.CreateCommand();
-            checkSourceCommand.CommandText = "SELECT 1 FROM Topics WHERE Id=$source;";
-            checkSourceCommand.Parameters.AddWithValue("$source", sourceTopicId);
-            object? sourceExists = await checkSourceCommand.ExecuteScalarAsync();
-            _ = sourceExists ?? throw new EntityNotFoundException($"Source topic {sourceTopicId} does not exist.");
+            await EnsureTopicExistsAsync(connection, sourceTopicId, "Source");
+            await EnsureTopicExistsAsync(connection, targetTopicId, "Target");
 
             // BeginTransactionAsync is declared on the common DbConnection base class and
             // returns DbTransaction, not SqliteTransaction directly — a known limitation
@@ -144,15 +156,7 @@ namespace Flashcards.Data.Repositories
                 updateCommand.Parameters.AddWithValue("$target", targetTopicId);
                 updateCommand.Parameters.AddWithValue("$source", sourceTopicId);
 
-                try
-                {
-                    await updateCommand.ExecuteNonQueryAsync();
-                }
-                catch (SqliteException ex) when (ex.SqliteErrorCode == 19) // FK violation: target doesn't exist
-                {
-                    // wrapping SqliteException into a common domain language
-                    throw new EntityNotFoundException($"Target topic {targetTopicId} does not exist.");
-                }
+                await updateCommand.ExecuteNonQueryAsync();
 
                 using SqliteCommand deleteCommand = connection.CreateCommand();
                 deleteCommand.Transaction = transaction;

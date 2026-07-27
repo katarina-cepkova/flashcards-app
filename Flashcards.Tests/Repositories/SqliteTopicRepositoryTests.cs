@@ -12,7 +12,7 @@ namespace Flashcards.Tests.Repositories
         // Guid.NewGuid() -> generates a random 128-bit Globally Unique Identifier,
         // used here to avoid filename collisions between test runs
         private readonly string _connectionString =
-            $"Data Source=file:{Guid.NewGuid()}?mode=memory&cache=shared";
+            $"Data Source=file:{Guid.NewGuid()}?mode=memory&cache=shared;Foreign Keys=True";
 
         private SqliteConnection _keeperConnection = null!;
         private SqliteTopicRepository _repository = null!;
@@ -231,9 +231,35 @@ namespace Flashcards.Tests.Repositories
         #endregion
 
         #region MergeAsync tests
+        [Fact]
+        public async Task MergeAsync_InvalidSourceId_ThrowsEntityNotFoundException()
+        {
+            // arrange
+            Topic targetTopic = new Topic { Name = "Programming", CreatedAt = DateTime.UtcNow };
+            long targetTopicId = await _repository.AddAsync(targetTopic);
 
-        // TODO: after SqliteFlashcardRepository is implemented (Merge reassigns Flashcards.TopicId)
+            long invalidSourceId = targetTopicId + 1000;
 
+            // act & assert
+            await Assert.ThrowsAsync<EntityNotFoundException>(
+                () => _repository.MergeAsync(invalidSourceId, targetTopicId));
+        }
+
+
+        
+
+
+        [Fact]
+        public async Task MergeAsync_InvalidSourceAndTargetIds_ThrowsEntityNotFoundException()
+        {
+            // arrange
+            long invalidSourceId = 9001;
+            long invalidTargetId = 9002;
+
+            // act & assert
+            await Assert.ThrowsAsync<EntityNotFoundException>(
+                () => _repository.MergeAsync(invalidSourceId, invalidTargetId));
+        }
         #endregion
 
 
@@ -309,7 +335,7 @@ namespace Flashcards.Tests.Repositories
 
 
         #region DeleteAsync tests
-        // TODO: after SqliteFlashcardRepository is implemented (Delete causes chain deletion of relevand Flashcards)
+        // TODO: after SqliteFlashcardRepository is implemented (Delete causes chain deletion of relevant Flashcards)
 
         [Theory]
         [InlineData(-1)]
