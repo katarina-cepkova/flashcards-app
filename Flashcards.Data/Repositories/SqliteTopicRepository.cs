@@ -29,7 +29,7 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            SqliteCommand command = connection.CreateCommand();
+            using SqliteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM Topics ORDER BY Id;";
 
             List<Topic> topics = new List<Topic>();
@@ -56,7 +56,7 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            SqliteCommand command = connection.CreateCommand();
+            using SqliteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM Topics WHERE Id=$id;";
             command.Parameters.AddWithValue("$id", id);
 
@@ -84,7 +84,7 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            SqliteCommand command = connection.CreateCommand();
+            using SqliteCommand command = connection.CreateCommand();
             command.CommandText = "SELECT * FROM Topics WHERE Name=$name;";
             command.Parameters.AddWithValue("$name", name);
 
@@ -112,7 +112,7 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            SqliteCommand command = connection.CreateCommand();
+            using SqliteCommand command = connection.CreateCommand();
             command.CommandText = """
                 INSERT INTO Topics (Name, CreatedAt) VALUES ($name, $createdAt);
                 SELECT last_insert_rowid();
@@ -141,7 +141,7 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            SqliteCommand checkSourceCommand = connection.CreateCommand();
+            using SqliteCommand checkSourceCommand = connection.CreateCommand();
             checkSourceCommand.CommandText = "SELECT 1 FROM Topics WHERE Id=$source;";
             checkSourceCommand.Parameters.AddWithValue("$source", sourceTopicId);
             object? sourceExists = await checkSourceCommand.ExecuteScalarAsync();
@@ -174,7 +174,7 @@ namespace Flashcards.Data.Repositories
                     throw new EntityNotFoundException($"Target topic {targetTopicId} does not exist.");
                 }
 
-                SqliteCommand deleteCommand = connection.CreateCommand();
+                using SqliteCommand deleteCommand = connection.CreateCommand();
                 deleteCommand.Transaction = transaction;
                 deleteCommand.CommandText = "DELETE FROM Topics WHERE Id=$source;";
                 deleteCommand.Parameters.AddWithValue("$source", sourceTopicId);
@@ -202,7 +202,7 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            SqliteCommand command = connection.CreateCommand();
+            using SqliteCommand command = connection.CreateCommand();
             command.CommandText = "UPDATE Topics SET Name=$name WHERE Id=$id;";
             command.Parameters.AddWithValue("$name", newName);
             command.Parameters.AddWithValue("$id", id);
@@ -229,7 +229,7 @@ namespace Flashcards.Data.Repositories
             using SqliteConnection connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
-            SqliteCommand command = connection.CreateCommand();
+            using SqliteCommand command = connection.CreateCommand();
             command.CommandText = "DELETE FROM Topics WHERE Id=$id;"; // cascades to Flashcards via ON DELETE CASCADE
             command.Parameters.AddWithValue("$id", id);
 
