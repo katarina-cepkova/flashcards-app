@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 
-namespace Flashcards.Data
+namespace Flashcards.Data.Database
 {
     /// <summary>
     /// Binds C# values as SQLite command parameters, converting types (dates, nulls)
