@@ -11,7 +11,9 @@ namespace Flashcards.Core.Repositories
         /// <summary>
         /// Retrieves all topics currently stored.
         /// </summary>
-        /// <returns>A read-only list of all topics, in no particular guaranteed order.</returns>
+        /// <returns>
+        /// A read-only list of all topics, in ascending order by topic ids.
+        /// </returns>
         Task<IReadOnlyList<Topic>> GetAllAsync();
 
         /// <summary>
