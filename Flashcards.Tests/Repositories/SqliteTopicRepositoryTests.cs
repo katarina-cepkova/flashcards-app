@@ -260,6 +260,21 @@ namespace Flashcards.Tests.Repositories
             await Assert.ThrowsAsync<EntityNotFoundException>(
                 () => _repository.MergeAsync(invalidSourceId, invalidTargetId));
         }
+
+        [Fact]
+        public async Task MergeAsync_InvalidTargetId_ThrowsEntityNotFoundException()
+        {
+            // arrange
+            Topic sourceTopic = new Topic { Name = "C#", CreatedAt = DateTime.UtcNow };
+            long sourceTopicId = await _repository.AddAsync(sourceTopic);
+
+            long invalidTargetId = sourceTopicId + 1000;
+
+            
+            // act & assert
+            await Assert.ThrowsAsync<EntityNotFoundException>(
+                () => _repository.MergeAsync(sourceTopicId, invalidTargetId));
+        }
         #endregion
 
 
@@ -335,7 +350,6 @@ namespace Flashcards.Tests.Repositories
 
 
         #region DeleteAsync tests
-        // TODO: after SqliteFlashcardRepository is implemented (Delete causes chain deletion of relevant Flashcards)
 
         [Theory]
         [InlineData(-1)]
