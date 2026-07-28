@@ -57,7 +57,7 @@ namespace Flashcards.Core.Learning
             if (_policy.ShouldRemove(Current))
                 RemoveCurrentAndAdvance();
             else
-                Advance();
+                RequeueAhead(_policy.StepsAhead(Current, true));
         }
 
 
@@ -71,7 +71,7 @@ namespace Flashcards.Core.Learning
                 return;
 
             Current!.SessionMissCount++;  // null-forgiving operator: _current is not null -> Current is not null
-            RequeueAhead(_policy.StepsAhead(Current));
+            RequeueAhead(_policy.StepsAhead(Current, false));
         }
 
 
