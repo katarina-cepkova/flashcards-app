@@ -17,7 +17,7 @@ namespace Flashcards.Tests.Learning
 
             public bool ShouldRemove(LearningSessionCard card) => true;
 
-            public uint StepsAhead(LearningSessionCard card) => _stepsAhead;
+            public uint StepsAhead(LearningSessionCard card, bool wasLastAnswerCorrect) => _stepsAhead;
         }
 
         private static LearningQueue CreateQueue(int cardCount, IRequeuePolicy? policy = null)
@@ -302,6 +302,31 @@ namespace Flashcards.Tests.Learning
             List<long> expectedIds = new List<long>() { 1, 4, 2, 3, 5 };
             IEnumerable<long> actualIds = queue.GetQueueOrder();
             Assert.Equal(expectedIds, actualIds);
+        }
+
+
+        [Fact]
+        public void MarkCorrect_IncrementsSessionCorrectCount()
+        {
+            LearningQueue queue = CreateQueue(3, new FixedRequeuePolicy());
+            LearningSessionCard card = queue.Current!;
+            int before = card.SessionCorrectCount;
+
+            queue.MarkCorrect();  // removes the card, but we own the reference to it
+
+            Assert.Equal(before + 1, card.SessionCorrectCount);
+        }
+
+        [Fact]
+        public void MarkIncorrect_IncrementsSessionMissCount()
+        {
+            LearningQueue queue = CreateQueue(3, new FixedRequeuePolicy());
+            LearningSessionCard card = queue.Current!;
+            int before = card.SessionMissCount;
+
+            queue.MarkIncorrect();
+
+            Assert.Equal(before + 1, card.SessionMissCount);
         }
     }
 }
