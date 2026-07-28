@@ -4,6 +4,6 @@
     {
         public bool ShouldRemove(LearningSessionCard card);
 
-        public uint StepsAhead(LearningSessionCard card);
+        public uint StepsAhead(LearningSessionCard card, bool wasLastAnswerCorrect);
     }
 }
