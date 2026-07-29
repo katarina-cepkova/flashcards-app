@@ -22,7 +22,6 @@ namespace Flashcards.App.ViewModels
                 _currentLanguage = value;
                 OnPropertyChanged();  // notify all subscribing UI elements
                 _localizationService.SetLanguage(value);  // change the language of the app
-                Console.WriteLine(_currentLanguage);
             }
         }
 
