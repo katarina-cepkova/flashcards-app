@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Generic dialog buttons, reused across multiple dialogs -->
+    <system:String x:Key="OKButtonText">OK</system:String>
+    <system:String x:Key="CancelButtonText">Zrušiť</system:String>
+    <system:String x:Key="YesButtonText">Áno</system:String>
+    <system:String x:Key="NoButtonText">Nie</system:String>
+
+    <!-- Default name given to a newly created topic before the user renames it -->
+    <system:String x:Key="DefaultTopicName">Téma</system:String>
+
+    <!-- Create new flashcard set dialog -->
+    <system:String x:Key="CreateNewSetTitle">Vytvoriť novú sadu kartičiek</system:String>
+    <system:String x:Key="CreateNewSetMessage">Ak chcete vytvoriť novú sadu kartičiek, \r\nprosím zadajte jej názov do poľa nižšie.</system:String>
+    <system:String x:Key="CreateSet_InvalidSetTopicMessage">Názov témy nemôže byť prázdny.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopicMessage">Názov témy už existuje.</system:String>
+
+    <!-- Rename topic: shown when the new name collides with an existing topic (offers merge) -->
+    <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">Názov témy '@' už existuje. \r\nAk budete súhlasiť, aktuálne a pôvodné \r\ndáta sa pri ďalšom dotaze zlúčia do jednej sady.</system:String>
+    <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Upozornenie: Konflikt mien</system:String>
+
+    <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
+    <system:String x:Key="InvalidTopicTitle">Chyba: Neplatný názov témy</system:String>
+
+    <!-- Delete flashcard set confirmation dialog -->
+    <system:String x:Key="DeleteSetTitle">Odstrániť súčasnú sadu kartičiek</system:String>
+    <system:String x:Key="DeleteSetMessage">Ste si naozaj istý, že chcete zmazať sadu kartičiek '@'? \r\nTáto akcia ho odstráni natrvalo. \r\nPotvrďte odstránenie.</system:String>
+
+    <!-- Open existing flashcard set dialog -->
+    <system:String x:Key="OpenSetTitle">Otvoriť existujúcu sadu kartičiek</system:String>
+
+    <!-- Flashcard side indicator, shown below the card -->
+    <system:String x:Key="FrontOfFlashcardLabelText">predná strana</system:String>
+    <system:String x:Key="BackOfFlashcardLabelText">zadná strana</system:String>
+
+    <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
+    <system:String x:Key="SoundCheckBoxText">Zvuk</system:String>
+
+</ResourceDictionary>
