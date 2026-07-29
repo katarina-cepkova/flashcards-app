@@ -1,0 +1,52 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Left panel: set management -->
+    <BitmapImage x:Key="CreateFlashcardSetIcon" UriSource="/Resources/Icons/multiple.png"/>
+    <BitmapImage x:Key="OpenFlashcardSetIcon" UriSource="/Resources/Icons/books.png"/>
+    <BitmapImage x:Key="DeleteFlashcardSetIcon" UriSource="/Resources/Icons/trash-xmark.png"/>
+    <BitmapImage x:Key="RefreshIcon" UriSource="/Resources/Icons/refresh.png"/>
+    <BitmapImage x:Key="StartLearningIcon" UriSource="/Resources/Icons/cards.png"/>
+
+    <!-- Right panel: flashcard management -->
+    <BitmapImage x:Key="CreateFlashcardIcon" UriSource="/Resources/Icons/square-plus.png"/>
+    <BitmapImage x:Key="SaveFlashcardIcon" UriSource="/Resources/Icons/floppy-disk-pen.png"/>
+    <BitmapImage x:Key="DeleteFlashcardIcon" UriSource="/Resources/Icons/rectangle-xmark.png"/>
+    <BitmapImage x:Key="EditFlashcardIcon" UriSource="/Resources/Icons/pencil.png"/>
+
+    <!-- Rich text toolbar -->
+    <BitmapImage x:Key="UndoIcon" UriSource="/Resources/Icons/undo-alt.png"/>
+    <BitmapImage x:Key="RedoIcon" UriSource="/Resources/Icons/redo-alt.png"/>
+    <BitmapImage x:Key="BoldIcon" UriSource="/Resources/Icons/bold.png"/>
+    <BitmapImage x:Key="ItalicIcon" UriSource="/Resources/Icons/italic.png"/>
+    <BitmapImage x:Key="UnderlineIcon" UriSource="/Resources/Icons/underline.png"/>
+    <BitmapImage x:Key="StrikeoutIcon" UriSource="/Resources/Icons/strikeout.png"/>
+    <BitmapImage x:Key="HighlightIcon" UriSource="/Resources/Icons/highlighter.png"/>
+    <BitmapImage x:Key="ColorFillIcon" UriSource="/Resources/Icons/paint-bucket.png"/>
+    <BitmapImage x:Key="IncreaseFontSizeIcon" UriSource="/Resources/Icons/font-size-big.png"/>
+    <BitmapImage x:Key="DecreaseFontSizeIcon" UriSource="/Resources/Icons/font-size-small.png"/>
+
+    <!-- Navigation -->
+    <BitmapImage x:Key="ArrowLeftIcon" UriSource="/Resources/Icons/arrow-left.png"/>
+    <BitmapImage x:Key="ArrowRightIcon" UriSource="/Resources/Icons/arrow-right.png"/>
+    <BitmapImage x:Key="TurnOverIcon" UriSource="/Resources/Icons/turn-over.png"/>
+
+    <!-- Sound (optional feature) -->
+    <BitmapImage x:Key="SoundIcon" UriSource="/Resources/Icons/waveform-path.png"/>
+    <BitmapImage x:Key="SoundFromFolderIcon" UriSource="/Resources/Icons/folder-music.png"/>
+    <BitmapImage x:Key="PlaySoundIcon" UriSource="/Resources/Icons/play.png"/>
+    <BitmapImage x:Key="PauseSoundIcon" UriSource="/Resources/Icons/pause.png"/>
+    <BitmapImage x:Key="StopSoundIcon" UriSource="/Resources/Icons/square-small.png"/>
+    <BitmapImage x:Key="MicrophoneOnIcon" UriSource="/Resources/Icons/microphoneOn.png"/>
+    <BitmapImage x:Key="MicrophoneOffIcon" UriSource="/Resources/Icons/muteMicrophone.png"/>
+
+    <!-- App / window icon -->
+    <BitmapImage x:Key="FlashcardsAppIcon" UriSource="/Resources/Icons/cards-blank.ico"/>
+
+    <!-- Language flags -->
+    <BitmapImage x:Key="GbFlagIcon" UriSource="/Resources/Icons/GB.png"/>
+    <BitmapImage x:Key="DeFlagIcon" UriSource="/Resources/Icons/DE.png"/>
+    <BitmapImage x:Key="SkFlagIcon" UriSource="/Resources/Icons/SK.png"/>
+    <BitmapImage x:Key="CzFlagIcon" UriSource="/Resources/Icons/CZ.png"/>
+
+</ResourceDictionary>
