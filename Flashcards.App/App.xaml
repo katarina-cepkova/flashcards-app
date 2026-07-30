@@ -8,6 +8,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/Typography.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/FlagRadioButtonStyle.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/Icons.xaml"/>
                 <ResourceDictionary Source="Resources/Strings/Strings.en-GB.xaml"/>
