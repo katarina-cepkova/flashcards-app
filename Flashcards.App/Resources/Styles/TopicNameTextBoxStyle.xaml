@@ -6,10 +6,15 @@
         <Setter Property="Foreground" Value="{StaticResource TextOnDarkBrush}"/>
         <Setter Property="Margin" Value="0,5,0,5"/>
         <Style.Triggers>
-            <Trigger Property="IsFocused" Value="True">
+            <!-- trigger caused by multiple conditions -->
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsFocused" Value="True"/>
+                    <Condition Property="IsReadOnly" Value="False"/>
+                </MultiTrigger.Conditions>
                 <Setter Property="Background" Value="{StaticResource DefaultFlashcardBackgroundBrush}"/>
                 <Setter Property="Foreground" Value="{StaticResource TextOnLightBrush}"/>
-            </Trigger>
+            </MultiTrigger>
         </Style.Triggers>
     </Style>
 </ResourceDictionary>
