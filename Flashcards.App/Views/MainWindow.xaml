@@ -7,11 +7,24 @@
         xmlns:converters="clr-namespace:Flashcards.App.Converters"
         mc:Ignorable="d"
         Title="MainWindow" Height="650" Width="1000">
+
     <Window.Resources>
         <converters:LanguageToIsCheckedConverter x:Key="LanguageToIsCheckedConverter"/>
+        <converters:StateToCollapsedConverter x:Key="StateToCollapsedConverter"/>
+        <converters:StateToHiddenConverter x:Key="StateToHiddenConverter"/>
+        <converters:StateToEditableConverter x:Key="StateToEditableConverter"/>
+        <converters:StateToReadOnlyConverter x:Key="StateToReadOnlyConverter"/>
+        <converters:RemainingCharactersLabelVisibilityConverter x:Key="RemainingCharactersLabelVisibilityConverter"/>
     </Window.Resources>
-    <Grid Background="{StaticResource MainWindowBackgroundBrush}">
-        <DockPanel LastChildFill="False">
+    
+    <Grid x:Name="MainGrid" Background="{StaticResource MainWindowBackgroundBrush}" Focusable="True">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- languages -->
+            <RowDefinition Height="*"/>     <!-- inner grid -->
+        </Grid.RowDefinitions>
+        
+        <DockPanel Grid.Row="0" LastChildFill="False">
             <StackPanel x:Name="LanguageSelectorPanel"
                         DockPanel.Dock="Top"
                         Orientation="Horizontal"
@@ -52,5 +65,46 @@
             </StackPanel>
 
         </DockPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- flashcard topic -->
+            </Grid.RowDefinitions>
+
+            <!-- Column = begins at column 0, ColumnSpan = spans over N columns -->
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
+                        Orientation="Vertical" HorizontalAlignment="Center">
+                <!-- UpdateSourceTrigger=PropertyChanged = send updates on each typed character, not after leaving focus -->
+                <TextBox x:Name="TopicNameTextBox"
+                         Style="{StaticResource TopicNameTextBoxStyle}"
+                         FontFamily="{StaticResource PrimaryFontFamily}"
+                         FontSize="{StaticResource TopicNameFontSize}"
+                         FontWeight="{StaticResource HeadingFontWeight}"
+                         Text="{Binding TopicName, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="{Binding TopicMaxLength}"
+                         Visibility="{Binding CurrentState,
+                                      Converter={StaticResource StateToHiddenConverter},
+                                      ConverterParameter='OpenedSetView,OpenedSetEdit,LearningSession'}"
+                         IsReadOnly="{Binding CurrentState,
+                                      Converter={StaticResource StateToReadOnlyConverter}}"/>
+
+                <TextBlock Text="{Binding RemainingCharactersText}"
+                           Foreground="{Binding RemainingCharactersColor}"
+                           HorizontalAlignment="Right">
+                    <TextBlock.Visibility>
+                        <!-- converter binding multiple values -->
+                        <MultiBinding Converter="{StaticResource RemainingCharactersLabelVisibilityConverter}">
+                            <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
+                            <Binding Path="CurrentState"/>
+                            <Binding Path="RemainingCharactersCount"/>
+                            <Binding Path="RemainingCharactersWarningThreshold"/>
+                        </MultiBinding>
+                    </TextBlock.Visibility>
+                </TextBlock>
+
+            </StackPanel>
+        </Grid>
+
     </Grid>
 </Window>

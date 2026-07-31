@@ -22,6 +22,16 @@ namespace Flashcards.App
         {
             InitializeComponent();
             DataContext = new MainViewModel(new LocalizationService());
+            PreviewMouseDown += MainWindow_PreviewMouseDown;
+        }
+
+        private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is not TextBox)
+            {
+                FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), MainGrid);
+                Keyboard.Focus(MainGrid);
+            }
         }
     }
 }
