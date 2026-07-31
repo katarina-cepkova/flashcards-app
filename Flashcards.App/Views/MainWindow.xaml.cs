@@ -22,18 +22,6 @@ namespace Flashcards.App
         {
             InitializeComponent();
             DataContext = new MainViewModel(new LocalizationService());
-            PreviewMouseDown += MainWindow_PreviewMouseDown;
-        }
-
-        private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            // clicking away from TextBox = puts it outside of focus
-            System.Diagnostics.Debug.WriteLine($"Clicked on: {e.OriginalSource}");
-            if (e.OriginalSource is not TextBox)
-            {
-                Keyboard.Focus(this);
-            }
-            System.Diagnostics.Debug.WriteLine($"After: TextBox.IsFocused = {TopicNameTextBox.IsFocused}");
         }
     }
 }
