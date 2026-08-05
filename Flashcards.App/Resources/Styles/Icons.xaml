@@ -44,9 +44,9 @@
     <BitmapImage x:Key="FlashcardsAppIcon" UriSource="/Resources/Icons/cards-blank.ico"/>
 
     <!-- Language flags -->
-    <BitmapImage x:Key="GbFlagIcon" UriSource="/Resources/Icons/GB.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="DeFlagIcon" UriSource="/Resources/Icons/DE.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="SkFlagIcon" UriSource="/Resources/Icons/SK.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="CzFlagIcon" UriSource="/Resources/Icons/CZ.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="GbFlagIcon" UriSource="/Resources/Icons/GB.png" DecodePixelWidth="128"/>
+    <BitmapImage x:Key="DeFlagIcon" UriSource="/Resources/Icons/DE.png" DecodePixelWidth="128"/>
+    <BitmapImage x:Key="SkFlagIcon" UriSource="/Resources/Icons/SK.png" DecodePixelWidth="128"/>
+    <BitmapImage x:Key="CzFlagIcon" UriSource="/Resources/Icons/CZ.png" DecodePixelWidth="128"/>
 
 </ResourceDictionary>
