@@ -1,0 +1,16 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Inner spacing between the button's border and its icon content -->
+    <Thickness x:Key="IconButtonPadding">8</Thickness>
+
+    <!-- Outer spacing between individual icon buttons within a panel -->
+    <Thickness x:Key="IconButtonMargin">4</Thickness>
+
+    <!-- Outer margin of inner grids/panels -->
+    <Thickness x:Key="ControlParentMargin">8</Thickness>
+
+    <!-- Border thickness for icon buttons, in both default and hover/pressed states -->
+    <Thickness x:Key="IconButtonBorderThickness">2</Thickness>
+
+</ResourceDictionary>
