@@ -15,12 +15,10 @@
     <SolidColorBrush x:Key="DefaultFlashcardForegroundBrush" Color="White"/>
 
     <!-- buttons -->
-    <SolidColorBrush x:Key="DbButtonsBrush" Color="#8B7355"/>
-    <SolidColorBrush x:Key="FileButtonsBrush" Color="#A57E7C"/>
-    <SolidColorBrush x:Key="SwitchPaletteBrush" Color="#AD8B9D"/>
+    <SolidColorBrush x:Key="SetButtonsBrush" Color="#8B7355"/>
     <SolidColorBrush x:Key="EditButtonsBrush" Color="#708238"/>
     <SolidColorBrush x:Key="SoundButtonsBrush" Color="#996699"/>
-    <SolidColorBrush x:Key="LogicButtonsBrush" Color="#889E44"/>
+    <SolidColorBrush x:Key="LogicButtonsBrush" Color="#A57E7C"/>
     <SolidColorBrush x:Key="TextButtonsBrush" Color="#F5F5DC"/>
     <SolidColorBrush x:Key="SelectedButtonBrush" Color="#F5F5DC"/>
 
