@@ -11,7 +11,13 @@
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
 
-                    <Border x:Name="Border" BorderThickness="2" BorderBrush="Transparent" Margin="0" Padding="0">
+                    <Border x:Name="Border" 
+                            BorderThickness="{StaticResource IconButtonBorderThickness}" 
+                            BorderBrush="Transparent" 
+                            CornerRadius="4"
+                            ClipToBounds="True"
+                            Margin="0" 
+                            Padding="0">
                         <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                     </Border>
