@@ -195,7 +195,56 @@
 
                 </Grid>
 
-            </Grid>
+            <StackPanel x:Name="FormattingPanel" Grid.Row="1" Grid.Column="1" 
+                        Orientation="Horizontal" Margin="{StaticResource ControlParentMargin}">
+                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                    <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}">
+                        <Image Source="{StaticResource UndoIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                    <Button x:Name="RedoButton" Style="{StaticResource FormattingButtonStyle}">
+                        <Image Source="{StaticResource RedoIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                </StackPanel>
 
+                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                    <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <Image Source="{StaticResource BoldIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </ToggleButton>
+
+                    <ToggleButton x:Name="ItalicButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <Image Source="{StaticResource ItalicIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </ToggleButton>
+
+                    <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <Image Source="{StaticResource UnderlineIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </ToggleButton>
+
+                    <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <Image Source="{StaticResource StrikethroughIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </ToggleButton>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                    <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}">
+                        <Image Source="{StaticResource FontSizeIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                    <Button x:Name="DownsizeButton" Style="{StaticResource FormattingButtonStyle}"
+                            Padding="6">
+                        <Image Source="{StaticResource FontSizeIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
         </Grid>
+
+    </Grid>
 </Window>

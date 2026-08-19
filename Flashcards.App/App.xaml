@@ -17,6 +17,11 @@
                 <ResourceDictionary Source="Resources/Styles/FlagRadioButtonStyle.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/TopicNameTextBoxStyle.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/IconButtonStyle.xaml"/>
+
+                <ResourceDictionary Source="Resources/Styles/FormattingButtonBaseStyle.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/FormattingButtonStyle.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/FormattingToggleButtonStyle.xaml"/>
+                <ResourceDictionary Source="Resources/Styles/FormattingInnerPanelStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
         
