@@ -21,11 +21,9 @@
     <BitmapImage x:Key="BoldIcon" UriSource="/Resources/Icons/bold.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="ItalicIcon" UriSource="/Resources/Icons/italic.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="UnderlineIcon" UriSource="/Resources/Icons/underline.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="StrikeoutIcon" UriSource="/Resources/Icons/strikeout.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="HighlightIcon" UriSource="/Resources/Icons/highlighter.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="StrikethroughIcon" UriSource="/Resources/Icons/strikethrough.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="ColorFillIcon" UriSource="/Resources/Icons/paint-bucket.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="IncreaseFontSizeIcon" UriSource="/Resources/Icons/font-size-big.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="DecreaseFontSizeIcon" UriSource="/Resources/Icons/font-size-small.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="FontSizeIcon" UriSource="/Resources/Icons/text-size.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
 
     <!-- Navigation -->
     <BitmapImage x:Key="ArrowLeftIcon" UriSource="/Resources/Icons/arrow-left.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
