@@ -61,4 +61,16 @@ namespace Flashcards.App.Commands
 
         public void Execute(object? parameter) => _execute((T?)parameter);
     }
+
+    /// <summary>
+    /// Non-generic convenience wrapper over <see cref="RelayCommand{T}"/> for commands
+    /// that don't need a parameter.
+    /// </summary>
+    public class RelayCommand : RelayCommand<object>
+    {
+        public RelayCommand(Action execute, Func<bool>? canExecute = null)
+            : base(_ => execute(), canExecute is null ? null : _ => canExecute())
+        {
+        }
+    }
 }
