@@ -5,18 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Flashcards.App"
         xmlns:converters="clr-namespace:Flashcards.App.Converters"
+        xmlns:attachedProperties="clr-namespace:Flashcards.App.AttachedProperties"
         mc:Ignorable="d"
         Title="Flashcards App" Height="650" Width="1000"
         Icon="{StaticResource FlashcardsAppIcon}">
 
-    <Window.Resources>
-        <converters:LanguageToIsCheckedConverter x:Key="LanguageToIsCheckedConverter"/>
-        <converters:StateToCollapsedConverter x:Key="StateToCollapsedConverter"/>
-        <converters:StateToHiddenConverter x:Key="StateToHiddenConverter"/>
-        <converters:StateToEditableConverter x:Key="StateToEditableConverter"/>
-        <converters:StateToReadOnlyConverter x:Key="StateToReadOnlyConverter"/>
-        <converters:RemainingCharactersLabelVisibilityConverter x:Key="RemainingCharactersLabelVisibilityConverter"/>
-    </Window.Resources>
     <Grid x:Name="MainGrid" 
           Background="{StaticResource MainWindowBackgroundBrush}" 
           Focusable="True">
@@ -195,7 +188,7 @@
 
                 </Grid>
 
-            <StackPanel x:Name="FormattingPanel" Grid.Row="1" Grid.Column="1" 
+                <StackPanel x:Name="FormattingPanel" Grid.Row="1" Grid.Column="1" 
                         Orientation="Horizontal" Margin="{StaticResource ControlParentMargin}">
                 <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
                     <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}">
@@ -244,7 +237,29 @@
 
                 </StackPanel>
             </StackPanel>
-        </Grid>
+
+            <RichTextBox x:Name="Flashcard" Grid.Row="2" Grid.Column="1" 
+                         Background="{StaticResource DefaultFlashcardBackgroundBrush}"
+                         Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
+                         FontFamily="{StaticResource PrimaryFontFamily}"
+                         FontSize="{StaticResource BodyFontSize}"
+                         Margin="{StaticResource FlashcardMargin}"
+                         Padding="{StaticResource FlashcardPadding}"
+                         
+                         CaretBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
+                         SelectionBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
+                         SelectionOpacity="0.3"
+                         AllowDrop="False"
+                         ContextMenu="{x:Null}"
+                         
+                         attachedProperties:RichTextBoxHelper.DocumentText="{Binding DisplayedText, Mode=TwoWay}"
+                         Visibility="{Binding CurrentState, Converter={StaticResource StateToHiddenConverter},
+                                          ConverterParameter='OpenedSetView,OpenedSetEdit,LearningSession'}"
+                         IsReadOnly="{Binding CurrentState, Converter={StaticResource StateToReadOnlyConverter}}">
+            </RichTextBox>
+            </Grid>
+        
+            
 
     </Grid>
 </Window>
