@@ -12,7 +12,7 @@
 
     <!-- flashcard -->
     <SolidColorBrush x:Key="DefaultFlashcardBackgroundBrush" Color="#967C5C"/>
-    <SolidColorBrush x:Key="DefaultFlashcardForegroundBrush" Color="White"/>
+    <SolidColorBrush x:Key="DefaultFlashcardForegroundBrush" Color="Black"/>
 
     <!-- buttons -->
     <SolidColorBrush x:Key="SetButtonsBrush" Color="#8B7355"/>

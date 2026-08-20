@@ -3,7 +3,7 @@
 
     <!-- Inner spacing between the button's border and its icon content -->
     <Thickness x:Key="IconButtonPadding">8</Thickness>
-    <Thickness x:Key="FormattingButtonPadding">2</Thickness>
+    <Thickness x:Key="FormattingButtonPadding">3</Thickness>
 
     <!-- Outer spacing between individual icon buttons within a panel -->
     <Thickness x:Key="IconButtonMargin">4</Thickness>
@@ -12,6 +12,10 @@
     <!-- Outer margin of inner grids/panels -->
     <Thickness x:Key="ControlParentMargin">8</Thickness>
     <Thickness x:Key="InnerFormattingPanelMargin">3,3,6,3</Thickness>
+    
+    <!-- Flashcard spacing -->
+    <Thickness x:Key="FlashcardMargin">8</Thickness>
+    <Thickness x:Key="FlashcardPadding">4</Thickness>
 
     <!-- Border thickness for icon buttons, in both default and hover/pressed states -->
     <Thickness x:Key="IconButtonBorderThickness">2</Thickness>
