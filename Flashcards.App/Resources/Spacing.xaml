@@ -15,7 +15,7 @@
     
     <!-- Flashcard spacing -->
     <Thickness x:Key="FlashcardMargin">8</Thickness>
-    <Thickness x:Key="FlashcardPadding">4</Thickness>
+    <Thickness x:Key="FlashcardPadding">4,8,4,8</Thickness>
 
     <!-- Border thickness for icon buttons, in both default and hover/pressed states -->
     <Thickness x:Key="IconButtonBorderThickness">2</Thickness>
