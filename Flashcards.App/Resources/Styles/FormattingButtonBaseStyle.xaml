@@ -8,5 +8,12 @@
         <Setter Property="Background" Value="{StaticResource FormattingButtonsBrush}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="{StaticResource IconButtonBorderThickness}"/>
+        <Setter Property="Visibility">
+            <Setter.Value>
+                <Binding Path="CurrentState"
+                         Converter="{StaticResource StateToHiddenConverter}"
+                         ConverterParameter="OpenedSetEdit"/>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>
