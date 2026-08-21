@@ -8,5 +8,10 @@
         <Setter Property="Background" Value="{StaticResource FormattingButtonsBrush}"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="{StaticResource IconButtonBorderThickness}"/>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.4"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

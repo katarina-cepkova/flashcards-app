@@ -202,11 +202,15 @@
                     </StackPanel.Visibility>
                     
                     <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                        <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}">
-                            <Image Source="{StaticResource UndoIcon}"
+                        <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}"
+                                Command="ApplicationCommands.Undo"
+                                CommandTarget="{Binding ElementName=Flashcard}">
+                        <Image Source="{StaticResource UndoIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
-                        <Button x:Name="RedoButton" Style="{StaticResource FormattingButtonStyle}">
+                        <Button x:Name="RedoButton" Style="{StaticResource FormattingButtonStyle}"
+                                Command="ApplicationCommands.Redo"
+                                CommandTarget="{Binding ElementName=Flashcard}">
                             <Image Source="{StaticResource RedoIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>

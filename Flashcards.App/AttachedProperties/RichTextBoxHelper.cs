@@ -104,6 +104,9 @@ namespace Flashcards.App.AttachedProperties
                 richTextBox.Document.Blocks.Clear();
                 richTextBox.Document.Blocks.Add(new Paragraph(new Run(newText)));
             }
+            // new card's content shouldn't be undoable back into the previous card's content
+            richTextBox.IsUndoEnabled = false; // internally drops undo/redo stack
+            richTextBox.IsUndoEnabled = true;
         }
 
         /// <summary>
