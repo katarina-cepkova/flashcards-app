@@ -32,8 +32,8 @@
     <system:String x:Key="OpenSetTitle">Open existing flashcard set</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
-    <system:String x:Key="FrontOfFlashcardLabelText">front</system:String>
-    <system:String x:Key="BackOfFlashcardLabelText">back</system:String>
+    <system:String x:Key="Front">front</system:String>
+    <system:String x:Key="Back">back</system:String>
 
     <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
     <system:String x:Key="SoundCheckBoxText">Sound</system:String>

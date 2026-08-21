@@ -32,8 +32,8 @@
     <system:String x:Key="OpenSetTitle">Ein vorhandenes Lernkarten-Set öffnen</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
-    <system:String x:Key="FrontOfFlashcardLabelText">Vorderseite</system:String>
-    <system:String x:Key="BackOfFlashcardLabelText">Rückseite</system:String>
+    <system:String x:Key="Front">Vorderseite</system:String>
+    <system:String x:Key="Back">Rückseite</system:String>
 
     <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
     <system:String x:Key="SoundCheckBoxText">der Ton</system:String>
