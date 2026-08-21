@@ -247,6 +247,37 @@
                         </Button>
 
                     </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <RadioButton x:Name="AlignLeftButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup">
+                            <Image Source="{StaticResource AlignLeftIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                        <RadioButton x:Name="AlignCenterButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup">
+                            <Image Source="{StaticResource AlignCenterIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                        <RadioButton x:Name="AlignRightButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup">
+                            <Image Source="{StaticResource AlignRightIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                        <RadioButton x:Name="AlignBlockButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup">
+                            <Image Source="{StaticResource AlignBlockIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                </StackPanel>
                 </StackPanel>
 
                 <RichTextBox x:Name="Flashcard" Grid.Row="2" Grid.Column="1" 
