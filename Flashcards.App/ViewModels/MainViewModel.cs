@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -144,6 +145,7 @@ namespace Flashcards.App.ViewModels
                     CurrentFlashcard.BackText = value;
             }
         }
+        private static bool CanFlip() => Keyboard.FocusedElement is not TextBoxBase;
 
         public ICommand FlipCommand { get; }
         public ICommand NextCommand { get; }
@@ -190,10 +192,7 @@ namespace Flashcards.App.ViewModels
             // commands
             NextCommand = new RelayCommand(_flashcardManager.MoveToNext, _flashcardManager.CanMoveToNext);
             PreviousCommand = new RelayCommand(_flashcardManager.MoveToPrevious, _flashcardManager.CanMoveToPrevious);
-            FlipCommand = new RelayCommand(() => IsFront = !IsFront);
-
-            
-
+            FlipCommand = new RelayCommand(() => IsFront = !IsFront, CanFlip);
         }
     }
 }
