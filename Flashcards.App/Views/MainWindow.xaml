@@ -9,7 +9,10 @@
         mc:Ignorable="d"
         Title="Flashcards App" Height="650" Width="1000"
         Icon="{StaticResource FlashcardsAppIcon}">
-
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding FlipCommand}" Key="Space"/>
+    </Window.InputBindings>
+    
     <Grid x:Name="MainGrid" 
           Background="{StaticResource MainWindowBackgroundBrush}" 
           Focusable="True">
@@ -164,12 +167,12 @@
                     <StackPanel x:Name="LearningSessionPanel"
                                 Grid.Row="2"
                                 Orientation="Vertical">
-                    <Button x:Name="StartLearningSessionButton"
+                        <Button x:Name="StartLearningSessionButton"
                                 Style="{StaticResource IconButtonStyle}"
                                 Background="{StaticResource LogicButtonsBrush}">
-                        <Image Source="{StaticResource RefreshIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
+                            <Image Source="{StaticResource RefreshIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
                         
                         <Button x:Name="RefreshLearningSessionButton"
                                 Style="{StaticResource IconButtonStyle}"        
@@ -184,82 +187,166 @@
                             <Image Source="{StaticResource QuitLearningSessionIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
-                </StackPanel>
+                    </StackPanel>
 
                 </Grid>
 
                 <StackPanel x:Name="FormattingPanel" Grid.Row="1" Grid.Column="1" 
-                        Orientation="Horizontal" Margin="{StaticResource ControlParentMargin}">
-                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                    <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}">
-                        <Image Source="{StaticResource UndoIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
-                    <Button x:Name="RedoButton" Style="{StaticResource FormattingButtonStyle}">
-                        <Image Source="{StaticResource RedoIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
+                            Orientation="Horizontal" Margin="{StaticResource ControlParentMargin}">
+                    <StackPanel.Visibility>
+                        <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                      ConverterParameter="OpenedSetEdit">
+                            <Binding Path="CurrentFlashcard"/>
+                            <Binding Path="CurrentState"/>
+                        </MultiBinding>
+                    </StackPanel.Visibility>
+                    
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}">
+                            <Image Source="{StaticResource UndoIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+                        <Button x:Name="RedoButton" Style="{StaticResource FormattingButtonStyle}">
+                            <Image Source="{StaticResource RedoIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                            <Image Source="{StaticResource BoldIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+
+                        <ToggleButton x:Name="ItalicButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                            <Image Source="{StaticResource ItalicIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+
+                        <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                            <Image Source="{StaticResource UnderlineIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+
+                        <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                            <Image Source="{StaticResource StrikethroughIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+                    </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}">
+                            <Image Source="{StaticResource FontSizeIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+
+                        <Button x:Name="DownsizeButton" Style="{StaticResource FormattingButtonStyle}"
+                                Padding="6">
+                            <Image Source="{StaticResource FontSizeIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+
+                    </StackPanel>
                 </StackPanel>
 
-                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                    <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource BoldIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
-
-                    <ToggleButton x:Name="ItalicButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource ItalicIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
-
-                    <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource UnderlineIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
-
-                    <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource StrikethroughIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
-                </StackPanel>
-
-                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                    <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}">
-                        <Image Source="{StaticResource FontSizeIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
-
-                    <Button x:Name="DownsizeButton" Style="{StaticResource FormattingButtonStyle}"
-                            Padding="6">
-                        <Image Source="{StaticResource FontSizeIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
-
-                </StackPanel>
-            </StackPanel>
-
-            <RichTextBox x:Name="Flashcard" Grid.Row="2" Grid.Column="1" 
-                         Background="{StaticResource DefaultFlashcardBackgroundBrush}"
-                         Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
-                         FontFamily="{StaticResource PrimaryFontFamily}"
-                         FontSize="{StaticResource BodyFontSize}"
-                         Margin="{StaticResource FlashcardMargin}"
-                         Padding="{StaticResource FlashcardPadding}"
+                <RichTextBox x:Name="Flashcard" Grid.Row="2" Grid.Column="1" 
+                             Background="{StaticResource DefaultFlashcardBackgroundBrush}"
+                             Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
+                             FontFamily="{StaticResource PrimaryFontFamily}"
+                             FontSize="{StaticResource BodyFontSize}"
+                             Margin="{StaticResource FlashcardMargin}"
+                             Padding="{StaticResource FlashcardPadding}"
                          
-                         CaretBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
-                         SelectionBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
-                         SelectionOpacity="0.3"
-                         AllowDrop="False"
-                         ContextMenu="{x:Null}"
+                             CaretBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
+                             SelectionBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
+                             SelectionOpacity="0.3"
+                             AllowDrop="False"
+                             ContextMenu="{x:Null}"
+                             AcceptsTab="True"
                          
-                         attachedProperties:RichTextBoxHelper.DocumentText="{Binding DisplayedText, Mode=TwoWay}"
-                         Visibility="{Binding CurrentState, Converter={StaticResource StateToHiddenConverter},
-                                          ConverterParameter='OpenedSetView,OpenedSetEdit,LearningSession'}"
-                         IsReadOnly="{Binding CurrentState, Converter={StaticResource StateToReadOnlyConverter}}">
-            </RichTextBox>
+                             attachedProperties:RichTextBoxHelper.DocumentText="{Binding DisplayedText, Mode=TwoWay}"
+                             Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
+                             IsReadOnly="{Binding CurrentState, Converter={StaticResource StateToReadOnlyConverter}}">
+                    <RichTextBox.Resources>
+                        <Style TargetType="Paragraph">
+                            <Setter Property="Margin" Value="0,0,0,4"/>
+                        </Style>
+                    </RichTextBox.Resources>
+                </RichTextBox>
+
+                <Grid Grid.Row="3" Grid.Column="1" Margin="{StaticResource ControlParentMargin}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="FrontTextBlock" Grid.Column="0"
+                               Text="{DynamicResource Front}"
+                               Style="{StaticResource SideTextBoxStyle}">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource FrontBackVisibleConverter}" ConverterParameter="Front">
+                                <Binding Path="IsFront"/>
+                                <Binding Path="CurrentFlashcard"/>
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
+
+                    <TextBlock x:Name="BackTextBlock" Grid.Column="0"
+                               Text="{DynamicResource Back}"
+                               Style="{StaticResource SideTextBoxStyle}">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource FrontBackVisibleConverter}" ConverterParameter="Back">
+                                <Binding Path="IsFront"/>
+                                <Binding Path="CurrentFlashcard"/>
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
+
+                    <Button x:Name="IncorrectButton" Grid.Column="2"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource IncorrectAnswerBrush}">
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                           ConverterParameter="LearningSession">
+                                <Binding Path="CurrentFlashcard"/>
+                                <Binding Path="CurrentState"/>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    
+                        <Image Source="{StaticResource ArrowLeftIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                    <Button x:Name="CorrectButton" Grid.Column="4"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource CorrectAnswerBrush}">
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                          ConverterParameter="LearningSession">
+                                <Binding Path="CurrentFlashcard"/>
+                                <Binding Path="CurrentState"/>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    
+                        <Image Source="{StaticResource ArrowRightIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                    <Button x:Name="FlipButton" Grid.Column="6"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource NavigationButtonsBrush}"
+                            Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
+                            Command="{Binding FlipCommand}">
+                        <Image Source="{StaticResource TurnOverIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                </Grid>
             </Grid>
-        
-            
 
     </Grid>
 </Window>
