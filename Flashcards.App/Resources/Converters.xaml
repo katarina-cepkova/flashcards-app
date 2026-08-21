@@ -7,4 +7,7 @@
     <converters:StateToEditableConverter x:Key="StateToEditableConverter"/>
     <converters:StateToReadOnlyConverter x:Key="StateToReadOnlyConverter"/>
     <converters:RemainingCharactersLabelVisibilityConverter x:Key="RemainingCharactersLabelVisibilityConverter"/>
+    <converters:FrontBackVisibleConverter x:Key="FrontBackVisibleConverter"/>
+    <converters:NullToVisibleConverter x:Key="NullToVisibleConverter"/>
+    <converters:FlashcardStateVisibleConverter x:Key="FlashcardStateVisibleConverter"/>
 </ResourceDictionary>
