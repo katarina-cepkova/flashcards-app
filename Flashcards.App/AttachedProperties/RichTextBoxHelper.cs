@@ -13,6 +13,37 @@ namespace Flashcards.App.AttachedProperties
     /// not directly bindable) with a plain <see cref="string"/> property on a ViewModel, so rich text content
     /// can participate in ordinary MVVM binding.
     /// </summary>
+    //
+    // This class doesn't create a normal object with properties — it "attaches" new properties
+    // onto existing WPF elements (here, RichTextBox) that don't natively have them. Each attached
+    // property below follows the same four-part shape:
+    //
+    // 1. `public static readonly DependencyProperty X` field — registers the property with
+    //    WPF under a string name (e.g. "IsBold") and a default value. This is what makes the
+    //    property recognizable to {Binding}, Style/Setter, and Trigger — a plain C# field or
+    //    auto-property would not work with any of those.
+    //
+    // 2. RegisterAttached(...) parameters, in order:
+    //      - name: the string key WPF uses internally, and what XAML refers to (e.g. "IsBold")
+    //      - typeof(bool)/typeof(string): the type of value the property holds
+    //      - typeof(RichTextBoxHelper): the class that owns/registers this property (not the
+    //        class it gets attached to — RichTextBox never needs to know this property exists)
+    //      - PropertyMetadata(...): the default value, and optionally a callback to run whenever
+    //        the value changes (see DocumentTextProperty below for an example)
+    //
+    // 3. A public static `GetX(DependencyObject obj)` method — required by WPF's naming convention
+    //    so the XAML parser and binding system can read the value. Internally just calls
+    //    obj.GetValue(XProperty), where obj is the specific element (e.g. one particular
+    //    RichTextBox) whose attached value is being read.
+    //
+    // 4. A `SetX(DependencyObject obj, T value)` method — writes the value via obj.SetValue(...).
+    //    Public where external XAML/bindings need to set it (DocumentText, since it's two-way);
+    //    private where only this class's own event handlers should set it (IsBold/IsItalic/
+    //    IsUnderline, which are derived read-only reflections of the selection's formatting).
+    //
+    // Values set via SetValue are stored per-instance (each RichTextBox on screen has its own
+    // independent DocumentText/IsBold/etc., even though the property is "defined" once here).
+    //
     internal static class RichTextBoxHelper
     {
         // Guard flag preventing an infinite loop between the Model→UI and UI→Model directions:
@@ -36,26 +67,84 @@ namespace Flashcards.App.AttachedProperties
         /// on a <see cref="RichTextBox"/> to keep its formatted content synchronized with the ViewModel,
         /// serialized as XAML.
         /// </summary>
-        public static readonly DependencyProperty DocumentTextProperty =
+        public static readonly DependencyProperty DocumentText =
             DependencyProperty.RegisterAttached(
                 "DocumentText",
                 typeof(string),
                 typeof(RichTextBoxHelper),
-                new FrameworkPropertyMetadata(default(string), OnDocumentTextChanged)
-                { BindsTwoWayByDefault = true });
+                new FrameworkPropertyMetadata(default(string), OnDocumentTextChanged) { BindsTwoWayByDefault = true });
+
+        /// <summary>Identifies the read-only IsBold attached property, reflecting whether the
+        /// current selection/caret position is bold, so a Bold toggle button can display it.</summary>
+        public static readonly DependencyProperty IsBold =
+            DependencyProperty.RegisterAttached("IsBold", typeof(bool), typeof(RichTextBoxHelper), new PropertyMetadata(false));
+
+        /// <summary>Identifies the read-only IsItalic attached property, reflecting whether the
+        /// current selection/caret position is italic, so an Italic toggle button can display it.</summary>
+        public static readonly DependencyProperty IsItalic =
+            DependencyProperty.RegisterAttached("IsItalic", typeof(bool), typeof(RichTextBoxHelper), new PropertyMetadata(false));
+
+        /// <summary>Identifies the read-only IsUnderline attached property, reflecting whether the
+        /// current selection/caret position is underlined, so an Underline toggle button can display it.</summary>
+        public static readonly DependencyProperty IsUnderline =
+            DependencyProperty.RegisterAttached("IsUnderline", typeof(bool), typeof(RichTextBoxHelper), new PropertyMetadata(false));
 
         /// <summary>
         /// Gets the current value of the DocumentText attached property for the given object.
         /// Required by the WPF attached-property naming convention (Get + property name) so the XAML
         /// parser can resolve bindings; not called directly elsewhere in this class.
         /// </summary>
-        public static string GetDocumentText(DependencyObject obj) => (string)obj.GetValue(DocumentTextProperty);
+        public static string GetDocumentText(DependencyObject obj) => (string)obj.GetValue(DocumentText);
 
         /// <summary>
         /// Sets the value of the DocumentText attached property for the given object.
         /// </summary>
-        public static void SetDocumentText(DependencyObject obj, string value) => obj.SetValue(DocumentTextProperty, value);
+        public static void SetDocumentText(DependencyObject obj, string value) => obj.SetValue(DocumentText, value);
 
+
+        /// <summary>Gets the current value of the IsBold attached property, for XAML bindings to read.</summary>
+        public static bool GetIsBold(DependencyObject obj) => (bool)obj.GetValue(IsBold);
+
+        /// <summary>
+        /// Sets the IsBold attached property. Private — only OnRichTextBoxSelectionChanged should set
+        /// this, since it's a derived reflection of the selection's formatting, not something callers
+        /// should assign directly.
+        /// </summary> 
+        private static void SetIsBold(DependencyObject obj, bool value) => obj.SetValue(IsBold, value);
+
+        /// <summary>Gets the current value of the IsItalic attached property, for XAML bindings to read.</summary>
+        public static bool GetIsItalic(DependencyObject obj) => (bool)obj.GetValue(IsItalic);
+
+        /// <summary>Sets the IsItalic attached property. Private for the same reason as SetIsBold.</summary>
+        private static void SetIsItalic(DependencyObject obj, bool value) => obj.SetValue(IsItalic, value);
+
+        /// <summary>Gets the current value of the IsUnderline attached property, for XAML bindings to read.</summary>
+        public static bool GetIsUnderline(DependencyObject obj) => (bool)obj.GetValue(IsUnderline);
+
+        /// <summary>Sets the IsUnderline attached property. Private for the same reason as SetIsBold.</summary>
+        private static void SetIsUnderline(DependencyObject obj, bool value) => obj.SetValue(IsUnderline, value);
+
+        /// <summary>
+        /// Clears the RichTextBox's undo/redo history. Call this explicitly whenever the
+        /// displayed content changes to something unrelated to what was there before (switching
+        /// cards, flipping to the other side, opening a different set), so Undo can't reach back
+        /// into content that's no longer showing.
+        /// </summary>
+        /// <remarks>
+        /// Not done automatically inside OnDocumentTextChanged, because that method also runs as
+        /// a side effect of formatting commands (e.g. Bold) — and WPF throws if IsUndoEnabled is
+        /// touched while such a command has its own internal change block open. Calling this
+        /// explicitly, only from places that know a genuine content switch is happening, avoids
+        /// that entirely.
+        /// </remarks>
+        public static void ClearUndoHistory(RichTextBox richTextBox)
+        {
+            // Turning IsUndoEnabled off and back on discards whatever undo/redo history had
+            // built up — there's no direct "clear" method on RichTextBox, so this off/on toggle
+            // is the standard WPF workaround.
+            richTextBox.IsUndoEnabled = false;
+            richTextBox.IsUndoEnabled = true;
+        }
 
         /// <summary>
         /// Model → UI direction: fires whenever the bound Front/Back string changes
@@ -73,6 +162,7 @@ namespace Flashcards.App.AttachedProperties
             if (!isHandlerAttached)
             {
                 richTextBox.TextChanged += OnRichTextBoxTextChanged;
+                richTextBox.SelectionChanged += OnRichTextBoxSelectionChanged;
                 richTextBox.SetValue(IsHandlerAttachedProperty, true);
             }
 
@@ -104,9 +194,6 @@ namespace Flashcards.App.AttachedProperties
                 richTextBox.Document.Blocks.Clear();
                 richTextBox.Document.Blocks.Add(new Paragraph(new Run(newText)));
             }
-            // new card's content shouldn't be undoable back into the previous card's content
-            richTextBox.IsUndoEnabled = false; // internally drops undo/redo stack
-            richTextBox.IsUndoEnabled = true;
         }
 
         /// <summary>
@@ -116,7 +203,6 @@ namespace Flashcards.App.AttachedProperties
         /// </summary>
         private static void OnRichTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            _isUpdating = true;
             RichTextBox richTextBox = (RichTextBox)sender;
 
             try
@@ -141,6 +227,41 @@ namespace Flashcards.App.AttachedProperties
             {
                 _isUpdating = false;
             }
+        }
+
+        private static void OnRichTextBoxSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            _isUpdating = true;
+            RichTextBox richTextBox = (RichTextBox)sender;
+            TextSelection selection = richTextBox.Selection;
+
+            // GetPropertyValue inspects every run of text within the selection; if they don't all
+            // agree on a property (e.g. selection spans both bold and non-bold text), it returns
+            // DependencyProperty.UnsetValue, which the pattern matches below simply treat as "not set".
+            //
+            // FontWeight/FontStyle are declared on TextElement — the common base class for every
+            // element that can appear in a FlowDocument (Run, Paragraph, Span, ...) — since font
+            // properties can apply at any of those levels, not just to a run of inline text.
+            object fontWeight = selection.GetPropertyValue(TextElement.FontWeightProperty);
+            bool isBold = fontWeight is FontWeight weight && weight == FontWeights.Bold;
+            SetIsBold(richTextBox, isBold);
+
+            object fontStyle = selection.GetPropertyValue(TextElement.FontStyleProperty);
+            bool isItalic = fontStyle is FontStyle style && style == FontStyles.Italic;
+            SetIsItalic(richTextBox, isItalic);
+
+            // TextDecorations is declared on Inline (not TextElement) — decorations like underline
+            // only make sense on inline runs of text, not on block-level elements like Paragraph.
+            // Unlike FontWeight (one value), TextDecorations is a collection, since multiple
+            // decorations (e.g. underline AND strikethrough) can be present on the same text at
+            // once — so checking "is this exactly equal to an underline collection" would be wrong;
+            // instead we check whether an underline is present among possibly several decorations.
+            // (Location identifies which kind of decoration that entry is — Underline, Strikethrough,
+            // OverLine, or Baseline).
+            object decorations = selection.GetPropertyValue(Inline.TextDecorationsProperty);
+            bool isUnderline = decorations is TextDecorationCollection collection && 
+                collection.Any(t => t.Location == TextDecorationLocation.Underline);
+            SetIsUnderline(richTextBox, isUnderline);
         }
     }
 }

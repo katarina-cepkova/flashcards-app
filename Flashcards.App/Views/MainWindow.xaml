@@ -11,6 +11,12 @@
         Icon="{StaticResource FlashcardsAppIcon}">
     <Window.InputBindings>
         <KeyBinding Command="{Binding FlipCommand}" Key="Space"/>
+        <KeyBinding Command="ApplicationCommands.Undo" Key="Z" Modifiers="Ctrl"/>
+        <KeyBinding Command="ApplicationCommands.Redo" Key="Y" Modifiers="Ctrl"/>
+        <KeyBinding Command="EditingCommands.ToggleBold" Key="B" Modifiers="Ctrl"/>
+        <KeyBinding Command="EditingCommands.ToggleItalic" Key="I" Modifiers="Ctrl"/>
+        <KeyBinding Command="EditingCommands.ToggleUnderline" Key="U" Modifiers="Ctrl"/>
+
     </Window.InputBindings>
     
     <Grid x:Name="MainGrid" 
@@ -217,17 +223,26 @@
                     </StackPanel>
 
                     <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                        <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="EditingCommands.ToggleBold"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsBold), ElementName=Flashcard, Mode=OneWay}">
                             <Image Source="{StaticResource BoldIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
 
-                        <ToggleButton x:Name="ItalicButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <ToggleButton x:Name="ItalicButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="EditingCommands.ToggleItalic"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsItalic), ElementName=Flashcard, Mode=OneWay}">
                             <Image Source="{StaticResource ItalicIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
 
-                        <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="EditingCommands.ToggleUnderline"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsUnderline), ElementName=Flashcard, Mode=OneWay}">
                             <Image Source="{StaticResource UnderlineIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
@@ -281,7 +296,7 @@
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </RadioButton>
 
-                </StackPanel>
+                    </StackPanel>
                 </StackPanel>
 
                 <RichTextBox x:Name="Flashcard" Grid.Row="2" Grid.Column="1" 
