@@ -21,7 +21,7 @@
              work via focus alone), ToggleStrikethrough only has a CommandBinding on this one
              RichTextBox, which focus-based routing doesn't reliably find without it. -->
         <KeyBinding Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}" Key="X" Modifiers="Ctrl+Shift"
-                                CommandTarget="{Binding ElementName=Flashcard}"/>
+                    CommandTarget="{Binding ElementName=Flashcard}"/>
 
     </Window.InputBindings>
     
@@ -287,30 +287,49 @@
                     </StackPanel>
 
                     <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <!-- IsChecked needs AlignmentToIsCheckedConverter because CurrentAlignment is a
+                             TextAlignment enum (one value can't drive four RadioButtons' bool IsChecked
+                             directly) — the converter compares it against each button's own ConverterParameter. -->
                         <RadioButton x:Name="AlignLeftButton"
                                      Style="{StaticResource FormattingToggleButtonStyle}"
-                                     GroupName="AlignGroup">
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignLeft"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Left, Mode=OneWay}">
                             <Image Source="{StaticResource AlignLeftIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </RadioButton>
 
                         <RadioButton x:Name="AlignCenterButton"
                                      Style="{StaticResource FormattingToggleButtonStyle}"
-                                     GroupName="AlignGroup">
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignCenter"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Center, Mode=OneWay}">
                             <Image Source="{StaticResource AlignCenterIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </RadioButton>
 
                         <RadioButton x:Name="AlignRightButton"
                                      Style="{StaticResource FormattingToggleButtonStyle}"
-                                     GroupName="AlignGroup">
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignRight"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Right, Mode=OneWay}">
                             <Image Source="{StaticResource AlignRightIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </RadioButton>
 
                         <RadioButton x:Name="AlignBlockButton"
                                      Style="{StaticResource FormattingToggleButtonStyle}"
-                                     GroupName="AlignGroup">
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignJustify"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Justify, Mode=OneWay}">
                             <Image Source="{StaticResource AlignBlockIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </RadioButton>

@@ -102,6 +102,17 @@ namespace Flashcards.App.AttachedProperties
         public static readonly RoutedUICommand ToggleStrikethrough =
             new RoutedUICommand("Toggle Strikethrough", "ToggleStrikethrough", typeof(RichTextBoxHelper));
 
+        /// <summary>Identifies the read-only CurrentAlignment attached property, reflecting the
+        /// paragraph alignment at the current selection/caret position, so alignment RadioButtons
+        /// can display which one is active.</summary>
+        public static readonly DependencyProperty CurrentAlignment =
+            DependencyProperty.RegisterAttached(
+                "CurrentAlignment", 
+                typeof(TextAlignment), 
+                typeof(RichTextBoxHelper), 
+                new PropertyMetadata(TextAlignment.Left)
+            );
+
         /// <summary>
         /// Gets the current value of the DocumentText attached property for the given object.
         /// Required by the WPF attached-property naming convention (Get + property name) so the XAML
@@ -142,8 +153,13 @@ namespace Flashcards.App.AttachedProperties
 
         /// <summary>Sets the IsStrikethrough attached property. Private for the same reason as SetIsBold.</summary>
         private static void SetIsStrikethrough(DependencyObject obj, bool value) => obj.SetValue(IsStrikethrough, value);
-        
-        
+
+        /// <summary>Gets the current value of the CurrentAlignment attached property, for XAML bindings to read.</summary>
+        public static TextAlignment GetCurrentAlignment(DependencyObject obj) => (TextAlignment)obj.GetValue(CurrentAlignment);
+
+        /// <summary>Sets the CurrentAlignment attached property. Private for the same reason as SetIsBold.</summary>
+        private static void SetCurrentAlignment(DependencyObject obj, TextAlignment value) => obj.SetValue(CurrentAlignment, value);
+
         /// <summary>
         /// Clears the RichTextBox's undo/redo history. Call this explicitly whenever the
         /// displayed content changes to something unrelated to what was there before (switching
@@ -316,6 +332,12 @@ namespace Flashcards.App.AttachedProperties
 
             bool isStriked = HasTextDecoration(selection, TextDecorationLocation.Strikethrough);
             SetIsStrikethrough(richTextBox, isStriked);
+
+            // Paragraph.TextAlignmentProperty — alignment is a Paragraph-level property, not
+            // per-run like FontWeight, since it applies to the whole line, not individual characters.
+            object alignment = selection.GetPropertyValue(Paragraph.TextAlignmentProperty);
+            if (alignment is TextAlignment textAlignment)
+                SetCurrentAlignment(richTextBox, textAlignment);
         }
 
         /// <summary>
