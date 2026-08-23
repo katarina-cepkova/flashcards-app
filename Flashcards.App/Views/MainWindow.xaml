@@ -16,7 +16,12 @@
         <KeyBinding Command="EditingCommands.ToggleBold" Key="B" Modifiers="Ctrl"/>
         <KeyBinding Command="EditingCommands.ToggleItalic" Key="I" Modifiers="Ctrl"/>
         <KeyBinding Command="EditingCommands.ToggleUnderline" Key="U" Modifiers="Ctrl"/>
-        <KeyBinding Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}" Key="X" Modifiers="Ctrl+Shift"/>
+
+        <!-- CommandTarget needed here: unlike Undo/Bold/Italic/Underline above (built into WPF,
+             work via focus alone), ToggleStrikethrough only has a CommandBinding on this one
+             RichTextBox, which focus-based routing doesn't reliably find without it. -->
+        <KeyBinding Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}" Key="X" Modifiers="Ctrl+Shift"
+                                CommandTarget="{Binding ElementName=Flashcard}"/>
 
     </Window.InputBindings>
     
@@ -75,32 +80,31 @@
 
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <!-- flashcard topic -->
                     <RowDefinition Height="Auto"/>
                     <!-- formatting buttons -->
-                    <RowDefinition Height="*"/>
-                    <!-- flashcard -->
                     <RowDefinition Height="Auto"/>
+                    <!-- flashcard -->
+                    <RowDefinition Height="*"/>
                     <!-- flipping section -->
                     <RowDefinition Height="Auto"/>
                     <!-- answer buttons -->
                     <RowDefinition Height="Auto"/>
                     <!-- progress bar -->
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <!-- left grid -->
-                    <ColumnDefinition Width="*"/>
-                    <!-- flashcard main area -->
                     <ColumnDefinition Width="Auto"/>
+                    <!-- flashcard main area -->
+                    <ColumnDefinition Width="*"/>
                     <!-- scrollbar -->
                     <ColumnDefinition Width="Auto"/>
                     <!-- right panel -->
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Column = begins at column 0, ColumnSpan = spans over N columns -->
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
                             Orientation="Vertical" HorizontalAlignment="Center">
                     <!-- UpdateSourceTrigger=PropertyChanged = send updates on each typed character, not after leaving focus -->
@@ -137,12 +141,12 @@
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="3"
                       Margin="{StaticResource ControlParentMargin}">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <!-- set buttons -->
-                        <RowDefinition Height="*"/>
-                        <!-- empty space -->
                         <RowDefinition Height="Auto"/>
+                        <!-- empty space -->
+                        <RowDefinition Height="*"/>
                         <!-- learning session buttons -->
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <StackPanel x:Name="FlashcardSetPanel"
@@ -198,6 +202,9 @@
 
                 </Grid>
 
+                <!-- Requires both a selected card AND edit mode: formatting controls are
+                     meaningless without a card to format, and shouldn't appear outside
+                     of editing (e.g. while viewing or during a learning session). -->
                 <StackPanel x:Name="FormattingPanel" Grid.Row="1" Grid.Column="1" 
                             Orientation="Horizontal" Margin="{StaticResource ControlParentMargin}">
                     <StackPanel.Visibility>
@@ -209,6 +216,9 @@
                     </StackPanel.Visibility>
                     
                     <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <!-- ApplicationCommands.Undo/Redo are handled natively by RichTextBox
+                             (via TextBoxBase) — no custom logic needed, just point the command
+                             at the RichTextBox. -->
                         <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}"
                                 Command="ApplicationCommands.Undo"
                                 CommandTarget="{Binding ElementName=Flashcard}">
@@ -224,6 +234,9 @@
                     </StackPanel>
 
                     <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <!-- EditingCommands.ToggleBold is built into WPF and toggles formatting
+                             on its own; IsBold (from RichTextBoxHelper) only reflects that state
+                             back onto the button — it doesn't drive the toggle itself. -->
                         <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}"
                                       Command="EditingCommands.ToggleBold"
                                       CommandTarget="{Binding ElementName=Flashcard}"
@@ -248,6 +261,8 @@
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
 
+                        <!-- No built-in EditingCommand for strikethrough, unlike the three above —
+                             this uses RichTextBoxHelper's own custom RoutedUICommand instead. -->
                         <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}"
                                       Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}"
                                       CommandTarget="{Binding ElementName=Flashcard}"
@@ -322,6 +337,8 @@
                              Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
                              IsReadOnly="{Binding CurrentState, Converter={StaticResource StateToReadOnlyConverter}}">
                     <RichTextBox.Resources>
+                        <!-- Default WPF paragraph spacing was excessively large — tightened so
+                             pressing Enter doesn't leave a big visible gap between lines. -->
                         <Style TargetType="Paragraph">
                             <Setter Property="Margin" Value="0,0,0,4"/>
                         </Style>
@@ -339,6 +356,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
+                    <!-- Default WPF paragraph spacing was excessively large — tightened so
+                         pressing Enter doesn't leave a big visible gap between lines. -->
                     <TextBlock x:Name="FrontTextBlock" Grid.Column="0"
                                Text="{DynamicResource Front}"
                                Style="{StaticResource SideTextBoxStyle}">
