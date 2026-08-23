@@ -3,7 +3,7 @@ using Flashcards.App.Services;
 using Flashcards.App.ViewModels;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace Flashcards.App
@@ -44,7 +44,7 @@ namespace Flashcards.App
         /// </summary>
         private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.OriginalSource is not TextBox)
+            if (e.OriginalSource is not TextBoxBase)
             {
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), MainGrid);
                 Keyboard.Focus(MainGrid);

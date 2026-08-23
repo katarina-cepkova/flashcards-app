@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Xaml;
 
 namespace Flashcards.App.AttachedProperties
@@ -89,6 +90,18 @@ namespace Flashcards.App.AttachedProperties
         public static readonly DependencyProperty IsUnderline =
             DependencyProperty.RegisterAttached("IsUnderline", typeof(bool), typeof(RichTextBoxHelper), new PropertyMetadata(false));
 
+        /// <summary>Identifies the read-only IsStrikethrough attached property, reflecting whether the
+        /// current selection/caret position is struck through, so a Strikethrough toggle button can display it.</summary>
+        public static readonly DependencyProperty IsStrikethrough =
+            DependencyProperty.RegisterAttached("IsStrikethrough", typeof(bool), typeof(RichTextBoxHelper), new PropertyMetadata(false));
+
+        /// <summary>
+        /// Custom command for toggling strikethrough, since WPF has no built-in
+        /// EditingCommands.ToggleStrikethrough (unlike Bold/Italic/Underline).
+        /// </summary>
+        public static readonly RoutedUICommand ToggleStrikethrough =
+            new RoutedUICommand("Toggle Strikethrough", "ToggleStrikethrough", typeof(RichTextBoxHelper));
+
         /// <summary>
         /// Gets the current value of the DocumentText attached property for the given object.
         /// Required by the WPF attached-property naming convention (Get + property name) so the XAML
@@ -124,6 +137,13 @@ namespace Flashcards.App.AttachedProperties
         /// <summary>Sets the IsUnderline attached property. Private for the same reason as SetIsBold.</summary>
         private static void SetIsUnderline(DependencyObject obj, bool value) => obj.SetValue(IsUnderline, value);
 
+        /// <summary>Gets the current value of the IsStrikethrough attached property, for XAML bindings to read.</summary>
+        public static bool GetIsStrikethrough(DependencyObject obj) => (bool)obj.GetValue(IsStrikethrough);
+
+        /// <summary>Sets the IsStrikethrough attached property. Private for the same reason as SetIsBold.</summary>
+        private static void SetIsStrikethrough(DependencyObject obj, bool value) => obj.SetValue(IsStrikethrough, value);
+        
+        
         /// <summary>
         /// Clears the RichTextBox's undo/redo history. Call this explicitly whenever the
         /// displayed content changes to something unrelated to what was there before (switching
@@ -163,6 +183,13 @@ namespace Flashcards.App.AttachedProperties
             {
                 richTextBox.TextChanged += OnRichTextBoxTextChanged;
                 richTextBox.SelectionChanged += OnRichTextBoxSelectionChanged;
+
+                // ToggleStrikethrough has no built-in WPF handling (unlike Bold/Italic/Underline via
+                // EditingCommands), so we register our own CommandBinding directly on this RichTextBox
+                // to tell it what to do when that command is invoked.
+                richTextBox.CommandBindings.Add(new CommandBinding(
+                    ToggleStrikethrough, OnToggleStrikethroughExecuted, OnToggleStrikethroughCanExecute));
+
                 richTextBox.SetValue(IsHandlerAttachedProperty, true);
             }
 
@@ -203,6 +230,7 @@ namespace Flashcards.App.AttachedProperties
         /// </summary>
         private static void OnRichTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
+            _isUpdating = true;
             RichTextBox richTextBox = (RichTextBox)sender;
 
             try
@@ -217,6 +245,13 @@ namespace Flashcards.App.AttachedProperties
                 string serializedText = Encoding.UTF8.GetString(stream.ToArray());
 
                 SetDocumentText(richTextBox, serializedText);
+
+                // Formatting commands (Bold, Strikethrough, ...) change the document without moving
+                // the caret, so SelectionChanged never fires for them — only TextChanged does.
+                // Re-checking formatting here too is what makes toggle buttons update immediately
+                // after being clicked, instead of only after the next caret move.
+                UpdateFormattingState(richTextBox);
+
             }
             catch (IOException)
             {
@@ -229,10 +264,28 @@ namespace Flashcards.App.AttachedProperties
             }
         }
 
-        private static void OnRichTextBoxSelectionChanged(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Checks whether the given selection's TextDecorations include the specified kind
+        /// (e.g. Underline, Strikethrough). Shared by the SelectionChanged detection logic
+        /// and by ToggleStrikethrough's own before/after check.
+        /// </summary>
+        private static bool HasTextDecoration(TextSelection selection, TextDecorationLocation location)
         {
-            _isUpdating = true;
-            RichTextBox richTextBox = (RichTextBox)sender;
+            object decorations = selection.GetPropertyValue(Inline.TextDecorationsProperty);
+            return decorations is TextDecorationCollection collection
+                && collection.Any(d => d.Location == location);
+        }
+
+
+        /// <summary>
+        /// Reads Bold/Italic/Underline/Strikethrough formatting at the current selection and
+        /// updates the corresponding attached properties, so the toolbar's toggle buttons
+        /// reflect it. Called from both OnRichTextBoxSelectionChanged (caret moved) and
+        /// OnRichTextBoxTextChanged (formatting changed without the caret moving, e.g. clicking
+        /// Bold) — selection alone can't detect the second case, since it never fires then.
+        /// </summary>
+        private static void UpdateFormattingState(RichTextBox richTextBox)
+        {
             TextSelection selection = richTextBox.Selection;
 
             // GetPropertyValue inspects every run of text within the selection; if they don't all
@@ -258,10 +311,48 @@ namespace Flashcards.App.AttachedProperties
             // instead we check whether an underline is present among possibly several decorations.
             // (Location identifies which kind of decoration that entry is — Underline, Strikethrough,
             // OverLine, or Baseline).
-            object decorations = selection.GetPropertyValue(Inline.TextDecorationsProperty);
-            bool isUnderline = decorations is TextDecorationCollection collection && 
-                collection.Any(t => t.Location == TextDecorationLocation.Underline);
+            bool isUnderline = HasTextDecoration(selection, TextDecorationLocation.Underline);
             SetIsUnderline(richTextBox, isUnderline);
+
+            bool isStriked = HasTextDecoration(selection, TextDecorationLocation.Strikethrough);
+            SetIsStrikethrough(richTextBox, isStriked);
+        }
+
+        /// <summary>
+        /// Fires whenever the caret moves or the selection changes (clicking, arrow keys).
+        /// Delegates to UpdateFormattingState, since moving the caret changes what "current
+        /// formatting" means even if nothing about the document itself changed.
+        /// </summary>
+        private static void OnRichTextBoxSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            RichTextBox richTextBox = (RichTextBox)sender;
+            UpdateFormattingState(richTextBox);
+        }
+
+        /// <summary>
+        /// Runs when ToggleStrikethrough is invoked. Flips strikethrough on the current selection:
+        /// removes it if already present, applies it otherwise. ApplyPropertyValue on an empty
+        /// selection (just a caret) still works — it sets the formatting that newly typed text
+        /// will use, the same way clicking Bold with nothing selected does.
+        /// </summary>
+        private static void OnToggleStrikethroughExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            RichTextBox richTextBox = (RichTextBox)sender;
+            TextSelection selection = richTextBox.Selection;
+
+            bool isCurrentlyStrikethrough = HasTextDecoration(selection, TextDecorationLocation.Strikethrough);            
+            selection.ApplyPropertyValue(
+                Inline.TextDecorationsProperty,
+                isCurrentlyStrikethrough ? null : TextDecorations.Strikethrough);
+        }
+
+        /// <summary>
+        /// Custom commands are enabled by default unless told otherwise — always allow it here,
+        /// same as Bold/Italic/Underline.
+        /// </summary>
+        private static void OnToggleStrikethroughCanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
         }
     }
 }

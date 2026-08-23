@@ -16,6 +16,7 @@
         <KeyBinding Command="EditingCommands.ToggleBold" Key="B" Modifiers="Ctrl"/>
         <KeyBinding Command="EditingCommands.ToggleItalic" Key="I" Modifiers="Ctrl"/>
         <KeyBinding Command="EditingCommands.ToggleUnderline" Key="U" Modifiers="Ctrl"/>
+        <KeyBinding Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}" Key="X" Modifiers="Ctrl+Shift"/>
 
     </Window.InputBindings>
     
@@ -247,7 +248,10 @@
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
 
-                        <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}">
+                        <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsStrikethrough), ElementName=Flashcard, Mode=OneWay}">
                             <Image Source="{StaticResource StrikethroughIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
