@@ -1,8 +1,8 @@
-﻿using Flashcards.App.AttachedProperties;
-using Flashcards.App.Services;
+﻿using Flashcards.App.Services;
 using Flashcards.App.ViewModels;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
@@ -13,6 +13,8 @@ namespace Flashcards.App
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly MarkdownEditingService _markdownEditingService = new();
+
         /// <summary>
         /// Constructs the window, wires up its ViewModel, and subscribes to the handlers
         /// that keep focus behavior and undo history consistent across the app.
@@ -59,7 +61,49 @@ namespace Flashcards.App
         private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(MainViewModel.DisplayedText))
-                RichTextBoxHelper.ClearUndoHistory(Flashcard);
+                MarkdownEditingService.ClearUndoHistory(EditTextBox);
+        }
+
+
+
+        private void BoldButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _markdownEditingService.ToggleEmphasis(EditTextBox, "**");
+        }
+
+        private void ItalicButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _markdownEditingService.ToggleEmphasis(EditTextBox, "*");
+        }
+
+        private void UnderlineButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            // implement later
+        }
+
+        private void StrikethroughButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _markdownEditingService.ToggleEmphasis(EditTextBox, "~~");
+        }
+
+        private void EditTextBox_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            // active-state parsing — pridá sa neskôr
+        }
+
+        private void EditTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            // scrollbar Maximum/ViewportSize recalculation — pridá sa neskôr
+        }
+
+        private void EditTextBox_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // scrollbar Maximum/ViewportSize recalculation — pridá sa neskôr
+        }
+
+        private void EditPreviewScrollBar_OnScroll(object sender, ScrollEventArgs e)
+        {
+            // scroll sync na EditTextBox a PreviewViewer — pridá sa neskôr
         }
     }
 }

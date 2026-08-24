@@ -48,6 +48,7 @@ namespace Flashcards.App.ViewModels
             set
             {
                 _currentState = value;
+                Debug.WriteLine(_currentState);
                 OnPropertyChanged();
             }
         }
@@ -123,8 +124,7 @@ namespace Flashcards.App.ViewModels
         }
 
         /// <summary>
-        /// The text of the currently visible side of <see cref="CurrentFlashcard"/>. Bound
-        /// two-way from the single shared RichTextBox via RichTextBoxHelper.
+        /// The text of the currently visible side of <see cref="CurrentFlashcard"/>.
         /// </summary>
         public string DisplayedText
         {
@@ -151,16 +151,7 @@ namespace Flashcards.App.ViewModels
         public ICommand NextCommand { get; }
         public ICommand PreviousCommand { get; }
 
-        /// <summary>
-        /// Wraps plain text in the minimal WPF flow-content XAML that TextRange.Load
-        /// expects (DataFormats.Xaml) — a bare string has no root element and throws
-        /// XamlParseException. Only needed for constructing test data; real content
-        /// is already in this format once saved through RichTextBoxHelper.
-        /// </summary>
-        private static string PlainTextAsFlowXaml(string text) =>
-            $"<Section xml:space=\"preserve\" xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">" +
-            $"<Paragraph><Run>{System.Security.SecurityElement.Escape(text)}</Run></Paragraph></Section>";
-
+        
         /// <summary>
         /// Forwards FlashcardManager's own PropertyChanged notifications so bindings
         /// on this view model (e.g. Cards, CurrentFlashcard) stay in sync. CurrentFlashcard
@@ -174,6 +165,20 @@ namespace Flashcards.App.ViewModels
                 OnPropertyChanged(nameof(DisplayedText));
         }
 
+
+        // helper command for manual UI testing, will be deleted later
+        public ICommand CycleStateCommand { get; }
+
+        private static readonly AppState[] AllStates =
+            (AppState[])Enum.GetValues(typeof(AppState));
+
+        private void CycleState()
+        {
+            int currentIndex = Array.IndexOf(AllStates, CurrentState);
+            int nextIndex = (currentIndex + 1) % AllStates.Length;
+            CurrentState = AllStates[nextIndex];
+        }
+
         public MainViewModel(ILocalizationService localizationService)
         {
             _localizationService = localizationService;
@@ -181,11 +186,11 @@ namespace Flashcards.App.ViewModels
             // TEMPORARY test data, remove once loading from repository is wired up
             _flashcardManager = new FlashcardManager(new[]
             {
-                new Flashcard { TopicId = 1, FrontText = PlainTextAsFlowXaml("Front 1"), BackText = PlainTextAsFlowXaml("Back 1") },
-                new Flashcard { TopicId = 1, FrontText = PlainTextAsFlowXaml("Front 2"), BackText = PlainTextAsFlowXaml("Back 2") },
-                new Flashcard { TopicId = 1, FrontText = PlainTextAsFlowXaml("Front 3"), BackText = PlainTextAsFlowXaml("Back 3") },
-                new Flashcard { TopicId = 1, FrontText = PlainTextAsFlowXaml("Front 4"), BackText = PlainTextAsFlowXaml("Back 4") },
-                new Flashcard { TopicId = 1, FrontText = PlainTextAsFlowXaml("Front 5"), BackText = PlainTextAsFlowXaml("Back 5") },
+                new Flashcard { TopicId = 1, FrontText = "Front 1", BackText = "Back 1" },
+                new Flashcard { TopicId = 1, FrontText = "Front 2", BackText = "Back 2" },
+                new Flashcard { TopicId = 1, FrontText = "Front 3", BackText = "Back 3" },
+                new Flashcard { TopicId = 1, FrontText = "Front 4", BackText = "Back 4" },
+                new Flashcard { TopicId = 1, FrontText = "Front 5", BackText = "Back 5" },
             });
             _flashcardManager.PropertyChanged += OnFlashcardManagerPropertyChanged;
 
@@ -193,6 +198,7 @@ namespace Flashcards.App.ViewModels
             NextCommand = new RelayCommand(_flashcardManager.MoveToNext, _flashcardManager.CanMoveToNext);
             PreviousCommand = new RelayCommand(_flashcardManager.MoveToPrevious, _flashcardManager.CanMoveToPrevious);
             FlipCommand = new RelayCommand(() => IsFront = !IsFront, CanFlip);
+            CycleStateCommand = new RelayCommand(CycleState);
         }
     }
 }
