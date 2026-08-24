@@ -13,4 +13,7 @@
     <converters:FrontBackVisibleConverter x:Key="FrontBackVisibleConverter"/>
     <converters:NullToVisibleConverter x:Key="NullToVisibleConverter"/>
     <converters:FlashcardStateVisibleConverter x:Key="FlashcardStateVisibleConverter"/>
+
+    <converters:MarkdownToFlowDocumentConverter x:Key="MarkdownToFlowDocumentConverter"/>
+    <converters:StateToColumnWidthConverter x:Key="StateToColumnWidthConverter"/>
 </ResourceDictionary>
