@@ -1,25 +1,20 @@
-﻿using Markdig;
-using Markdig.Syntax;
-using Markdig.Syntax.Inlines;
-using System;
-using System.Collections.Generic;
-using System.Security.Policy;
-using System.Text;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace Flashcards.App.Services
 {
     /// <summary>
-    /// Handles inserting/removing markdown emphasis markers (bold, italic, strikethrough)
-    /// around the current selection or cursor position in a plain TextBox.
+    /// Handles inserting/removing markdown emphasis markers (bold, italic, strikethrough) around the current
+    /// selection or cursor position in a plain TextBox.
+    /// Positioning is done by scanning the raw text directly rather than relying on Markdig's AST —
+    /// EmphasisInline.Span is unreliable in this Markdig version (confirmed via direct testing: it always returns
+    /// 0,0), so parsing the document can't tell us where markers actually sit in the source text.
     /// </summary>
     public static class MarkdownEditingService
     {
         /// <summary>
-        /// Toggles the given markdown marker (e.g. "**" for bold) on the current selection
-        /// or caret position. If the caret/selection is already inside a matching emphasis
-        /// span, the markers are removed; otherwise they're inserted around the selection
-        /// (or the whole word under the caret, if nothing is selected).
+        /// Toggles the given markdown marker (e.g. "**" for bold) on the current selection or caret position. If the
+        /// caret/selection is already inside a matching marker pair, the markers are removed; otherwise they're
+        /// inserted around the selection (or the whole word under the caret, if nothing is selected).
         /// </summary>
         public static void ToggleEmphasis(TextBox textBox, string marker)
         {
@@ -27,11 +22,16 @@ namespace Flashcards.App.Services
             int selectionStart = textBox.SelectionStart;
             int selectionEnd = selectionStart + textBox.SelectionLength;
 
-            MarkdownDocument document = Markdown.Parse(text, MarkdownPipelineProvider.Pipeline);
-            var enclosing = FindEnclosingEmphasis(document, selectionStart, selectionEnd, marker);
+            // No selection — expand to the boundaries of the word the caret is
+            // resting inside, so the whole word gets wrapped, not an empty pair
+            // of markers dropped right at the caret.
+            if (selectionStart == selectionEnd)
+                (selectionStart, selectionEnd) = ExpandToWordBoundaries(textBox.Text, selectionStart);
+
+            var enclosing = FindEnclosing(text, selectionStart, selectionEnd, marker);
 
             if (enclosing is null)
-                InsertMarkers(textBox, selectionStart, selectionStart + textBox.SelectionLength, marker);
+                InsertMarkers(textBox, selectionStart, selectionEnd, marker);
             
             else
                 RemoveMarkers(textBox, enclosing.Value, marker);
@@ -39,11 +39,7 @@ namespace Flashcards.App.Services
         }
 
         /// <summary>
-        /// Wraps the given range in the text with the given marker (e.g. "**"), inserting
-        /// an opening and closing pair. If nothing is selected (start == end), the caret's
-        /// surrounding word is used instead, so clicking a formatting button with the caret
-        /// resting inside a word formats that whole word rather than inserting an empty pair
-        /// of markers at the caret.
+        /// Wraps the given range in the text with the given marker (e.g. "**"), inserting an opening and closing pair.
         /// </summary>
         private static void InsertMarkers(TextBox textBox, int start, int end, string marker)
         {
@@ -55,16 +51,16 @@ namespace Flashcards.App.Services
             textBox.Text = updated;
 
             // Select the whole word/range that was just wrapped, shifted right by
-            // marker.Length since the opening marker now sits before it. This also
-            // covers the caret-only case: even if nothing was selected before, the
-            // whole word ends up selected after formatting.
+            // marker.Length since the opening marker now sits before it. 
             textBox.SelectionStart = start + marker.Length;
             textBox.SelectionLength = end - start;
         }
 
+
+
         /// <summary>
         /// Removes a marker pair (e.g. "**") from around the given range. The range is
-        /// expected to include the markers themselves (as returned by FindEnclosingEmphasis),
+        /// expected to include the markers themselves (as returned by FindEnclosing),
         /// not just the text between them.
         /// </summary>
         private static void RemoveMarkers(TextBox textBox, (int start, int end) selection, string marker)
@@ -78,70 +74,182 @@ namespace Flashcards.App.Services
                                  .Remove(selection.start, markerLength);
             textBox.Text = updated;
 
-            // Restore the selection over the original word, now marker-free.
-            textBox.SelectionStart = selection.start;
-            textBox.SelectionLength = Math.Max(0, selection.end - selection.start - (2 * markerLength));
+            // The raw content now sits where the markers used to be, shifted by the
+            // removed opening marker's length.
+            int rawStart = selection.start;
+            int rawEnd = selection.end - (2 * markerLength);
+            (rawStart, rawEnd) = StripEdgeMarkers(textBox.Text, rawStart, rawEnd);
+
+            // Restore the selection over the original word
+            textBox.SelectionStart = rawStart;
+            textBox.SelectionLength = rawEnd - rawStart;
+        }
+
+        /// <summary>
+        /// Repeatedly strips one character of matching delimiter markers from each edge of the given range — e.g. for
+        /// "*italic*", peels the surrounding "*" to leave just "italic". Only used to determine where to place the
+        /// selection after RemoveMarkers, not to modify any text, so it doesn't need to reason about run lengths the
+        /// way FindEnclosing does: RemoveMarkers only ever produces text we generated ourselves, where matching edges
+        /// are always the same delimiter character, so comparing one character at a time is enough. Stops as soon as
+        /// the edges no longer match or aren't delimiter characters.
+        /// Used because RemoveMarkers' resulting selection covers whatever text remains after removing one layer —
+        /// which may itself still be wrapped in further layers of markers (e.g. after removing "~~" from
+        /// "~~*italic*~~", the remaining "*italic*" still has "*" at its edges) — so the caller can select just the raw
+        /// word underneath.
+        /// </summary>
+        private static (int Start, int End) StripEdgeMarkers(string text, int start, int end)
+        {
+            while (end - start >= 2 && text[start] == text[end - 1] && IsDelimiterChar(text[start])) {
+                start++;
+                end--;
+            }
+            return (start, end);
         }
 
 
         /// <summary>
-        /// Walks the parsed AST looking for an EmphasisInline node (matched by delimiter
-        /// character and count) whose span contains the given position — this is what gives
-        /// us correct nesting handling for free, instead of writing a custom tokenizer.
+        /// Finds the start/end indices of the word surrounding the given caret position, treating whitespace and
+        /// punctuation (which includes markdown delimiter characters like "*"/"~"/"_") as word boundaries. As a side
+        /// effect, this means expansion naturally stops at the nearest layer of existing markers rather than reaching
+        /// through them — which is what makes nested emphasis "the user's problem" to resolve via an explicit
+        /// selection, rather than something this code guesses at.
         /// </summary>
-        /*
-        Markdig parses text into a tree, not a flat list. For example:
-        
-          This is **bold *and italic* word**.
-        
-        becomes roughly:
-        
-        MarkdownDocument
-          └── ParagraphBlock
-              ├── LiteralInline "This is "
-              └── EmphasisInline (bold, DelimiterCount=2)
-                  ├── LiteralInline "bold "
-                  ├── EmphasisInline (italic, DelimiterCount=1)
-                  │   └── LiteralInline "and italic"
-                  └── LiteralInline " word"
-        
-        Descendants<EmphasisInline>() walks this tree recursively (at any nesting
-        depth) and returns every EmphasisInline node — here, both the bold node and
-        the nested italic node — as one flat sequence, so we don't have to walk the
-        tree by hand.
-        
-        Note: an EmphasisInline's own children are the *plain text* it wraps (its
-        markers are not stored as content) — the "**"/"*" characters only exist as
-        coordinates in emphasis.Span, pointing back into the original raw string.
-        That's exactly what we need here, since we're about to edit that raw string,
-        not the parsed tree.
-        */
-        private static (int start, int end)? FindEnclosingEmphasis(MarkdownDocument document, int start, int end, string marker)
+        private static (int Start, int End) ExpandToWordBoundaries(string text, int position)
         {
-            char delimiterChar = marker[0];
-            int delimiterLength = marker.Length; // 1 for italic, 2 for bold or strikethrough
+            int start = position;
+            while (start > 0 && !char.IsWhiteSpace(text[start - 1])
+                && !char.IsPunctuation(text[start - 1])
+                && !IsDelimiterChar(text[start - 1]))
+                start--;
 
-            IEnumerable<EmphasisInline> emphases = document.Descendants<EmphasisInline>();
+            int end = position;
+            while (end < text.Length && !char.IsWhiteSpace(text[end]) 
+                && !char.IsPunctuation(text[end])
+                && !IsDelimiterChar(text[end]))
+                end++;
+            
+            return (start, end);
+        }
+        private static bool IsDelimiterChar(char c) => c == '*' || c == '~' || c == '_';
 
-            foreach (EmphasisInline emphasis in emphases)
+        /// <summary>
+        /// CommonMark treats "*" and "_" (and their doubled forms "**"/"__") as
+        /// interchangeable emphasis delimiters — both represent the same semantic
+        /// meaning (italic for single, bold for double). This lets FindEnclosingMarker
+        /// recognize italic/bold the user typed by hand with "_" even though our own
+        /// buttons only ever generate "*".
+        /// </summary>
+        private static bool AreEquivalentDelimiters(char a, char b) =>
+            a == b || (a is '*' or '_' && b is '*' or '_');
+
+
+        /// <summary>
+        /// Scans backward from `position`, grouping consecutive runs of the same delimiter
+        /// character (e.g. "**", "~~", "*") into ordered tokens — innermost (closest to the
+        /// word) first. Each token records its character, length, and absolute position in
+        /// the text, so a match can be removed directly without re-scanning.
+        /// </summary>
+        private static List<(char Delimiter, int Length, int Start, int End)> TokenizeMarkersLeft(string text, int position)
+        {
+            var tokens = new List<(char delimiter, int length, int start, int end)>();
+            int i = position;
+
+            while (i > 0 && IsDelimiterChar(text[i - 1]))
             {
-                // skip nodes with different delimiter (e.g. italic when looking for bold)
-                if (emphasis.DelimiterChar != delimiterChar || emphasis.DelimiterCount != delimiterLength)
-                    continue;
+                char delimiter = text[i - 1];
+                int end = i;
+                int start = i - 1;
+                while (start > 0 && text[start - 1] == delimiter)
+                    start--;
 
-                // emphasis.Span covers the whole segment including its markers (e.g. both
-                // "**" pairs around "bold"), which is why span.End + 1 is used as the
-                // exclusive end below
-                int spanStart = emphasis.Span.Start;
-                int spanEnd = emphasis.Span.End + 1;
-
-                // The entire selection must fit inside this emphasis span — not just its
-                // start — otherwise a selection that only partially overlaps existing
-                // markers (e.g. starts in plain text, ends inside a bold word) would be
-                // wrongly identified as "already fully formatted".
-                if (spanStart <= start && end <= spanEnd)
-                    return (spanStart, spanEnd);
+                tokens.Add((delimiter, end - start, start, end));
+                i = start;
             }
+
+            return tokens;
+        }
+
+        /// <summary>
+        /// Same as TokenizeMarkersLeft, but scanning forward from `position` — used for the
+        /// closing side of a range.
+        /// </summary>
+        private static List<(char Delimiter, int Length, int Start, int End)> TokenizeMarkersRight(string text, int position)
+        {
+            var tokens = new List<(char, int, int, int)>();
+            int i = position;
+
+            while (i < text.Length && IsDelimiterChar(text[i]))
+            {
+                char delimiter = text[i];
+                int start = i;
+                int end = i + 1;
+                while (end < text.Length && text[end] == delimiter)
+                    end++;
+
+                tokens.Add((delimiter, end - start, start, end));
+                i = end;
+            }
+
+            return tokens;
+        }
+
+        /// <summary>
+        /// Looks for the given marker anywhere in the block of delimiter characters
+        /// surrounding the given range, matching it against the delimiter at the same
+        /// depth on the opposite side (e.g. for "**~~*word*~~**", looking for "~~" finds
+        /// it at depth 1 on both sides, even though "*" sits closer to the word). Depth
+        /// must match on both sides — a marker found at depth 1 on the left is only a
+        /// valid pair if the same marker sits at depth 1 on the right, not depth 0 or 2.
+        ///
+        /// This replaces relying on Markdig's AST for positioning — EmphasisInline.Span
+        /// is unreliable in this Markdig version (confirmed via direct testing, it always
+        /// returns 0,0) — with a direct scan of the raw text instead.
+        /// </summary>
+        private static (int Start, int End)? FindEnclosing(string text, int start, int end, string marker)
+        {
+            var leftTokens = TokenizeMarkersLeft(text, start);
+            var rightTokens = TokenizeMarkersRight(text, end);
+            int markerLength = marker.Length;
+
+
+            int depth = Math.Min(leftTokens.Count, rightTokens.Count);
+
+            for (int i = 0; i < depth; i++)
+            {
+                var left = leftTokens[i];
+                var right = rightTokens[i];
+
+                if (left.Delimiter == right.Delimiter && left.Length == right.Length && AreEquivalentDelimiters(left.Delimiter, marker[0]))
+                {
+                    int length = left.Length;
+                    // Our markers are only ever 1 or 2 characters long, so the only run
+                    // length that can represent "two markers sharing an edge" (e.g. "***"
+                    // = "**" + "*") is 3 — always odd. An odd-length run at least as long
+                    // as the requested marker is treated as containing it: peeling
+                    // `markerLength` characters off the edge nearest the word leaves the
+                    // other marker type intact on the outside (e.g. "***bold***" toggling
+                    // italic leaves the bold "**" in place).
+                    bool isOddLength = length % 2 != 0;
+                    if ((isOddLength && markerLength <= length))
+                    {
+                        return (left.Start + (length - markerLength), right.End - (length - markerLength));
+                    }
+                    // An even-length run only matches if it's exactly the marker we're
+                    // looking for — e.g. "**" is bold, not "bold containing italic", so
+                    // looking for "*" against a "**" run must NOT match here (it falls
+                    // through to the `else` below, and InsertMarkers adds "*" around it).
+                    else if (!isOddLength && markerLength == length)
+                    {
+                        return (left.Start, right.End);
+                    }
+                    // else: this layer exists and is the right delimiter character, but its
+                    // length can't represent the requested marker (e.g. length 1 when looking
+                    // for length 2) — not a match at THIS depth, but an outer layer still might
+                    // match, so keep looking rather than giving up entirely.
+
+                }
+            }
+
             return null;
         }
 

@@ -11,6 +11,8 @@ namespace Flashcards.App.Services
         // This same pipeline should be used in MarkdownToFlowDocumentConverter as well — otherwise
         // the toggle buttons could disagree with the preview about what's actually formatted.
         public static readonly MarkdownPipeline Pipeline =
-            new MarkdownPipelineBuilder().UseEmphasisExtras().Build();
+            new MarkdownPipelineBuilder()
+            .UseEmphasisExtras()
+            .Build();
     }
 }
