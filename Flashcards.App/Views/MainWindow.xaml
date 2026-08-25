@@ -243,12 +243,6 @@
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
 
-                        <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}"
-                                      Click="UnderlineButton_OnClick">
-                            <Image Source="{StaticResource UnderlineIcon}"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
-                        </ToggleButton>
-
                         <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}"
                                      Click="StrikethroughButton_OnClick">
                             <Image Source="{StaticResource StrikethroughIcon}"
@@ -310,7 +304,8 @@
                                                                 ConverterParameter=OpenedSetEdit}"
                              SelectionChanged="EditTextBox_OnSelectionChanged"
                              TextChanged="EditTextBox_OnTextChanged"
-                             SizeChanged="EditTextBox_OnSizeChanged"/>
+                             SizeChanged="EditTextBox_OnSizeChanged"
+                             PreviewKeyDown="EditTextBox_OnPreviewKeyDown"/>
 
 
                     <FlowDocumentScrollViewer x:Name="PreviewViewer" Grid.Column="2"

@@ -12,6 +12,26 @@ namespace Flashcards.App.Services
     public static class MarkdownEditingService
     {
         /// <summary>
+        /// Reports whether the caret/selection currently sits inside a marker pair matching
+        /// `marker` — i.e. what ToggleEmphasis would remove if clicked right now. Used to drive
+        /// toggle button active state (IsChecked), so it mirrors ToggleEmphasis's own start/end
+        /// resolution (word-boundary expansion when nothing is selected) rather than introducing
+        /// a second, possibly inconsistent notion of "formatted".
+        /// </summary>
+        public static bool IsMarkerActive(TextBox textBox, string marker)
+        {
+            string text = textBox.Text;
+            int start = textBox.SelectionStart;
+            int end = start + textBox.SelectionLength;
+
+            if (start == end)
+                (start, end) = ExpandToWordBoundaries(text, start);
+
+            return FindEnclosing(text, start, end, marker) is not null;
+        }
+
+
+        /// <summary>
         /// Toggles the given markdown marker (e.g. "**" for bold) on the current selection or caret position. If the
         /// caret/selection is already inside a matching marker pair, the markers are removed; otherwise they're
         /// inserted around the selection (or the whole word under the caret, if nothing is selected).
@@ -43,20 +63,18 @@ namespace Flashcards.App.Services
         /// </summary>
         private static void InsertMarkers(TextBox textBox, int start, int end, string marker)
         {
-            string text = textBox.Text;
+            // Replace the whole range in a single SelectedText assignment (rather than two
+            // separate inserts) — this is what makes WPF record the entire toggle as ONE
+            // undoable edit instead of two, so a single Ctrl+Z undoes the whole operation.
+            // SelectedText (instead of replacing the whole Text property) is what makes WPF
+            // reliably record this as an undoable edit at all, the way a real keystroke would.
+            string original = textBox.Text.Substring(start, end - start);
+            textBox.Select(start, end - start);
+            textBox.SelectedText = $"{marker}{original}{marker}";
 
-            // Insert at `end` first — inserting at `start` first would shift every index
-            // after it, and `end` would no longer point at the right place.
-            string updated = text.Insert(end, marker).Insert(start, marker);
-            textBox.Text = updated;
-
-            // Select the whole word/range that was just wrapped, shifted right by
-            // marker.Length since the opening marker now sits before it. 
             textBox.SelectionStart = start + marker.Length;
             textBox.SelectionLength = end - start;
         }
-
-
 
         /// <summary>
         /// Removes a marker pair (e.g. "**") from around the given range. The range is
@@ -65,22 +83,22 @@ namespace Flashcards.App.Services
         /// </summary>
         private static void RemoveMarkers(TextBox textBox, (int start, int end) selection, string marker)
         {
-            string text = textBox.Text;
             int markerLength = marker.Length;
 
-            // Remove the closing marker first — removing the opening one first would
-            // shift `selection.end`, since everything after it moves left.
-            string updated = text.Remove(selection.end - markerLength, markerLength)
-                                 .Remove(selection.start, markerLength);
-            textBox.Text = updated;
+            // Same single-assignment approach as InsertMarkers — replace the whole range
+            // (markers included) with just the inner content in one SelectedText write,
+            // so removal is recorded as one undoable edit too.
+            string inner = textBox.Text.Substring(selection.start + markerLength, selection.end - selection.start - 2 * markerLength);
+            textBox.Select(selection.start, selection.end - selection.start);
+            textBox.SelectedText = inner;
 
             // The raw content now sits where the markers used to be, shifted by the
             // removed opening marker's length.
             int rawStart = selection.start;
-            int rawEnd = selection.end - (2 * markerLength);
+            int rawEnd = rawStart + inner.Length;
             (rawStart, rawEnd) = StripEdgeMarkers(textBox.Text, rawStart, rawEnd);
 
-            // Restore the selection over the original word
+            // Restore the selection over the raw word
             textBox.SelectionStart = rawStart;
             textBox.SelectionLength = rawEnd - rawStart;
         }

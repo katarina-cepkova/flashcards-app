@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="AttachedProperties\" />
     <Folder Include="Resources\Strings\" />
   </ItemGroup>
 

@@ -13,8 +13,6 @@ namespace Flashcards.App
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly MarkdownEditingService _markdownEditingService = new();
-
         /// <summary>
         /// Constructs the window, wires up its ViewModel, and subscribes to the handlers
         /// that keep focus behavior and undo history consistent across the app.
@@ -68,27 +66,26 @@ namespace Flashcards.App
 
         private void BoldButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _markdownEditingService.ToggleEmphasis(EditTextBox, "**");
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "**");
         }
 
         private void ItalicButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _markdownEditingService.ToggleEmphasis(EditTextBox, "*");
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "*");
         }
 
-        private void UnderlineButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            // implement later
-        }
 
         private void StrikethroughButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _markdownEditingService.ToggleEmphasis(EditTextBox, "~~");
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "~~");
         }
 
         private void EditTextBox_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
-            // active-state parsing — pridá sa neskôr
+            TextBox textBox = (TextBox)sender;
+            BoldButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "**");
+            ItalicButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "*");
+            StrikethroughButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "~~");
         }
 
         private void EditTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
@@ -99,6 +96,26 @@ namespace Flashcards.App
         private void EditTextBox_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             // scrollbar Maximum/ViewportSize recalculation — pridá sa neskôr
+        }
+
+        private void EditTextBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.B when Keyboard.Modifiers == ModifierKeys.Control:
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "**");
+                    e.Handled = true; // stop propagation to other components
+                    break;
+                case Key.I when Keyboard.Modifiers == ModifierKeys.Control:
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "*");
+                    e.Handled = true;
+                    break;
+                // keyboard modifiers represented as enum - bitwise OR
+                case Key.X when Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift):
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "~~");
+                    e.Handled = true;
+                    break;
+            }
         }
 
         private void EditPreviewScrollBar_OnScroll(object sender, ScrollEventArgs e)
