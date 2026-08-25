@@ -1,5 +1,6 @@
 ﻿using Flashcards.Data.Database;
 using Microsoft.Data.Sqlite;
+using System.IO;
 
 namespace Flashcards.Tests.Data
 {
