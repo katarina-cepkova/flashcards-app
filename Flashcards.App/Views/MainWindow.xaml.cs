@@ -80,22 +80,38 @@ namespace Flashcards.App
             MarkdownEditingService.ToggleEmphasis(EditTextBox, "~~");
         }
 
+        private void InlineCodeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "`");
+        }
+
         private void EditTextBox_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             TextBox textBox = (TextBox)sender;
             BoldButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "**");
             ItalicButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "*");
             StrikethroughButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "~~");
+            InlineCodeButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "`");
+        }
+
+        private void QuoteButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.InsertQuote(EditTextBox);
+        }
+
+        private void LinkButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.InsertLink(EditTextBox);
         }
 
         private void EditTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            // scrollbar Maximum/ViewportSize recalculation — pridá sa neskôr
+            // scrollbar Maximum/ViewportSize recalculation
         }
 
         private void EditTextBox_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // scrollbar Maximum/ViewportSize recalculation — pridá sa neskôr
+            // scrollbar Maximum/ViewportSize recalculation
         }
 
         private void EditTextBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -110,6 +126,10 @@ namespace Flashcards.App
                     MarkdownEditingService.ToggleEmphasis(EditTextBox, "*");
                     e.Handled = true;
                     break;
+                case Key.E when Keyboard.Modifiers == ModifierKeys.Control:
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "`");
+                    e.Handled = true;
+                    break;
                 // keyboard modifiers represented as enum - bitwise OR
                 case Key.X when Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift):
                     MarkdownEditingService.ToggleEmphasis(EditTextBox, "~~");
@@ -120,7 +140,7 @@ namespace Flashcards.App
 
         private void EditPreviewScrollBar_OnScroll(object sender, ScrollEventArgs e)
         {
-            // scroll sync na EditTextBox a PreviewViewer — pridá sa neskôr
+            // scroll sync na EditTextBox a PreviewViewer
         }
     }
 }

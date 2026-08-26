@@ -244,11 +244,17 @@
                         </ToggleButton>
 
                         <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}"
-                                     Click="StrikethroughButton_OnClick">
+                                      Click="StrikethroughButton_OnClick">
                             <Image Source="{StaticResource StrikethroughIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </ToggleButton>
-                    </StackPanel>
+
+                        <ToggleButton x:Name="InlineCodeButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Click="InlineCodeButton_OnClick">
+                             <Image Source="{StaticResource InlineCodeIcon}"
+                                    RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+                </StackPanel>
 
                     <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
                         <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}">
@@ -257,11 +263,30 @@
                         </Button>
 
                         <Button x:Name="DownsizeButton" Style="{StaticResource FormattingButtonStyle}"
-                                Padding="6">
+                                Padding="7">
                             <Image Source="{StaticResource FontSizeIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
 
+                    </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <Button x:Name="QuoteButton" Style="{StaticResource FormattingButtonStyle}"
+                                Click="QuoteButton_OnClick">
+                            <Image Source="{StaticResource QuoteIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+
+                        <Button x:Name="LinkButton" Style="{StaticResource FormattingButtonStyle}"
+                                Click="LinkButton_OnClick">
+                            <Image Source="{StaticResource LinkIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+                        
+                        <Button x:Name="CodeBlockButton" Style="{StaticResource FormattingButtonStyle}">
+                            <Image Source="{StaticResource CodeBlockIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
                     </StackPanel>
 
                     

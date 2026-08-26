@@ -52,10 +52,10 @@ namespace Flashcards.App.Services
 
             if (enclosing is null)
                 InsertMarkers(textBox, selectionStart, selectionEnd, marker);
-            
+
             else
                 RemoveMarkers(textBox, enclosing.Value, marker);
-            
+
         }
 
         /// <summary>
@@ -141,14 +141,14 @@ namespace Flashcards.App.Services
                 start--;
 
             int end = position;
-            while (end < text.Length && !char.IsWhiteSpace(text[end]) 
+            while (end < text.Length && !char.IsWhiteSpace(text[end])
                 && !char.IsPunctuation(text[end])
                 && !IsDelimiterChar(text[end]))
                 end++;
-            
+
             return (start, end);
         }
-        private static bool IsDelimiterChar(char c) => c == '*' || c == '~' || c == '_';
+        private static bool IsDelimiterChar(char c) => c == '*' || c == '~' || c == '_' || c == '`';
 
         /// <summary>
         /// CommonMark treats "*" and "_" (and their doubled forms "**"/"__") as
@@ -281,6 +281,73 @@ namespace Flashcards.App.Services
         {
             textBox.IsUndoEnabled = false;
             textBox.IsUndoEnabled = true;
+        }
+
+        /// <summary>
+        /// Inserts a "> " blockquote prefix on every line touched by the current selection (or just the caret's line,
+        /// if nothing is selected) — including lines only partially covered by the selection, e.g. a selection starting
+        /// mid-line still quotes that whole line. Always inserts — doesn't check whether a line is already a blockquote
+        /// (nested quotes are valid markdown syntax). Uses a single SelectedText write covering the whole affected
+        /// range, so the entire operation is recorded as one undoable edit. Leaves the whole quoted block selected
+        /// afterward, rather than trying to preserve the original selection's exact position across the now-longer
+        /// lines.
+        /// </summary>
+        public static void InsertQuote(TextBox textBox)
+        {
+            string text = textBox.Text;
+            int selectionStart = textBox.SelectionStart;
+            int selectionEnd = selectionStart + textBox.SelectionLength;
+
+            // finding the range of affected lines
+            // using \n instead of \r\n for finding to catch all newlines
+            int rangeStart = text.LastIndexOf('\n', Math.Max(0, selectionStart - 1)) + 1;
+            int newlineIndex = text.IndexOf('\n', selectionEnd);
+            int rangeEnd;
+            if (newlineIndex == -1)
+                rangeEnd = text.Length;
+            else
+                rangeEnd = (newlineIndex > 0 && text[newlineIndex - 1] == '\r') ? newlineIndex - 1 : newlineIndex;
+
+            IEnumerable<string> lines = text.Substring(rangeStart, rangeEnd - rangeStart)
+                .Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+            string quoted = string.Join("\r\n", lines.Select(line => "> " + line));
+            textBox.Select(rangeStart, rangeEnd - rangeStart);
+            textBox.SelectedText = quoted;
+            textBox.SelectionStart = rangeStart;
+            textBox.SelectionLength = quoted.Length;
+
+        }
+
+
+        /// <summary>
+        /// Inserts a markdown link. With a selection, the selected text becomes the link
+        /// text (wrapped in "[...]"), followed by an empty "()" for the URL, with the caret
+        /// landing inside the parentheses ready to type the URL. With no selection, an empty
+        /// "[]()" template is inserted, with the caret landing inside the "[]" instead, since
+        /// there's no text yet to link from.
+        /// </summary>
+        public static void InsertLink(TextBox textBox)
+        {
+            int selectionStart = textBox.SelectionStart;
+            int selectionLength = textBox.SelectionLength;
+
+            // only caret
+            if (selectionLength == 0)
+            {
+                textBox.Select(selectionStart, 0);
+                textBox.SelectedText = "[]()";
+                textBox.SelectionStart = selectionStart + 1; // cursor inside the []
+                textBox.SelectionLength = 0;
+            }
+            else
+            {
+                string selectedText = textBox.SelectedText;
+                textBox.Select(selectionStart, selectionLength);
+                textBox.SelectedText = $"[{selectedText}]()";
+                textBox.SelectionStart = selectionStart + selectedText.Length + 3; // cursor inside the ()
+                textBox.SelectionLength = 0;
+            }
         }
     }
 }
