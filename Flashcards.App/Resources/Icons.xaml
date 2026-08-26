@@ -14,22 +14,20 @@
     <BitmapImage x:Key="SaveFlashcardIcon" UriSource="/Resources/Icons/floppy-disk-pen.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="DeleteFlashcardIcon" UriSource="/Resources/Icons/rectangle-xmark.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="EditFlashcardIcon" UriSource="/Resources/Icons/pencil.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="ColorFillIcon" UriSource="/Resources/Icons/paint-bucket.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
 
     <!-- Rich text toolbar -->
     <BitmapImage x:Key="UndoIcon" UriSource="/Resources/Icons/undo-alt.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="RedoIcon" UriSource="/Resources/Icons/redo-alt.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="BoldIcon" UriSource="/Resources/Icons/bold.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="ItalicIcon" UriSource="/Resources/Icons/italic.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="UnderlineIcon" UriSource="/Resources/Icons/underline.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="StrikethroughIcon" UriSource="/Resources/Icons/strikethrough.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="ColorFillIcon" UriSource="/Resources/Icons/paint-bucket.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="FontSizeIcon" UriSource="/Resources/Icons/text-size.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="AlignLeftIcon" UriSource="/Resources/Icons/align-left.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="AlignRightIcon" UriSource="/Resources/Icons/align-right.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="AlignCenterIcon" UriSource="/Resources/Icons/align-center.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="AlignBlockIcon" UriSource="/Resources/Icons/align-block.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-
-
+    <BitmapImage x:Key="QuoteIcon" UriSource="/Resources/Icons/quote-right.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="LinkIcon" UriSource="/Resources/Icons/link-alt.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="InlineCodeIcon" UriSource="/Resources/Icons/code-simple.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="CodeBlockIcon" UriSource="/Resources/Icons/code.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+                 
     <!-- Navigation -->
     <BitmapImage x:Key="ArrowLeftIcon" UriSource="/Resources/Icons/arrow-left.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="ArrowRightIcon" UriSource="/Resources/Icons/arrow-right.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
