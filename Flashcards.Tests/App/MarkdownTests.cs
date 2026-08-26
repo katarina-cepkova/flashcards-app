@@ -12,7 +12,7 @@ namespace Flashcards.Tests.App
             textBox.SelectionLength = selectionLength;
             return textBox;
         }
-
+        #region ToggleEmphasis
         // ---------- Caret only (no selection) — relies on ExpandToWordBoundaries ----------
 
         [StaTheory]
@@ -21,6 +21,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretInsideWord_FormatsPlainWord(string marker)
         {
             // Arrange — caret resting inside "ipsum", nothing selected.
@@ -42,6 +43,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretBeforeWord_FormatsPlainWord(string marker)
         {
             // Arrange — caret sitting right before the word starts, still no selection.
@@ -63,6 +65,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretAfterWord_FormatsPlainWord(string marker)
         {
             // Arrange — caret sitting right after the word ends.
@@ -83,6 +86,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretBeforePunctuation_FormatsPlainWord(string marker)
         {
             // Arrange — caret inside "amet", the word directly preceding the
@@ -105,6 +109,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretAfterPunctuation_InsertsMarkerPair(string marker)
         {
             // Arrange — caret right after the trailing period, with nothing but
@@ -127,6 +132,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretBetweenPunctuation_InsertsMarkerPair(string marker)
         {
             // Arrange — caret sitting between two commas, with no word character
@@ -148,6 +154,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretInsideFormatted_DeletesInnerMatchingMarker(string marker)
         {
             // Arrange — word already wrapped in the marker being toggled, caret inside it.
@@ -209,19 +216,29 @@ namespace Flashcards.Tests.App
         [InlineData("**", "*")]
         [InlineData("**", "_")]
         [InlineData("**", "~~")]
+        [InlineData("**", "`")]
         [InlineData("__", "*")]
         [InlineData("__", "_")]
         [InlineData("__", "~~")]
+        [InlineData("__", "`")]
         [InlineData("*", "**")]
         [InlineData("*", "__")]
         [InlineData("*", "~~")]
+        [InlineData("*", "`")]
         [InlineData("_", "**")]
         [InlineData("_", "__")]
         [InlineData("_", "~~")]
+        [InlineData("_", "`")]
         [InlineData("~~", "*")]
         [InlineData("~~", "_")]
         [InlineData("~~", "**")]
         [InlineData("~~", "__")]
+        [InlineData("~~", "`")]
+        [InlineData("`", "*")]
+        [InlineData("`", "_")]
+        [InlineData("`", "**")]
+        [InlineData("`", "__")]
+        [InlineData("`", "~~")]
         public void ToggleEmphasis_CaretInsideWord_NonmatchingInnerMarker_AddsMarker(string existingMarker, string proposedMarker)
         {
             // Arrange — word already wrapped in one marker; caret sees this
@@ -241,14 +258,22 @@ namespace Flashcards.Tests.App
         [StaTheory]
         [InlineData("**", "*")]
         [InlineData("**", "~~")]
+        [InlineData("**", "`")]
         [InlineData("__", "*")]
         [InlineData("__", "~~")]
+        [InlineData("__", "`")]
         [InlineData("*", "**")]
         [InlineData("*", "~~")]
+        [InlineData("*", "`")]
         [InlineData("_", "**")]
         [InlineData("_", "~~")]
+        [InlineData("_", "`")]
         [InlineData("~~", "*")]
         [InlineData("~~", "**")]
+        [InlineData("~~", "`")]
+        [InlineData("`", "*")]
+        [InlineData("`", "**")]
+        [InlineData("`", "~~")]
         public void ToggleEmphasis_CaretInsideWord_MatchingOuter_RemovesMarker(string existingInnerMarker, string proposedMarker)
         {
             // Arrange — two layers, with `proposedMarker` as the OUTER one this
@@ -274,6 +299,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretAtStartOfText_FormatsFirstWord(string marker)
         {
             // Arrange — caret at index 0, the ExpandToWordBoundaries `start > 0`
@@ -295,6 +321,7 @@ namespace Flashcards.Tests.App
         [InlineData("*")]
         [InlineData("_")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretAtEndOfText_FormatsLastWord(string marker)
         {
             // Arrange — caret at text.Length exactly, with nothing after it at all
@@ -317,6 +344,7 @@ namespace Flashcards.Tests.App
         [InlineData("**")]
         [InlineData("*")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretInsideFourCharacterRun_AddsMarkerInsteadOfMatching(string marker)
         {
             // Arrange — a 4-character run of the same delimiter. Even-length and
@@ -340,6 +368,7 @@ namespace Flashcards.Tests.App
         [InlineData("**")]
         [InlineData("*")]
         [InlineData("~~")]
+        [InlineData("`")]
         public void ToggleEmphasis_CaretOnPlainWord_UnrelatedUnclosedMarkerElsewhere_StillWrapsNormally(string marker)
         {
             // Arrange — the stray "*" before "dolor" is never closed; it sits well
@@ -376,5 +405,209 @@ namespace Flashcards.Tests.App
             // Assert — outer "~~" removed, inner "*ipsum*" left untouched.
             Assert.Equal("Lorem *ipsum* dolor sit amet.", textBox.Text);
         }
+        #endregion
+
+        #region InsertQuote
+
+        [StaFact]
+        public void InsertQuote_CaretOnSingleLineWithoutNewline_QuotesThatLine()
+        {
+            // Arrange — caret inside "ipsum", single-line text, nothing selected.
+            var textBox = CreateTextBox("Lorem ipsum dolor.", 8);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert
+            Assert.Equal("> Lorem ipsum dolor.", textBox.Text);
+            Assert.Equal(0, textBox.SelectionStart);
+            Assert.Equal("> Lorem ipsum dolor.".Length, textBox.SelectionLength);
+        }
+
+        [StaFact]
+        public void InsertQuote_CaretOnSingleLineWithNewline_QuotesThatLine()
+        {
+            // Arrange — caret inside "ipsum", single-line text, nothing selected.
+            var textBox = CreateTextBox("Lorem ipsum dolor.\r\n", 8); // TextBox inserts \r\n when user presses Enter/Shift+Enter
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert
+            Assert.Equal("> Lorem ipsum dolor.\r\n", textBox.Text);
+            Assert.Equal(0, textBox.SelectionStart);
+            Assert.Equal("> Lorem ipsum dolor.".Length, textBox.SelectionLength);
+        }
+
+        [StaFact]
+        public void InsertQuote_SelectionMidWord_QuotesWholeLine()
+        {
+            // Arrange — selection covers only "ipsum", not the whole line — the whole
+            // line should still get quoted, not just the selected word.
+            var textBox = CreateTextBox("Lorem ipsum dolor.", 6, 5);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert
+            Assert.Equal("> Lorem ipsum dolor.", textBox.Text);
+        }
+
+        [StaFact]
+        public void InsertQuote_SelectionSpanningMultipleLines_QuotesEachTouchedLine()
+        {
+            // Arrange — selection starts on line 1 and ends on line 2 of a 3-line text
+            // line 3 must be left untouched.
+            string text = "first\nsecond\nthird";
+            var textBox = CreateTextBox(text, 2, 8);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert — third line unaffected, \n replaced for \r\n
+            Assert.Equal("> first\r\n> second\nthird", textBox.Text);
+        }
+
+        [StaFact]
+        public void InsertQuote_SelectionEndingExactlyAtNewline_DoesNotPullInNextLine()
+        {
+            string text = "first\r\nsecond";
+            int start = 0;
+            int end = 5; // selection includes the newline character itself
+            var textBox = CreateTextBox(text, start, end - start);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert — only the first line is quoted.
+            Assert.Equal("> first\r\nsecond", textBox.Text);
+        }
+
+        [StaFact]
+        public void InsertQuote_CaretOnFirstLineOfMultilineText_HandlesStartOfTextCorrectly()
+        {
+            // Arrange — caret on the very first line, testing the LastIndexOf('\n', ...)
+            // guard for when there's no preceding newline at all.
+            var textBox = CreateTextBox("first\nsecond\nthird", 2);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert
+            Assert.Equal("> first\nsecond\nthird", textBox.Text);
+        }
+
+        [StaFact]
+        public void InsertQuote_CaretOnLastLineWithNoTrailingNewline_HandlesEndOfTextCorrectly()
+        {
+            // Arrange — caret on the last line, which has no trailing newline character —
+            // tests the IndexOf('\n', ...) == -1 fallback to text.Length.
+            var textBox = CreateTextBox("first\nsecond\nthird", 13);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert — only the last line is quoted; earlier lines untouched.
+            Assert.Equal("first\nsecond\n> third", textBox.Text);
+        }
+
+        [StaFact]
+        public void InsertQuote_ResultingSelection_CoversWholeQuotedBlock()
+        {
+            // Arrange
+            string text = "first\nsecond\nthird";
+            var textBox = CreateTextBox(text, 0, 10);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert — selection covers exactly the quoted block, not the original
+            // selection's relative position (see InsertQuote's doc comment).
+            string quotedBlock = "> first\r\n> second";
+            Assert.Equal(0, textBox.SelectionStart);
+            Assert.Equal(quotedBlock.Length, textBox.SelectionLength);
+        }
+
+        [StaFact]
+        public void InsertQuote_CaretAtVeryStartOfText_HandlesZeroPositionCorrectly()
+        {
+            // Arrange — caret at index 0 exactly, testing Math.Max(0, selectionStart - 1)
+            // guard directly (selectionStart - 1 would be -1 without it).
+            var textBox = CreateTextBox("first\nsecond", 0);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert
+            Assert.Equal("> first\nsecond", textBox.Text);
+        }
+
+        [StaFact]
+        public void InsertQuote_SelectionSpanningBlankLine_QuotesEmptyLineToo()
+        {
+            // Arrange — selection spans a blank line between two non-empty lines.
+            string text = "first\n\nthird";
+            var textBox = CreateTextBox(text, 0, text.Length);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert — the blank line gets "> " (marker with no content after it), not
+            // skipped or left unquoted.
+            Assert.Equal("> first\r\n> \r\n> third", textBox.Text);
+        }
+
+        [StaFact]
+        public void InsertQuote_OnAlreadyQuotedLine_AddsNestedQuoteMarker()
+        {
+            // Arrange — line is already a blockquote; InsertQuote never checks for this,
+            // since "> > text" is valid nested-blockquote markdown, not a mistake to guard against.
+            var textBox = CreateTextBox("> first", 3);
+
+            // Act
+            MarkdownEditingService.InsertQuote(textBox);
+
+            // Assert
+            Assert.Equal("> > first", textBox.Text);
+        }
+        #endregion
+
+        #region InsertLink
+
+        [StaFact]
+        public void InsertLink_NoSelection_InsertsEmptyTemplateWithCaretInsideBrackets()
+        {
+            // Arrange — caret with nothing selected.
+            var textBox = CreateTextBox("Lorem ipsum.", 6);
+
+            // Act
+            MarkdownEditingService.InsertLink(textBox);
+
+            // Assert — empty "[]()" template inserted, caret lands inside the "[]"
+            // since there's no text yet to serve as the link text.
+            Assert.Equal("Lorem []()ipsum.", textBox.Text);
+            Assert.Equal(7, textBox.SelectionStart);
+            Assert.Equal(0, textBox.SelectionLength);
+        }
+
+        [StaFact]
+        public void InsertLink_WithSelection_WrapsSelectedTextAsLinkText()
+        {
+            // Arrange — "ipsum" selected.
+            var textBox = CreateTextBox("Lorem ipsum dolor.", 6, 5);
+
+            // Act
+            MarkdownEditingService.InsertLink(textBox);
+
+            // Assert — selected text becomes the link text, caret lands inside the
+            // empty "()" ready to type the URL.
+            Assert.Equal("Lorem [ipsum]() dolor.", textBox.Text);
+            Assert.Equal(14, textBox.SelectionStart); // right after "[ipsum]("
+            Assert.Equal(0, textBox.SelectionLength);
+        }
+
+        #endregion
     }
+
+
 }
