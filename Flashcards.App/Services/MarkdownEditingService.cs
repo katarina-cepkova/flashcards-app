@@ -284,6 +284,16 @@ namespace Flashcards.App.Services
         }
 
         /// <summary>
+        /// Finds the start index of the line containing the given position — the character
+        /// right after the nearest preceding newline, or 0 if the position is on the first
+        /// line.
+        /// </summary>
+        private static int FindParagraphStart(string text, int start)
+        {
+            return text.LastIndexOf('\n', Math.Max(0, start - 1)) + 1;
+        }
+
+        /// <summary>
         /// Inserts a "> " blockquote prefix on every line touched by the current selection (or just the caret's line,
         /// if nothing is selected) — including lines only partially covered by the selection, e.g. a selection starting
         /// mid-line still quotes that whole line. Always inserts — doesn't check whether a line is already a blockquote
@@ -300,7 +310,7 @@ namespace Flashcards.App.Services
 
             // finding the range of affected lines
             // using \n instead of \r\n for finding to catch all newlines
-            int rangeStart = text.LastIndexOf('\n', Math.Max(0, selectionStart - 1)) + 1;
+            int rangeStart = FindParagraphStart(text, selectionStart);
             int newlineIndex = text.IndexOf('\n', selectionEnd);
             int rangeEnd;
             if (newlineIndex == -1)
@@ -386,5 +396,120 @@ namespace Flashcards.App.Services
                 textBox.SelectionLength = selectionLength;
             }
         }
+
+
+        /// <summary>
+        /// Returns the heading level of the line the caret/selection is on: 0 for plain text (including a line with
+        /// more than 6 leading '#' characters, or '#' characters with no space after them), 1-6 for H1-H6.
+        /// </summary>
+        public static int GetHeadingLevel(TextBox textBox)
+        {
+            int selectionStart = textBox.SelectionStart;
+            string text = textBox.Text;
+            int paragraphStart = FindParagraphStart(text, selectionStart);
+
+            // CommonMark defines ATX headings as 1-6 '#' characters — a 7th '#' means the
+            // line is no longer a valid heading at all, just plain text starting with '#'.
+            int headingLevel = 0;
+            int position = paragraphStart;
+            while (position < text.Length && text[position] == '#' && headingLevel < 6)
+            {
+                headingLevel++;
+                position++;
+            }
+
+            // CommonMark requires a space after the '#' run for it to count as a heading
+            // at all — e.g. "###word" is plain text, not H3. No '#' at all means headingLevel
+            // == 0 -> "no space to check".
+            bool hasTrailingSpace = position < text.Length && text[position] == ' ';
+
+            return hasTrailingSpace ? headingLevel : 0;
+        }
+
+        /// <summary>
+        /// Sets the heading level of the line the caret/selection is on to exactly
+        /// `targetLevel` (0 for plain text, 1-6 for H1-H6), replacing whatever heading
+        /// marker (if any) is currently there.
+        /// </summary>
+        private static void SetHeadingLevel(TextBox textBox, int targetLevel)
+        {
+            if (targetLevel is < 0 or > 6)
+                throw new ArgumentOutOfRangeException(nameof(targetLevel), 
+                    targetLevel, "Heading level must be between 0 and 6.");
+
+            string text = textBox.Text;
+            int selectionStart = textBox.SelectionStart;
+            int lineStart = FindParagraphStart(text, selectionStart);
+
+            // Only treat the leading '#' run as an existing marker to replace if it's a
+            // VALID heading (has a trailing space) — an invalid run like "#####abc" (no
+            // space) is left untouched as plain text content, and the new marker is
+            // inserted before it instead of eating into what the user actually typed.
+            int currentLevel = GetHeadingLevel(textBox);
+            int charCountToReplace = 0;
+
+            if (currentLevel > 0)
+            {
+                int position = lineStart;
+                while (text[position] == '#')
+                {
+                    charCountToReplace++;
+                    position++;
+                }
+                // the trailing space, guaranteed present since currentLevel > 0
+                charCountToReplace++;
+            }
+
+            string newMarker = targetLevel == 0 ? "" : new string('#', targetLevel) + ' ';
+
+            textBox.Select(lineStart, charCountToReplace);
+            textBox.SelectedText = newMarker;
+
+            textBox.SelectionStart = lineStart + newMarker.Length;
+            textBox.SelectionLength = 0;
+        }
+
+        /// <summary>
+        /// Increases heading SIZE (Upsize button) — fewer '#' means a BIGGER heading in
+        /// markdown (H1 is the largest, H6 the smallest), so "increasing size" means
+        /// DECREASING the '#' count, moving toward H1. From plain text (level 0), jumps
+        /// straight to H6 (the smallest). No-ops if already at H1, as a defensive guard 
+        /// independent of the button's IsEnabled state (e.g. in case of a rapid click
+        /// before IsEnabled updates).
+        /// </summary>
+        public static void IncreaseHeadingLevel(TextBox textBox)
+        {
+            int headingLevel = GetHeadingLevel(textBox);
+            // Already maximum — this is a defensive guard, not a case expected to actually
+            // happen: EditTextBox_OnSelectionChanged is expected to disable the button once
+            // headingLevel == 1, so in practice this method should never be called with it.
+            if (headingLevel == 1)
+                return;
+            else if (headingLevel == 0)
+                SetHeadingLevel(textBox, 6);
+            else
+                SetHeadingLevel(textBox, headingLevel - 1);
+        }
+
+        /// <summary>
+        /// Decreases heading SIZE (Downsize button) — more '#' means a SMALLER heading, so "decreasing size" means
+        /// INCREASING the '#' count, moving toward H6, and then past it back to plain text. No-ops if already at plain
+        /// text, as a defensive guard independent of the button's IsEnabled state (e.g. in case of a rapid click before
+        /// IsEnabled updates).
+        /// </summary>
+        public static void DecreaseHeadingLevel(TextBox textBox)
+        {
+            int headingLevel = GetHeadingLevel(textBox);
+            // Already minimum — this is a defensive guard, not a case expected to actually
+            // happen: EditTextBox_OnSelectionChanged is expected to disable the button once
+            // headingLevel == 0, so in practice this method should never be called with it.
+            if (headingLevel == 0)
+                return;
+            else if (headingLevel == 6)
+                SetHeadingLevel(textBox, 0); // switching to plain text
+            else
+                SetHeadingLevel(textBox, headingLevel + 1);
+        }
+
     }
 }

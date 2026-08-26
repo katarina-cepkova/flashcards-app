@@ -257,12 +257,14 @@
                 </StackPanel>
 
                     <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                        <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}">
+                        <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}"
+                                Click="UpsizeButton_OnClick">
                             <Image Source="{StaticResource FontSizeIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
 
                         <Button x:Name="DownsizeButton" Style="{StaticResource FormattingButtonStyle}"
+                                Click="DownsizeButton_OnClick"
                                 Padding="7">
                             <Image Source="{StaticResource FontSizeIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>

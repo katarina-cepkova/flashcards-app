@@ -85,6 +85,16 @@ namespace Flashcards.App
             MarkdownEditingService.ToggleEmphasis(EditTextBox, "`");
         }
 
+        private void UpsizeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.IncreaseHeadingLevel(EditTextBox);
+        }
+
+        private void DownsizeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.DecreaseHeadingLevel(EditTextBox);
+        }
+
         private void EditTextBox_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             TextBox textBox = (TextBox)sender;
@@ -92,6 +102,10 @@ namespace Flashcards.App
             ItalicButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "*");
             StrikethroughButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "~~");
             InlineCodeButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "`");
+
+            int headingLevel = MarkdownEditingService.GetHeadingLevel(textBox);
+            UpsizeButton.IsEnabled = headingLevel != 1;
+            DownsizeButton.IsEnabled = headingLevel != 0;
         }
 
         private void QuoteButton_OnClick(object sender, RoutedEventArgs e)
