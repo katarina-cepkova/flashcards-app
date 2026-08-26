@@ -349,5 +349,42 @@ namespace Flashcards.App.Services
                 textBox.SelectionLength = 0;
             }
         }
+
+        /// <summary>
+        /// Inserts a fenced code block. With no selection, an empty block is inserted at the
+        /// caret, with the caret left on the blank line between the fences, ready to type.
+        /// With a selection, the selected text (which may already span multiple lines) is
+        /// wrapped inside the fences as-is — unlike InsertQuote, there's no per-line prefixing
+        /// here, so the selection's own line breaks are left untouched. Always inserts —
+        /// doesn't check whether the range is already inside a code block. Writes via a single
+        /// SelectedText assignment so the whole operation is recorded as one undoable edit.
+        /// </summary>
+        public static void InsertCodeBlock(TextBox textBox)
+        {
+            int selectionStart = textBox.SelectionStart;
+            int selectionLength = textBox.SelectionLength;
+
+            // only caret
+            if (selectionLength == 0)
+            {
+                textBox.Select(selectionStart, 0);
+                textBox.SelectedText = "\r\n```\r\n\r\n```";
+                // The +1 here is not a miscount — "\r\n```\r\n".Length lands the caret
+                // between the two \r\n pairs, but WPF renders that exact position as the
+                // END of the previous line rather than the start of the blank line between
+                // the fences. The extra +1 nudges the caret past the leading \r of the second
+                // pair, which WPF does render as sitting on the blank line.
+                textBox.SelectionStart = selectionStart + "\r\n```\r\n".Length + 1;
+                textBox.SelectionLength = 0;
+            }
+            else
+            {
+                string selectedText = textBox.SelectedText;
+                textBox.Select(selectionStart, selectionLength);
+                textBox.SelectedText = $"\r\n```\r\n{selectedText}\r\n```";
+                textBox.SelectionStart = selectionStart + "\r\n```\r\n".Length;
+                textBox.SelectionLength = selectionLength;
+            }
+        }
     }
 }

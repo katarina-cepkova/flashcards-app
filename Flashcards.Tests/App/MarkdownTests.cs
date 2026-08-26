@@ -607,6 +607,55 @@ namespace Flashcards.Tests.App
         }
 
         #endregion
+
+        #region InsertCodeBlock
+        [StaFact]
+        public void InsertCodeBlock_NoSelection_InsertsEmptyBlock()
+        {
+            // Arrange — caret with nothing selected.
+            var textBox = CreateTextBox("Lorem ipsum.", 6);
+
+            // Act
+            MarkdownEditingService.InsertCodeBlock(textBox);
+
+            // Assert
+            Assert.Equal("Lorem \r\n```\r\n\r\n```ipsum.", textBox.Text);
+            Assert.Equal(15, textBox.SelectionStart);
+            Assert.Equal(0, textBox.SelectionLength);
+        }
+
+        [StaFact]
+        public void InsertCodeBlock_WithSelection_WrapsSelectedTextInBlock()
+        {
+            // Arrange — "ipsum" selected.
+            var textBox = CreateTextBox("Lorem ipsum dolor.", 6, 5);
+
+            // Act
+            MarkdownEditingService.InsertCodeBlock(textBox);
+
+            // Assert — selected text sits between the fences unchanged, and stays selected.
+            Assert.Equal("Lorem \r\n```\r\nipsum\r\n``` dolor.", textBox.Text);
+            Assert.Equal(6 + "\r\n```\r\n".Length, textBox.SelectionStart);
+            Assert.Equal(5, textBox.SelectionLength);
+        }
+
+        [StaFact]
+        public void InsertCodeBlock_WithMultilineSelection_LeavesInternalLineBreaksUntouched()
+        {
+            // Arrange — a selection that already spans two lines.
+            string selected = "first\nsecond";
+            var textBox = CreateTextBox($"Lorem {selected} dolor.", 6, selected.Length);
+
+            // Act
+            MarkdownEditingService.InsertCodeBlock(textBox);
+
+            // Assert — unlike InsertQuote, no per-line prefixing happens; the selection's
+            // own \n is preserved exactly as-is inside the fences.
+            Assert.Equal($"Lorem \r\n```\r\n{selected}\r\n``` dolor.", textBox.Text);
+        }
+
+
+        #endregion
     }
 
 

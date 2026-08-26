@@ -283,7 +283,8 @@
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
                         
-                        <Button x:Name="CodeBlockButton" Style="{StaticResource FormattingButtonStyle}">
+                        <Button x:Name="CodeBlockButton" Style="{StaticResource FormattingButtonStyle}"
+                                Click="CodeBlockButton_OnClick">
                             <Image Source="{StaticResource CodeBlockIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>

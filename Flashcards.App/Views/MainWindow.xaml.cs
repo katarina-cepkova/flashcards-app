@@ -104,6 +104,11 @@ namespace Flashcards.App
             MarkdownEditingService.InsertLink(EditTextBox);
         }
 
+        private void CodeBlockButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.InsertCodeBlock(EditTextBox);
+        }
+
         private void EditTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
             // scrollbar Maximum/ViewportSize recalculation
