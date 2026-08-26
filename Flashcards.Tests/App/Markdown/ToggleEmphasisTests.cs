@@ -1,17 +1,11 @@
 ﻿using System.Windows.Controls;
 using Flashcards.App.Services;
 
-namespace Flashcards.Tests.App
+namespace Flashcards.Tests.App.Markdown
 {
-    public class MarkdownTests
+    public class ToggleEmphasisTests
     {
-        private static TextBox CreateTextBox(string text, int selectionStart, int selectionLength = 0)
-        {
-            var textBox = new TextBox { Text = text };
-            textBox.SelectionStart = selectionStart;
-            textBox.SelectionLength = selectionLength;
-            return textBox;
-        }
+
         #region ToggleEmphasis
         // ---------- Caret only (no selection) — relies on ExpandToWordBoundaries ----------
 
@@ -25,7 +19,7 @@ namespace Flashcards.Tests.App
         public void ToggleEmphasis_CaretInsideWord_FormatsPlainWord(string marker)
         {
             // Arrange — caret resting inside "ipsum", nothing selected.
-            var textBox = CreateTextBox("Lorem ipsum dolor sit amet.", 9);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum dolor sit amet.", 9);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -47,7 +41,7 @@ namespace Flashcards.Tests.App
         public void ToggleEmphasis_CaretBeforeWord_FormatsPlainWord(string marker)
         {
             // Arrange — caret sitting right before the word starts, still no selection.
-            var textBox = CreateTextBox("Lorem ipsum dolor sit amet.", 6);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum dolor sit amet.", 6);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -69,7 +63,7 @@ namespace Flashcards.Tests.App
         public void ToggleEmphasis_CaretAfterWord_FormatsPlainWord(string marker)
         {
             // Arrange — caret sitting right after the word ends.
-            var textBox = CreateTextBox("Lorem ipsum dolor sit amet.", 11);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum dolor sit amet.", 11);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -91,7 +85,7 @@ namespace Flashcards.Tests.App
         {
             // Arrange — caret inside "amet", the word directly preceding the
             // sentence's trailing period.
-            var textBox = CreateTextBox("Lorem ipsum dolor sit amet.", 26);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum dolor sit amet.", 26);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -114,7 +108,7 @@ namespace Flashcards.Tests.App
         {
             // Arrange — caret right after the trailing period, with nothing but
             // end-of-text after it — no word to expand into on either side.
-            var textBox = CreateTextBox("Lorem ipsum dolor sit amet.", 27);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum dolor sit amet.", 27);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -137,7 +131,7 @@ namespace Flashcards.Tests.App
         {
             // Arrange — caret sitting between two commas, with no word character
             // touching it on either side.
-            var textBox = CreateTextBox("Lorem ipsum,, dolor sit amet.", 12);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum,, dolor sit amet.", 12);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -158,7 +152,7 @@ namespace Flashcards.Tests.App
         public void ToggleEmphasis_CaretInsideFormatted_DeletesInnerMatchingMarker(string marker)
         {
             // Arrange — word already wrapped in the marker being toggled, caret inside it.
-            var textBox = CreateTextBox($"Lorem {marker}ipsum{marker} dolor sit amet.", 8);
+            var textBox = Helpers.CreateTextBox($"Lorem {marker}ipsum{marker} dolor sit amet.", 8);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -180,7 +174,7 @@ namespace Flashcards.Tests.App
             // other one sharing its character. Toggling should peel off only this
             // marker's length, leaving the other marker type intact around the word.
             string combinedMarker = new string(marker[0], 3);
-            var textBox = CreateTextBox($"Lorem {combinedMarker}ipsum{combinedMarker} dolor sit amet.", 11);
+            var textBox = Helpers.CreateTextBox($"Lorem {combinedMarker}ipsum{combinedMarker} dolor sit amet.", 11);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -200,7 +194,7 @@ namespace Flashcards.Tests.App
         {
             // Arrange — word hand-written with the underscore form of the marker
             // the button only ever generates the asterisk form.
-            var textBox = CreateTextBox($"Lorem {existingMarker}ipsum{existingMarker} dolor sit amet.", 10);
+            var textBox = Helpers.CreateTextBox($"Lorem {existingMarker}ipsum{existingMarker} dolor sit amet.", 10);
 
             // Act — toggling the asterisk-form marker must still recognize the
             // underscore-form as equivalent (see AreEquivalentDelimiters).
@@ -243,7 +237,7 @@ namespace Flashcards.Tests.App
         {
             // Arrange — word already wrapped in one marker; caret sees this
             // nearest layer, and it doesn't match what's being toggled.
-            var textBox = CreateTextBox($"Lorem {existingMarker}ipsum{existingMarker} dolor sit amet.", 10);
+            var textBox = Helpers.CreateTextBox($"Lorem {existingMarker}ipsum{existingMarker} dolor sit amet.", 10);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, proposedMarker);
@@ -279,7 +273,7 @@ namespace Flashcards.Tests.App
             // Arrange — two layers, with `proposedMarker` as the OUTER one this
             // time (existingInnerMarker sits closer to the word). FindEnclosing
             // continues to check other layers when the first doesn't match
-            var textBox = CreateTextBox($"Lorem {proposedMarker}{existingInnerMarker}ipsum{existingInnerMarker}{proposedMarker} dolor sit amet.", 10);
+            var textBox = Helpers.CreateTextBox($"Lorem {proposedMarker}{existingInnerMarker}ipsum{existingInnerMarker}{proposedMarker} dolor sit amet.", 10);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, proposedMarker);
@@ -304,7 +298,7 @@ namespace Flashcards.Tests.App
         {
             // Arrange — caret at index 0, the ExpandToWordBoundaries `start > 0`
             // guard is what's under test here.
-            var textBox = CreateTextBox("Lorem ipsum.", 0);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum.", 0);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -326,7 +320,7 @@ namespace Flashcards.Tests.App
         {
             // Arrange — caret at text.Length exactly, with nothing after it at all
             // (not even punctuation) — the `end < text.Length` guard is under test.
-            var textBox = CreateTextBox("Lorem ipsum", 11);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum", 11);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -351,7 +345,7 @@ namespace Flashcards.Tests.App
             // not an exact match for `marker`, so FindEnclosing must not treat it
             // as a valid combined marker the way it does for length-3 runs.
             string run = new string(marker[0], 4);
-            var textBox = CreateTextBox($"Lorem {run}ipsum{run} dolor sit amet.", 6 + run.Length + 2);
+            var textBox = Helpers.CreateTextBox($"Lorem {run}ipsum{run} dolor sit amet.", 6 + run.Length + 2);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -374,7 +368,7 @@ namespace Flashcards.Tests.App
             // Arrange — the stray "*" before "dolor" is never closed; it sits well
             // outside "ipsum"'s word boundaries, so it must not interfere with
             // formatting the unrelated word "ipsum".
-            var textBox = CreateTextBox("Lorem ipsum *dolor sit amet.", 8);
+            var textBox = Helpers.CreateTextBox("Lorem ipsum *dolor sit amet.", 8);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, marker);
@@ -397,7 +391,7 @@ namespace Flashcards.Tests.App
             var text = "Lorem ~~*ipsum*~~ dolor sit amet.";
             int start = text.IndexOf("*ipsum*", StringComparison.Ordinal);
             int end = start + "*ipsum*".Length;
-            var textBox = CreateTextBox(text, start, end - start);
+            var textBox = Helpers.CreateTextBox(text, start, end - start);
 
             // Act
             MarkdownEditingService.ToggleEmphasis(textBox, "~~");
@@ -407,255 +401,7 @@ namespace Flashcards.Tests.App
         }
         #endregion
 
-        #region InsertQuote
-
-        [StaFact]
-        public void InsertQuote_CaretOnSingleLineWithoutNewline_QuotesThatLine()
-        {
-            // Arrange — caret inside "ipsum", single-line text, nothing selected.
-            var textBox = CreateTextBox("Lorem ipsum dolor.", 8);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert
-            Assert.Equal("> Lorem ipsum dolor.", textBox.Text);
-            Assert.Equal(0, textBox.SelectionStart);
-            Assert.Equal("> Lorem ipsum dolor.".Length, textBox.SelectionLength);
-        }
-
-        [StaFact]
-        public void InsertQuote_CaretOnSingleLineWithNewline_QuotesThatLine()
-        {
-            // Arrange — caret inside "ipsum", single-line text, nothing selected.
-            var textBox = CreateTextBox("Lorem ipsum dolor.\r\n", 8); // TextBox inserts \r\n when user presses Enter/Shift+Enter
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert
-            Assert.Equal("> Lorem ipsum dolor.\r\n", textBox.Text);
-            Assert.Equal(0, textBox.SelectionStart);
-            Assert.Equal("> Lorem ipsum dolor.".Length, textBox.SelectionLength);
-        }
-
-        [StaFact]
-        public void InsertQuote_SelectionMidWord_QuotesWholeLine()
-        {
-            // Arrange — selection covers only "ipsum", not the whole line — the whole
-            // line should still get quoted, not just the selected word.
-            var textBox = CreateTextBox("Lorem ipsum dolor.", 6, 5);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert
-            Assert.Equal("> Lorem ipsum dolor.", textBox.Text);
-        }
-
-        [StaFact]
-        public void InsertQuote_SelectionSpanningMultipleLines_QuotesEachTouchedLine()
-        {
-            // Arrange — selection starts on line 1 and ends on line 2 of a 3-line text
-            // line 3 must be left untouched.
-            string text = "first\nsecond\nthird";
-            var textBox = CreateTextBox(text, 2, 8);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert — third line unaffected, \n replaced for \r\n
-            Assert.Equal("> first\r\n> second\nthird", textBox.Text);
-        }
-
-        [StaFact]
-        public void InsertQuote_SelectionEndingExactlyAtNewline_DoesNotPullInNextLine()
-        {
-            string text = "first\r\nsecond";
-            int start = 0;
-            int end = 5; // selection includes the newline character itself
-            var textBox = CreateTextBox(text, start, end - start);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert — only the first line is quoted.
-            Assert.Equal("> first\r\nsecond", textBox.Text);
-        }
-
-        [StaFact]
-        public void InsertQuote_CaretOnFirstLineOfMultilineText_HandlesStartOfTextCorrectly()
-        {
-            // Arrange — caret on the very first line, testing the LastIndexOf('\n', ...)
-            // guard for when there's no preceding newline at all.
-            var textBox = CreateTextBox("first\nsecond\nthird", 2);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert
-            Assert.Equal("> first\nsecond\nthird", textBox.Text);
-        }
-
-        [StaFact]
-        public void InsertQuote_CaretOnLastLineWithNoTrailingNewline_HandlesEndOfTextCorrectly()
-        {
-            // Arrange — caret on the last line, which has no trailing newline character —
-            // tests the IndexOf('\n', ...) == -1 fallback to text.Length.
-            var textBox = CreateTextBox("first\nsecond\nthird", 13);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert — only the last line is quoted; earlier lines untouched.
-            Assert.Equal("first\nsecond\n> third", textBox.Text);
-        }
-
-        [StaFact]
-        public void InsertQuote_ResultingSelection_CoversWholeQuotedBlock()
-        {
-            // Arrange
-            string text = "first\nsecond\nthird";
-            var textBox = CreateTextBox(text, 0, 10);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert — selection covers exactly the quoted block, not the original
-            // selection's relative position (see InsertQuote's doc comment).
-            string quotedBlock = "> first\r\n> second";
-            Assert.Equal(0, textBox.SelectionStart);
-            Assert.Equal(quotedBlock.Length, textBox.SelectionLength);
-        }
-
-        [StaFact]
-        public void InsertQuote_CaretAtVeryStartOfText_HandlesZeroPositionCorrectly()
-        {
-            // Arrange — caret at index 0 exactly, testing Math.Max(0, selectionStart - 1)
-            // guard directly (selectionStart - 1 would be -1 without it).
-            var textBox = CreateTextBox("first\nsecond", 0);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert
-            Assert.Equal("> first\nsecond", textBox.Text);
-        }
-
-        [StaFact]
-        public void InsertQuote_SelectionSpanningBlankLine_QuotesEmptyLineToo()
-        {
-            // Arrange — selection spans a blank line between two non-empty lines.
-            string text = "first\n\nthird";
-            var textBox = CreateTextBox(text, 0, text.Length);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert — the blank line gets "> " (marker with no content after it), not
-            // skipped or left unquoted.
-            Assert.Equal("> first\r\n> \r\n> third", textBox.Text);
-        }
-
-        [StaFact]
-        public void InsertQuote_OnAlreadyQuotedLine_AddsNestedQuoteMarker()
-        {
-            // Arrange — line is already a blockquote; InsertQuote never checks for this,
-            // since "> > text" is valid nested-blockquote markdown, not a mistake to guard against.
-            var textBox = CreateTextBox("> first", 3);
-
-            // Act
-            MarkdownEditingService.InsertQuote(textBox);
-
-            // Assert
-            Assert.Equal("> > first", textBox.Text);
-        }
-        #endregion
-
-        #region InsertLink
-
-        [StaFact]
-        public void InsertLink_NoSelection_InsertsEmptyTemplateWithCaretInsideBrackets()
-        {
-            // Arrange — caret with nothing selected.
-            var textBox = CreateTextBox("Lorem ipsum.", 6);
-
-            // Act
-            MarkdownEditingService.InsertLink(textBox);
-
-            // Assert — empty "[]()" template inserted, caret lands inside the "[]"
-            // since there's no text yet to serve as the link text.
-            Assert.Equal("Lorem []()ipsum.", textBox.Text);
-            Assert.Equal(7, textBox.SelectionStart);
-            Assert.Equal(0, textBox.SelectionLength);
-        }
-
-        [StaFact]
-        public void InsertLink_WithSelection_WrapsSelectedTextAsLinkText()
-        {
-            // Arrange — "ipsum" selected.
-            var textBox = CreateTextBox("Lorem ipsum dolor.", 6, 5);
-
-            // Act
-            MarkdownEditingService.InsertLink(textBox);
-
-            // Assert — selected text becomes the link text, caret lands inside the
-            // empty "()" ready to type the URL.
-            Assert.Equal("Lorem [ipsum]() dolor.", textBox.Text);
-            Assert.Equal(14, textBox.SelectionStart); // right after "[ipsum]("
-            Assert.Equal(0, textBox.SelectionLength);
-        }
-
-        #endregion
-
-        #region InsertCodeBlock
-        [StaFact]
-        public void InsertCodeBlock_NoSelection_InsertsEmptyBlock()
-        {
-            // Arrange — caret with nothing selected.
-            var textBox = CreateTextBox("Lorem ipsum.", 6);
-
-            // Act
-            MarkdownEditingService.InsertCodeBlock(textBox);
-
-            // Assert
-            Assert.Equal("Lorem \r\n```\r\n\r\n```ipsum.", textBox.Text);
-            Assert.Equal(15, textBox.SelectionStart);
-            Assert.Equal(0, textBox.SelectionLength);
-        }
-
-        [StaFact]
-        public void InsertCodeBlock_WithSelection_WrapsSelectedTextInBlock()
-        {
-            // Arrange — "ipsum" selected.
-            var textBox = CreateTextBox("Lorem ipsum dolor.", 6, 5);
-
-            // Act
-            MarkdownEditingService.InsertCodeBlock(textBox);
-
-            // Assert — selected text sits between the fences unchanged, and stays selected.
-            Assert.Equal("Lorem \r\n```\r\nipsum\r\n``` dolor.", textBox.Text);
-            Assert.Equal(6 + "\r\n```\r\n".Length, textBox.SelectionStart);
-            Assert.Equal(5, textBox.SelectionLength);
-        }
-
-        [StaFact]
-        public void InsertCodeBlock_WithMultilineSelection_LeavesInternalLineBreaksUntouched()
-        {
-            // Arrange — a selection that already spans two lines.
-            string selected = "first\nsecond";
-            var textBox = CreateTextBox($"Lorem {selected} dolor.", 6, selected.Length);
-
-            // Act
-            MarkdownEditingService.InsertCodeBlock(textBox);
-
-            // Assert — unlike InsertQuote, no per-line prefixing happens; the selection's
-            // own \n is preserved exactly as-is inside the fences.
-            Assert.Equal($"Lorem \r\n```\r\n{selected}\r\n``` dolor.", textBox.Text);
-        }
-
-
-        #endregion
+       
     }
 
 
