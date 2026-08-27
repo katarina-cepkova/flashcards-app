@@ -8,7 +8,8 @@
         mc:Ignorable="d"
         Title="Flashcards App" Height="650" Width="1000"
         Icon="{StaticResource FlashcardsAppIcon}"
-        ThemeMode="Dark">
+        ThemeMode="Dark"
+        Loaded="MainWindow_OnLoaded">
     <Window.InputBindings>
         <KeyBinding Command="{Binding FlipCommand}" Key="Space"/>
         <KeyBinding Command="ApplicationCommands.Undo" Key="Z" Modifiers="Ctrl"/>
@@ -300,7 +301,8 @@
                 <Grid x:Name="FlashcardEditor" Grid.Row="2" Grid.Column="1"
                       Margin="{StaticResource FlashcardMargin}"
                       Background="{StaticResource DefaultFlashcardBackgroundBrush}"
-                      Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}">   
+                      Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
+                      MouseWheel="FlashcardEditor_OnMouseWheel">   
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{Binding CurrentState, Converter={StaticResource StateToColumnWidthConverter}}"/>
                         <ColumnDefinition Width="4"/> <!-- border -->
@@ -343,7 +345,6 @@
                                               Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
                                               Padding="{StaticResource FlashcardPadding}"
                                               VerticalScrollBarVisibility="Hidden"
-                                              IsHitTestVisible="False"
                                               Document="{Binding ElementName=EditTextBox, Path=Text, 
                                                          Converter={StaticResource MarkdownToFlowDocumentConverter}}">
                         <FlowDocumentScrollViewer.Resources>
@@ -355,6 +356,10 @@
 
                     <ScrollBar x:Name="EditPreviewScrollBar" Grid.Column="3"
                                Orientation="Vertical"
+                               Minimum="0"
+    
+                               SmallChange="1"
+                               LargeChange="1"
                                Scroll="EditPreviewScrollBar_OnScroll"/>
             </Grid>
                 <Grid Grid.Row="3" Grid.Column="1" Margin="{StaticResource ControlParentMargin}">
