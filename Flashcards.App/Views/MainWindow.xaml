@@ -7,16 +7,20 @@
         xmlns:converters="clr-namespace:Flashcards.App.Converters"
         mc:Ignorable="d"
         Title="Flashcards App" Height="650" Width="1000"
-        Icon="{StaticResource FlashcardsAppIcon}">
+        Icon="{StaticResource FlashcardsAppIcon}"
+        ThemeMode="Dark">
     <Window.InputBindings>
         <KeyBinding Command="{Binding FlipCommand}" Key="Space"/>
         <KeyBinding Command="ApplicationCommands.Undo" Key="Z" Modifiers="Ctrl"/>
         <KeyBinding Command="ApplicationCommands.Redo" Key="Y" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding PreviousCommand}" Key="Up"/>
+        <KeyBinding Command="{Binding NextCommand}" Key="Down"/>
     </Window.InputBindings>
     
     <Grid x:Name="MainGrid" 
           Background="{StaticResource MainWindowBackgroundBrush}" 
-          Focusable="True">
+          Focusable="True"
+          MouseWheel="MainGrid_OnMouseWheel">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -75,9 +79,7 @@
                     <RowDefinition Height="Auto"/>
                     <!-- flashcard -->
                     <RowDefinition Height="*"/>
-                    <!-- flipping section -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- answer buttons -->
+                    <!-- flipping and answer section -->
                     <RowDefinition Height="Auto"/>
                     <!-- progress bar -->
                     <RowDefinition Height="Auto"/>
@@ -429,6 +431,19 @@
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
                 </Grid>
+
+            <ScrollBar x:Name="CardNavigationScrollBar" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2"
+                       Orientation="Vertical"
+                       Minimum="0"
+                       Maximum="{Binding MaxCardIndex}"
+                       SmallChange="1"
+                       LargeChange="1"
+                       ViewportSize="1"
+                       Value="{Binding CurrentCardIndex, Mode=TwoWay}"
+                       Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
+                       Scroll="CardNavigationScrollBar_OnScroll"
+                       Margin="{StaticResource ScrollBarMargin}">
+            </ScrollBar>
             </Grid>
 
     </Grid>

@@ -45,6 +45,16 @@ namespace Flashcards.App.Services
             }
         }
 
+        /// <summary>
+        /// Jumps directly to the card at the given index — used by the scrollbar-based
+        /// navigation, which needs to set an arbitrary position, not just step by one.
+        /// </summary>
+        public void SelectIndex(int index)
+        {
+            if (index < 0 || index >= Cards.Count) return;
+            Index = index;
+        }
+
         public bool CanMoveToNext() => Index >= 0 && Index < Cards.Count - 1;
         public void MoveToNext()
         {

@@ -13,6 +13,7 @@
     <Thickness x:Key="ControlParentMargin">8</Thickness>
     <Thickness x:Key="InnerFormattingPanelMargin">3,3,6,3</Thickness>
     <Thickness x:Key="TextBoxMargin">0,5,0,5</Thickness>
+    <Thickness x:Key="ScrollBarMargin">5,0,5,0</Thickness>
     
     <!-- Flashcard spacing -->
     <Thickness x:Key="FlashcardMargin">8</Thickness>

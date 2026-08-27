@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Flashcards.App
 {
@@ -49,6 +50,35 @@ namespace Flashcards.App
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), MainGrid);
                 Keyboard.Focus(MainGrid);
             }
+        }
+
+        /// <summary>
+        /// Moves to the next/previous flashcard on mouse wheel input anywhere in the window
+        /// that hasn't already been consumed by a child element (see FlashcardEditor_OnMouseWheel,
+        /// which stops this from firing while the wheel is over the flashcard content itself).
+        /// Scrolling up (positive delta) goes to the previous card, scrolling down goes to the next.
+        /// </summary>
+        private void MainGrid_OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var viewModel = (MainViewModel)DataContext;
+            ICommand command = e.Delta > 0 ? viewModel.PreviousCommand : viewModel.NextCommand;
+
+            if (command.CanExecute(null))
+                command.Execute(null);
+
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Stops scroll-to-navigate (MainGrid_OnMouseWheel) from firing when the wheel is
+        /// used anywhere over the flashcard content area — EditTextBox/PreviewViewer handle
+        /// their own scrolling, but don't mark the event Handled themselves when there's
+        /// nothing to scroll, so it would otherwise bubble up and unintentionally trigger
+        /// card navigation.
+        /// </summary>
+        private void FlashcardEditor_OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            e.Handled = true;
         }
 
         /// <summary>
@@ -160,6 +190,39 @@ namespace Flashcards.App
         private void EditPreviewScrollBar_OnScroll(object sender, ScrollEventArgs e)
         {
             // scroll sync na EditTextBox a PreviewViewer
+        }
+
+        /// <summary>
+        /// Routes CardNavigationScrollBar interactions to the matching card-navigation
+        /// action: clicking an arrow button (SmallIncrement/SmallDecrement) or the track
+        /// itself (LargeIncrement/LargeDecrement) steps one card via NextCommand/
+        /// PreviousCommand; dragging or clicking the thumb (ThumbTrack/ThumbPosition) jumps
+        /// straight to the dragged-to index via CurrentCardIndex.
+        /// </summary>
+        private void CardNavigationScrollBar_OnScroll(object sender, ScrollEventArgs e)
+        {
+            MainViewModel viewModel = (MainViewModel)DataContext;
+
+            switch (e.ScrollEventType)
+            {
+                case ScrollEventType.SmallIncrement: // arrow button click
+                case ScrollEventType.LargeIncrement: // clicking on the track itself
+                    if (viewModel.NextCommand.CanExecute(null))
+                        viewModel.NextCommand.Execute(null);
+                    break;
+
+                case ScrollEventType.SmallDecrement: // arrow button click
+                case ScrollEventType.LargeDecrement: // clicking on the track itself
+                    if (viewModel.PreviousCommand.CanExecute(null))
+                        viewModel.PreviousCommand.Execute(null);
+                    break;
+
+                case ScrollEventType.ThumbTrack:
+                case ScrollEventType.ThumbPosition:
+                    // Direct drag/click on the thumb — jump straight to the dragged-to index.
+                    viewModel.CurrentCardIndex = (int)Math.Round(e.NewValue);
+                    break;
+            }
         }
     }
 }

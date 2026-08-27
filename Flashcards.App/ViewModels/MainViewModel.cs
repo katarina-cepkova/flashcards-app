@@ -108,6 +108,14 @@ namespace Flashcards.App.ViewModels
         /// <summary>The flashcard currently shown/edited.</summary>
         public Flashcard? CurrentFlashcard => _flashcardManager.CurrentFlashcard;
 
+        public int MaxCardIndex => Cards.Count - 1;
+
+        public int CurrentCardIndex
+        {
+            get => _flashcardManager.Index;
+            set => _flashcardManager.SelectIndex(value);
+        }
+
         private bool _isFront = true;
 
         /// <summary>Whether the front (true) or back (false) side of the flashcard is currently shown.</summary>
@@ -163,6 +171,9 @@ namespace Flashcards.App.ViewModels
 
             if (e.PropertyName == nameof(FlashcardManager.CurrentFlashcard))
                 OnPropertyChanged(nameof(DisplayedText));
+
+            if (e.PropertyName == nameof(FlashcardManager.Index))
+                OnPropertyChanged(nameof(CurrentCardIndex));
         }
 
 
