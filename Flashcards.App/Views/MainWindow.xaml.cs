@@ -40,7 +40,7 @@ namespace Flashcards.App
             var viewModel = new MainViewModel(new LocalizationService());
             DataContext = viewModel;
 
-            // Undo history is tied to the RichTextBox instance, not to which card/side is
+            // Undo history is tied to the TextBox instance, not to which card/side is
             // displayed, so it has to be cleared manually whenever the displayed content
             // switches to a different card or side — otherwise Undo could reach back into
             // content that's no longer showing.
@@ -68,6 +68,11 @@ namespace Flashcards.App
                 _previewScrollViewer.ScrollChanged += PreviewViewer_OnScrollChanged;
         }
 
+        /// <summary>
+        /// Clicking anywhere outside a TextBox moves focus to MainGrid instead of leaving it wherever it last was —
+        /// e.g. so a click on empty space doesn't leave focus sitting inside EditTextBox, which would otherwise keep
+        /// intercepting keys like Space (see FlipCommand's CanFlip guard) meant for the rest of the window.
+        /// </summary>
         private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.OriginalSource is not TextBoxBase)
@@ -108,7 +113,7 @@ namespace Flashcards.App
 
         /// <summary>
         /// Runs whenever any property on MainViewModel changes; only DisplayedText is relevant
-        /// here, since that's the only change that means "the RichTextBox is about to show
+        /// here, since that's the only change that means "EditTextBox is about to show
         /// different content" (switching cards or flipping side).
         /// </summary>
         private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -117,39 +122,46 @@ namespace Flashcards.App
                 MarkdownEditingService.ClearUndoHistory(EditTextBox);
         }
 
-
-
+        /// <summary>Toggles "**" (bold) on the current selection/caret position.</summary>
         private void BoldButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.ToggleEmphasis(EditTextBox, "**");
         }
 
+        /// <summary>Toggles "*" (italic) on the current selection/caret position.</summary>
         private void ItalicButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.ToggleEmphasis(EditTextBox, "*");
         }
 
-
+        /// <summary>Toggles "~~" (strikethrough) on the current selection/caret position.</summary>
         private void StrikethroughButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.ToggleEmphasis(EditTextBox, "~~");
         }
 
+        /// <summary>Toggles "`" (inline code) on the current selection/caret position.</summary>
         private void InlineCodeButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.ToggleEmphasis(EditTextBox, "`");
         }
 
+        /// <summary>Increases the heading size (toward H1) of the current line.</summary>
         private void UpsizeButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.IncreaseHeadingLevel(EditTextBox);
         }
 
+        /// <summary>Decreases the heading size (toward H6, then plain text) of the current line.</summary>
         private void DownsizeButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.DecreaseHeadingLevel(EditTextBox);
         }
 
+        /// <summary>
+        /// Refreshes the formatting toolbar's active state (checked/unchecked, enabled/disabled)
+        /// to reflect the marker/heading level at the current caret position or selection.
+        /// </summary>
         private void EditTextBox_OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             TextBox textBox = (TextBox)sender;
@@ -163,31 +175,42 @@ namespace Flashcards.App
             DownsizeButton.IsEnabled = headingLevel != 0;
         }
 
+        /// <summary>Adds a "> " blockquote prefix to every line touched by the current selection.</summary>
         private void QuoteButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.InsertQuote(EditTextBox);
         }
 
+        /// <summary>Inserts a markdown link template, wrapping the selection as the link text if any.</summary>
         private void LinkButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.InsertLink(EditTextBox);
         }
 
+        /// <summary>Inserts a fenced code block, wrapping the selection's content if any.</summary>
         private void CodeBlockButton_OnClick(object sender, RoutedEventArgs e)
         {
             MarkdownEditingService.InsertCodeBlock(EditTextBox);
         }
 
+        /// <summary>Keeps EditPreviewScrollBar's range accurate as the text content changes.</summary>
         private void EditTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            // scrollbar Maximum/ViewportSize recalculation
+            RecalculateEditPreviewScrollBarRange();
         }
 
+        /// <summary>Keeps EditPreviewScrollBar's range accurate as the window/control is resized.</summary>
         private void EditTextBox_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // scrollbar Maximum/ViewportSize recalculation
+            RecalculateEditPreviewScrollBarRange();
         }
 
+        /// <summary>
+        /// Keyboard shortcuts for the formatting toolbar's toggle buttons: Ctrl+B (bold),
+        /// Ctrl+I (italic), Ctrl+E (inline code), Ctrl+Shift+X (strikethrough). Runs as a
+        /// Preview (tunneling) handler so it can intercept the key before EditTextBox's own
+        /// input handling processes it.
+        /// </summary>
         private void EditTextBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             switch (e.Key)

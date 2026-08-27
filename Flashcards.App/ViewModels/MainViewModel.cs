@@ -23,6 +23,8 @@ namespace Flashcards.App.ViewModels
         private readonly ILocalizationService _localizationService;
         private readonly FlashcardManager _flashcardManager;
 
+        #region Language
+
         private string _currentLanguage = "en-GB";  // default language at the app's start
 
         /// <summary>The culture code of the app's currently active language, e.g. "en-GB".</summary>
@@ -39,6 +41,10 @@ namespace Flashcards.App.ViewModels
             }
         }
 
+        #endregion
+
+        #region App state
+
         private AppState _currentState = AppState.OpenedSetEdit;
 
         /// <summary>The overall UI state of the app, controlling which panels and controls are visible.</summary>
@@ -52,6 +58,10 @@ namespace Flashcards.App.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        #endregion
+
+        #region Topic name
 
         private string _topicName = "testing";
 
@@ -102,19 +112,37 @@ namespace Flashcards.App.ViewModels
             }
         }
 
+        #endregion
+
+        #region Flashcards and navigation
+
         /// <summary>The flashcards belonging to the currently open set.</summary>
         public ObservableCollection<Flashcard> Cards => _flashcardManager.Cards;
 
         /// <summary>The flashcard currently shown/edited.</summary>
         public Flashcard? CurrentFlashcard => _flashcardManager.CurrentFlashcard;
 
+        /// <summary>The highest valid card index — used as CardNavigationScrollBar's Maximum.</summary>
         public int MaxCardIndex => Cards.Count - 1;
 
+        /// <summary>
+        /// The index of the currently shown card within Cards. Setting it jumps directly
+        /// to that card (via FlashcardManager.SelectIndex), independent of the one-step-
+        /// at-a-time NextCommand/PreviousCommand — used by CardNavigationScrollBar's thumb,
+        /// which can be dragged to an arbitrary position, not just moved one step.
+        /// </summary>
         public int CurrentCardIndex
         {
             get => _flashcardManager.Index;
             set => _flashcardManager.SelectIndex(value);
         }
+
+        public ICommand NextCommand { get; }
+        public ICommand PreviousCommand { get; }
+
+        #endregion
+
+        #region Flip and display
 
         private bool _isFront = true;
 
@@ -140,7 +168,7 @@ namespace Flashcards.App.ViewModels
             {
                 if (CurrentFlashcard is null)
                     return "";
-                return IsFront ? CurrentFlashcard.FrontText : CurrentFlashcard.BackText; 
+                return IsFront ? CurrentFlashcard.FrontText : CurrentFlashcard.BackText;
             }
 
             set
@@ -153,17 +181,19 @@ namespace Flashcards.App.ViewModels
                     CurrentFlashcard.BackText = value;
             }
         }
+
+        /// <summary>Flipping is blocked while a TextBox has focus, so Space can be typed normally.</summary>
         private static bool CanFlip() => Keyboard.FocusedElement is not TextBoxBase;
 
         public ICommand FlipCommand { get; }
-        public ICommand NextCommand { get; }
-        public ICommand PreviousCommand { get; }
 
-        
+        #endregion
+
         /// <summary>
         /// Forwards FlashcardManager's own PropertyChanged notifications so bindings
         /// on this view model (e.g. Cards, CurrentFlashcard) stay in sync. CurrentFlashcard
-        /// changes also need to re-raise DisplayedText.
+        /// changes also need to re-raise DisplayedText, and Index changes need to re-raise
+        /// CurrentCardIndex.
         /// </summary>
         private void OnFlashcardManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -176,6 +206,7 @@ namespace Flashcards.App.ViewModels
                 OnPropertyChanged(nameof(CurrentCardIndex));
         }
 
+        #region Manual UI testing helper (temporary)
 
         // helper command for manual UI testing, will be deleted later
         public ICommand CycleStateCommand { get; }
@@ -183,12 +214,15 @@ namespace Flashcards.App.ViewModels
         private static readonly AppState[] AllStates =
             (AppState[])Enum.GetValues(typeof(AppState));
 
+        /// <summary>Cycles CurrentState through every AppState value in order, wrapping around.</summary>
         private void CycleState()
         {
             int currentIndex = Array.IndexOf(AllStates, CurrentState);
             int nextIndex = (currentIndex + 1) % AllStates.Length;
             CurrentState = AllStates[nextIndex];
         }
+
+        #endregion
 
         public MainViewModel(ILocalizationService localizationService)
         {
