@@ -61,21 +61,26 @@ namespace Flashcards.App.ViewModels
 
         #endregion
 
-        #region Topic name
-
-        private string _topicName = "testing";
+        #region Topic
+        private Topic? _topic;
 
         /// <summary>The name of the currently open (or being created/renamed) flashcard set.</summary>
         public string TopicName
         {
-            get => _topicName;
+            get => _topic?.Name ?? "";
             set
             {
-                _topicName = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(RemainingCharactersText));
-                OnPropertyChanged(nameof(RemainingCharactersColor));
-                OnPropertyChanged(nameof(RemainingCharactersCount));
+                if (_topic is not null)
+                {
+                    // TODO: db check - valid topic name
+                    _topic.Name = value;
+                
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(RemainingCharactersText));
+                    OnPropertyChanged(nameof(RemainingCharactersColor));
+                    OnPropertyChanged(nameof(RemainingCharactersCount));
+
+                }
             }
         }
 
@@ -88,6 +93,7 @@ namespace Flashcards.App.ViewModels
         /// <summary>Text representation of <see cref="RemainingCharactersCount"/>, for display.</summary>
         public string RemainingCharactersText => RemainingCharactersCount.ToString();
 
+        /// <summary>Remaining-character threshold at or below which the label switches to the critical color.</summary>
         private int CriticalRemainingCharacterCount => 5;
 
         /// <summary>
@@ -122,8 +128,12 @@ namespace Flashcards.App.ViewModels
         /// <summary>The flashcard currently shown/edited.</summary>
         public Flashcard? CurrentFlashcard => _flashcardManager.CurrentFlashcard;
 
-        /// <summary>The highest valid card index — used as CardNavigationScrollBar's Maximum.</summary>
-        public int MaxCardIndex => Cards.Count - 1;
+        /// <summary>
+        /// The highest valid position on CardNavigationScrollBar — one less than the number of active (non-deleted)
+        /// cards, since deleted cards remain physically in Cards as tombstones and shouldn't count toward the visible
+        /// range. Clamped to 0 so an empty set (all cards deleted) never produces a negative Maximum.
+        /// </summary>
+        public int MaxCardIndex => Math.Max(0, _flashcardManager.ActiveFlashcardCount - 1);
 
         /// <summary>
         /// The index of the currently shown card within Cards. Setting it jumps directly
@@ -133,11 +143,14 @@ namespace Flashcards.App.ViewModels
         /// </summary>
         public int CurrentCardIndex
         {
-            get => _flashcardManager.Index;
+            get => _flashcardManager.LogicalIndex;
             set => _flashcardManager.SelectIndex(value);
         }
 
+        /// <summary>Moves to the next active flashcard, if one exists.</summary>
         public ICommand NextCommand { get; }
+
+        /// <summary>Moves to the previous active flashcard, if one exists.</summary>
         public ICommand PreviousCommand { get; }
 
         #endregion
@@ -185,15 +198,15 @@ namespace Flashcards.App.ViewModels
         /// <summary>Flipping is blocked while a TextBox has focus, so Space can be typed normally.</summary>
         private static bool CanFlip() => Keyboard.FocusedElement is not TextBoxBase;
 
+        /// <summary>Flips the currently displayed flashcard between its front and back side.</summary>
         public ICommand FlipCommand { get; }
 
         #endregion
 
         /// <summary>
-        /// Forwards FlashcardManager's own PropertyChanged notifications so bindings
-        /// on this view model (e.g. Cards, CurrentFlashcard) stay in sync. CurrentFlashcard
-        /// changes also need to re-raise DisplayedText, and Index changes need to re-raise
-        /// CurrentCardIndex.
+        /// Forwards FlashcardManager's own PropertyChanged notifications so bindings on this view model (e.g. Cards,
+        /// CurrentFlashcard) stay in sync. CurrentFlashcard changes also need to re-raise DisplayedText, LogicalIndex
+        /// changes need to re-raise CurrentCardIndex, and ActiveFlashcardCount changes need to re-raise MaxCardIndex.
         /// </summary>
         private void OnFlashcardManagerPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -202,15 +215,19 @@ namespace Flashcards.App.ViewModels
             if (e.PropertyName == nameof(FlashcardManager.CurrentFlashcard))
                 OnPropertyChanged(nameof(DisplayedText));
 
-            if (e.PropertyName == nameof(FlashcardManager.Index))
+            if (e.PropertyName == nameof(FlashcardManager.LogicalIndex))
                 OnPropertyChanged(nameof(CurrentCardIndex));
+
+            if (e.PropertyName == nameof(FlashcardManager.ActiveFlashcardCount))
+                OnPropertyChanged(nameof(MaxCardIndex));
         }
 
         #region Manual UI testing helper (temporary)
 
-        // helper command for manual UI testing, will be deleted later
+        /// <summary>Manual UI testing helper: cycles CurrentState through every AppState value. Remove before submission.</summary>
         public ICommand CycleStateCommand { get; }
 
+        /// <summary>All defined AppState values, in declaration order, used by CycleState to wrap around.</summary>
         private static readonly AppState[] AllStates =
             (AppState[])Enum.GetValues(typeof(AppState));
 
@@ -224,6 +241,42 @@ namespace Flashcards.App.ViewModels
 
         #endregion
 
+        #region Modify flashcard set
+
+        /// <summary>Adds a new default flashcard to the currently open topic.</summary>
+        public ICommand CreateFlashcardCommand { get; }
+
+        /// <summary>
+        /// Creates a new default-colored flashcard under the current topic and adds it via FlashcardManager.
+        /// AddFlashcardButton is only enabled while a set is open, so _topic should never be null here —
+        /// this is a defensive guard against a UI/state bug, not an expected path.
+        /// </summary>
+        private void AddFlashcard()
+        {
+            // AddFlashcardButton is only enabled while a set is open, so _topic should
+            // never be null here — this is a defensive guard against a UI/state bug,
+            // not an expected path.
+            if (_topic is null)
+                throw new InvalidOperationException("Cannot add a flashcard: no topic is open.");
+
+            // A topic only gets edited (and cards added to it) after it's been saved to
+            // the database at least once, so Id should always be set by this point.
+            if (_topic.Id is not long topicId)
+                throw new InvalidOperationException("Cannot add a flashcard: the current topic has not been saved yet.");
+
+            Flashcard card = Flashcard.CreateDefault(topicId, 0);
+            _flashcardManager.AddCard(card);
+        }
+
+        /// <summary>Marks the currently selected flashcard as deleted.</summary>
+        public ICommand DeleteFlashcardCommand { get; }
+
+        #endregion
+
+        /// <summary>
+        /// Constructs the view model with temporary hardcoded topic and flashcard data (to be replaced
+        /// once repository-backed topic loading is wired up), and initializes all commands.
+        /// </summary>
         public MainViewModel(ILocalizationService localizationService)
         {
             _localizationService = localizationService;
@@ -238,12 +291,19 @@ namespace Flashcards.App.ViewModels
                 new Flashcard { TopicId = 1, FrontText = "Front 5", BackText = "Back 5" },
             });
             _flashcardManager.PropertyChanged += OnFlashcardManagerPropertyChanged;
-
+            _topic = new Topic() {
+                Id = 1,
+                Name = "Topic",
+                CreatedAt = DateTime.Now,
+            };
             // commands
             NextCommand = new RelayCommand(_flashcardManager.MoveToNext, _flashcardManager.CanMoveToNext);
             PreviousCommand = new RelayCommand(_flashcardManager.MoveToPrevious, _flashcardManager.CanMoveToPrevious);
             FlipCommand = new RelayCommand(() => IsFront = !IsFront, CanFlip);
             CycleStateCommand = new RelayCommand(CycleState);
+            CreateFlashcardCommand = new RelayCommand(AddFlashcard);
+            DeleteFlashcardCommand = new RelayCommand(_flashcardManager.DeleteCurrentFlashcard);
+
         }
     }
 }

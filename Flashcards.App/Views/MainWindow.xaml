@@ -500,7 +500,8 @@
                             Background="{StaticResource EditButtonsBrush}"
                             IsEnabled="{Binding CurrentState,
                                         Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter=OpenedSetEdit}">
+                                        ConverterParameter=OpenedSetEdit}"
+                            Command="{Binding CreateFlashcardCommand}">
                         <Image Source="{StaticResource CreateFlashcardIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
@@ -510,7 +511,8 @@
                             Background="{StaticResource EditButtonsBrush}"
                             IsEnabled="{Binding CurrentState,
                                         Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter=OpenedSetEdit}">
+                                        ConverterParameter=OpenedSetEdit}"
+                            Command="{Binding DeleteFlashcardCommand}">
                         <Image Source="{StaticResource DeleteFlashcardIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
