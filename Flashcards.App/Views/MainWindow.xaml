@@ -130,7 +130,7 @@
                 </StackPanel>
 
                 <Grid x:Name="LeftGrid" 
-                      Grid.Column="0" Grid.Row="1" Grid.RowSpan="3"
+                      Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"
                       Margin="{StaticResource ControlParentMargin}">
                     <Grid.RowDefinitions>
                         <!-- set buttons -->
@@ -144,7 +144,14 @@
                     <StackPanel x:Name="FlashcardSetPanel"
                                 Grid.Row="0"
                                 Orientation="Vertical">
-                        <Button x:Name="CreateSetButton"
+                    <Button x:Name="SaveButton"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource SetButtonsBrush}">
+                        <Image Source="{StaticResource SaveIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                        
+                    <Button x:Name="CreateSetButton"
                                 Style="{StaticResource IconButtonStyle}"
                                 Background="{StaticResource SetButtonsBrush}">
                             <Image Source="{StaticResource CreateFlashcardSetIcon}"
@@ -361,7 +368,7 @@
                                SmallChange="1"
                                LargeChange="1"
                                Scroll="EditPreviewScrollBar_OnScroll"/>
-            </Grid>
+                </Grid>
                 <Grid Grid.Row="3" Grid.Column="1" Margin="{StaticResource ControlParentMargin}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -437,7 +444,7 @@
                     </Button>
                 </Grid>
 
-            <ScrollBar x:Name="CardNavigationScrollBar" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2"
+                <ScrollBar x:Name="CardNavigationScrollBar" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2"
                        Orientation="Vertical"
                        Minimum="0"
                        Maximum="{Binding MaxCardIndex}"
@@ -448,7 +455,69 @@
                        Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
                        Scroll="CardNavigationScrollBar_OnScroll"
                        Margin="{StaticResource ScrollBarMargin}">
-            </ScrollBar>
+                </ScrollBar>
+
+            <StackPanel Grid.Row="1" Grid.RowSpan="2" Grid.Column="3"
+                        Orientation="Vertical">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleButton x:Name="EditButton" Grid.Row="0" Grid.Column="0"
+                            Style="{StaticResource IconToggleButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsChecked="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit,
+                                        Mode=OneWay}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter='OpenedSetEdit,OpenedSetView'}"
+                            Click="EditButton_OnClick">
+                        <Image Source="{StaticResource EditFlashcardIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </ToggleButton>
+
+                    <Button x:Name="ColorButton" Grid.Row="0" Grid.Column="1"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit}">
+                        <Image Source="{StaticResource ColorFillIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                    <Button x:Name="AddFlashcardButton" Grid.Row="1" Grid.Column="0"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit}">
+                        <Image Source="{StaticResource CreateFlashcardIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                    <Button x:Name="DeleteFlashcardButton" Grid.Row="1" Grid.Column="1"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit}">
+                        <Image Source="{StaticResource DeleteFlashcardIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                </Grid>
+
+            </StackPanel>
             </Grid>
 
     </Grid>

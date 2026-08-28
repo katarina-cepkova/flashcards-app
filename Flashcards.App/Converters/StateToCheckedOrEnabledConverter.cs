@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Flashcards.App.Models;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -7,17 +8,17 @@ using System.Windows.Data;
 
 namespace Flashcards.App.Converters
 {
-    /// <summary>
-    /// Converts a TextAlignment to bool for a RadioButton's IsChecked, comparing it against
-    /// the alignment named in ConverterParameter (e.g. "Center").
-    /// </summary>
-    public class AlignmentToIsCheckedConverter : IValueConverter
+    class StateToCheckedOrEnabledConverter : IValueConverter
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is not TextAlignment currentAlignment || parameter is not string targetAlignment)
+            if (value is not AppState currentState || parameter is not string allowedStatesString)
                 return false;
-            return currentAlignment.ToString() == targetAlignment;
+
+            string[] allowedStates = allowedStatesString.Split(',');
+            bool isAllowed = allowedStates.Any(s => s.Trim() == currentState.ToString());  // enum.ToString() -> textual name
+
+            return isAllowed;
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
