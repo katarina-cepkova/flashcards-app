@@ -7,7 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
+  
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+  </ItemGroup>
+	
   <ItemGroup>
     <Folder Include="AttachedProperties\" />
     <Folder Include="Resources\Strings\" />
@@ -25,6 +29,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Flashcards.Core\Flashcards.Core.csproj" />
     <ProjectReference Include="..\Flashcards.Data\Flashcards.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\ColorPickerDialog.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
   </ItemGroup>
 
 </Project>
