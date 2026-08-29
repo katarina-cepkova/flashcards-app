@@ -307,7 +307,7 @@
 
                 <Grid x:Name="FlashcardEditor" Grid.Row="2" Grid.Column="1"
                       Margin="{StaticResource FlashcardMargin}"
-                      Background="{StaticResource DefaultFlashcardBackgroundBrush}"
+                      Background="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToBrushConverter}}"
                       Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
                       MouseWheel="FlashcardEditor_OnMouseWheel">   
                     <Grid.ColumnDefinitions>
@@ -321,6 +321,7 @@
 
                     <!-- Edit panel: plain TextBox, no scrollbar of its own -->
                     <TextBox x:Name="EditTextBox" Grid.Column="0"
+                             Style="{StaticResource FlashcardTextBoxStyle}"
                              Background="{StaticResource DefaultFlashcardBackgroundBrush}"
                              Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
                              FontFamily="{StaticResource PrimaryFontFamily}"
@@ -348,8 +349,7 @@
 
 
                     <FlowDocumentScrollViewer x:Name="PreviewViewer" Grid.Column="2"
-                                              
-                                              Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
+                                              Foreground="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToContrastingTextBrushConverter}}"
                                               Padding="{StaticResource FlashcardPadding}"
                                               VerticalScrollBarVisibility="Hidden"
                                               Document="{Binding ElementName=EditTextBox, Path=Text, 
@@ -490,7 +490,8 @@
                             Background="{StaticResource EditButtonsBrush}"
                             IsEnabled="{Binding CurrentState,
                                         Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter=OpenedSetEdit}">
+                                        ConverterParameter=OpenedSetEdit}"
+                            Command="{Binding EditFlashcardColorCommand}">
                         <Image Source="{StaticResource ColorFillIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>

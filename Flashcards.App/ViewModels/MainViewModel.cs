@@ -1,7 +1,9 @@
 ﻿using Flashcards.App.Commands;
 using Flashcards.App.Models;
 using Flashcards.App.Services;
+using Flashcards.App.Dialogs;
 using Flashcards.Core.Entities;
+
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -10,7 +12,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-
 
 namespace Flashcards.App.ViewModels
 {
@@ -264,12 +265,39 @@ namespace Flashcards.App.ViewModels
             if (_topic.Id is not long topicId)
                 throw new InvalidOperationException("Cannot add a flashcard: the current topic has not been saved yet.");
 
-            Flashcard card = Flashcard.CreateDefault(topicId, 0);
+            Flashcard card = Flashcard.CreateDefault(topicId, _lastUsedColorArgb);
             _flashcardManager.AddCard(card);
         }
 
         /// <summary>Marks the currently selected flashcard as deleted.</summary>
         public ICommand DeleteFlashcardCommand { get; }
+
+        #endregion
+
+        #region Color
+
+        private int _lastUsedColorArgb;
+
+        /// <summary>
+        /// Opens the system color picker and applies the chosen color to CurrentFlashcard. The null
+        /// check is redundant with ColorCommand's canExecute (which already disables the button when
+        /// CurrentFlashcard is null) — kept as a defensive guard against other ways Execute could be
+        /// triggered (e.g. a future KeyBinding) that might bypass canExecute.
+        /// </summary>
+        private void ChooseColor()
+        {
+            if (CurrentFlashcard is null) return;
+
+            if (ColorPickerDialog.PickColor(CurrentFlashcard.ColorArgb) is int newColor)
+            {
+                CurrentFlashcard.ColorArgb = newColor;
+                _lastUsedColorArgb = newColor;
+                OnPropertyChanged(nameof(CurrentFlashcard));
+            }
+        }
+
+        public ICommand EditFlashcardColorCommand { get; }
+
 
         #endregion
 
@@ -280,15 +308,18 @@ namespace Flashcards.App.ViewModels
         public MainViewModel(ILocalizationService localizationService)
         {
             _localizationService = localizationService;
+            _lastUsedColorArgb = ArgbColorConverter.ToArgb(
+                ((SolidColorBrush)_resources["DefaultFlashcardBackgroundBrush"]).Color
+            );  // fallback default
 
             // TEMPORARY test data, remove once loading from repository is wired up
             _flashcardManager = new FlashcardManager(new[]
             {
-                new Flashcard { TopicId = 1, FrontText = "Front 1", BackText = "Back 1" },
-                new Flashcard { TopicId = 1, FrontText = "Front 2", BackText = "Back 2" },
-                new Flashcard { TopicId = 1, FrontText = "Front 3", BackText = "Back 3" },
-                new Flashcard { TopicId = 1, FrontText = "Front 4", BackText = "Back 4" },
-                new Flashcard { TopicId = 1, FrontText = "Front 5", BackText = "Back 5" },
+                new Flashcard { TopicId = 1, FrontText = "Front 1", BackText = "Back 1", ColorArgb = _lastUsedColorArgb },
+                new Flashcard { TopicId = 1, FrontText = "Front 2", BackText = "Back 2", ColorArgb = _lastUsedColorArgb},
+                new Flashcard { TopicId = 1, FrontText = "Front 3", BackText = "Back 3", ColorArgb = _lastUsedColorArgb},
+                new Flashcard { TopicId = 1, FrontText = "Front 4", BackText = "Back 4", ColorArgb = _lastUsedColorArgb},
+                new Flashcard { TopicId = 1, FrontText = "Front 5", BackText = "Back 5", ColorArgb = _lastUsedColorArgb},
             });
             _flashcardManager.PropertyChanged += OnFlashcardManagerPropertyChanged;
             _topic = new Topic() {
@@ -303,7 +334,7 @@ namespace Flashcards.App.ViewModels
             CycleStateCommand = new RelayCommand(CycleState);
             CreateFlashcardCommand = new RelayCommand(AddFlashcard);
             DeleteFlashcardCommand = new RelayCommand(_flashcardManager.DeleteCurrentFlashcard);
-
+            EditFlashcardColorCommand = new RelayCommand(ChooseColor, () => CurrentFlashcard is not null);
         }
     }
 }
