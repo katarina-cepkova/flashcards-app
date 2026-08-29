@@ -12,13 +12,10 @@ namespace Flashcards.App.Converters
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is not AppState currentState || parameter is not string allowedStatesString)
+            if (value is not AppState currentState || parameter is not string allowedStates)
                 return false;
 
-            string[] allowedStates = allowedStatesString.Split(',');
-            bool isAllowed = allowedStates.Any(s => s.Trim() == currentState.ToString());  // enum.ToString() -> textual name
-
-            return isAllowed;
+            return AppStateConverterHelpers.MatchesAnyState(allowedStates, currentState);
         }
 
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

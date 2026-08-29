@@ -23,8 +23,11 @@ namespace Flashcards.App.Converters
             if (values[0] is not bool isFocused
                 || values[1] is not AppState currentState
                 || values[2] is not int remainingCount
-                || values[3] is not int threshold)
+                || values[3] is not int threshold
+                || parameter is not string editableStates)
                 return Visibility.Hidden;
+
+            IEnumerable<string> states = editableStates.Split(',', StringSplitOptions.TrimEntries);
 
             bool isEditable = currentState == AppState.OpenedSetEdit;
             bool isNearLimit = remainingCount <= threshold;
