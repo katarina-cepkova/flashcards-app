@@ -27,11 +27,11 @@
             <!-- Hover and focus both highlight the border using the flashcard's own color
              (same brush as Background), rather than the Fluent theme's default accent color. -->
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="BorderThickness" Value="4"/>
+                <Setter Property="BorderThickness" Value="2"/>
                 <Setter Property="BorderBrush" Value="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToBrushConverter}}"/>
             </Trigger>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="BorderThickness" Value="4"/>
+                <Setter Property="BorderThickness" Value="2"/>
                 <Setter Property="BorderBrush" Value="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToBrushConverter}}"/>
             </Trigger>
         </Style.Triggers>
