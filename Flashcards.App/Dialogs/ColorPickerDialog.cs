@@ -34,6 +34,27 @@ namespace Flashcards.App.Dialogs
             using var dialog = new ColorDialog();
             dialog.Color = Color.FromArgb(currentColorArgb);
 
+            dialog.CustomColors = new[]
+            {
+                ToColorRef(0xF6, 0xD8, 0xCE),  // Peach
+                ToColorRef(0xF7, 0xEC, 0xC7),  // Butter
+                ToColorRef(0xE3, 0xEF, 0xCB),  // Sage
+                ToColorRef(0xCD, 0xE9, 0xD4),  // Mint
+                ToColorRef(0xC7, 0xE4, 0xEC),  // Powder blue
+                ToColorRef(0xD3, 0xD6, 0xF1),  // Periwinkle
+                ToColorRef(0xEA, 0xD1, 0xE7),  // Lilac
+                ToColorRef(0xF3, 0xD2, 0xDD),  // Blush
+
+                ToColorRef(0x62, 0x2F, 0x1F),  // Terracotta
+                ToColorRef(0x75, 0x42, 0x1F),  // Caramel
+                ToColorRef(0x3E, 0x52, 0x20),  // Olive
+                ToColorRef(0x26, 0x52, 0x37),  // Forest
+                ToColorRef(0x1C, 0x4A, 0x52),  // Steel teal
+                ToColorRef(0x33, 0x37, 0x63),  // Indigo
+                ToColorRef(0x5A, 0x33, 0x60),  // Plum
+                ToColorRef(0x68, 0x29, 0x3D),  // Berry
+            };
+
             // MainWindow (WPF) has no Handle of its own we can read directly — WPF doesn't expose
             // it, since apps don't normally need to talk to Windows at this level. WindowInteropHelper
             // reaches underneath WPF to get it anyway, since every WPF window still has a real Win32
@@ -51,6 +72,13 @@ namespace Flashcards.App.Dialogs
 
             return null;
         }
+
+        /// <summary>
+        /// Converts an R, G, B triple into the Win32 COLORREF format ColorDialog.CustomColors expects
+        /// (0x00BBGGRR — bytes in reverse order from typical RGB, and no alpha channel).
+        /// </summary>
+        private static int ToColorRef(byte r, byte g, byte b) =>
+            r | (g << 8) | (b << 16);
     }
 
 }
