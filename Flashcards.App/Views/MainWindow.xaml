@@ -351,9 +351,16 @@
                     <FlowDocumentScrollViewer x:Name="PreviewViewer" Grid.Column="2"
                                               Foreground="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToContrastingTextBrushConverter}}"
                                               Padding="{StaticResource FlashcardPadding}"
-                                              VerticalScrollBarVisibility="Hidden"
-                                              Document="{Binding ElementName=EditTextBox, Path=Text, 
-                                                         Converter={StaticResource MarkdownToFlowDocumentConverter}}">
+                                              VerticalScrollBarVisibility="Hidden">
+
+                        <FlowDocumentScrollViewer.Document>
+                            <MultiBinding Converter="{StaticResource MarkdownToFlowDocumentConverter}">
+                                <Binding ElementName="EditTextBox" Path="Text"/>
+                                <Binding Path="CurrentFlashcard.ColorArgb" Converter="{StaticResource ArgbToContrastingTextBrushConverter}"/>
+                                <Binding Path="CurrentFlashcard.ColorArgb" Converter="{StaticResource ArgbToBrushConverter}"/>
+                            </MultiBinding>
+                        </FlowDocumentScrollViewer.Document>
+                        
                         <FlowDocumentScrollViewer.Resources>
                             <Style TargetType="Paragraph">
                                 <Setter Property="Margin" Value="0,0,0,4"/>
