@@ -3,6 +3,8 @@
                     xmlns:converters="clr-namespace:Flashcards.App.Converters">
     <converters:LanguageToIsCheckedConverter x:Key="LanguageToIsCheckedConverter"/>
     <converters:MarkdownToFlowDocumentConverter x:Key="MarkdownToFlowDocumentConverter"/>
+    <converters:ArgbToBrushConverter x:Key="ArgbToBrushConverter"/>
+    <converters:ArgbToContrastingTextBrushConverter x:Key="ArgbToContrastingTextBrushConverter"/>
 
     <converters:StateToCollapsedConverter x:Key="StateToCollapsedConverter"/>
     <converters:StateToHiddenConverter x:Key="StateToHiddenConverter"/>
