@@ -15,6 +15,23 @@
                 <Setter Property="Background" Value="{StaticResource DefaultFlashcardBackgroundBrush}"/>
                 <Setter Property="Foreground" Value="{StaticResource TextOnLightBrush}"/>
             </MultiTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsTopicNameValid}" Value="False"/>
+                    <Condition Binding="{Binding CurrentState}" Value="CreatingSet"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{StaticResource InvalidInputBrush}"/>
+                <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            </MultiDataTrigger>
+
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsTopicNameValid}" Value="True"/>
+                    <Condition Binding="{Binding CurrentState}" Value="CreatingSet"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{StaticResource ValidInputBrush}"/>
+                <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            </MultiDataTrigger>
         </Style.Triggers>
     </Style>
 </ResourceDictionary>

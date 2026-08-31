@@ -31,5 +31,8 @@
     <SolidColorBrush x:Key="UnansweredBrush" Color="Gray"/>
     <SolidColorBrush x:Key="CriticalBrush" Color="Red"/>
     <SolidColorBrush x:Key="AlmostCriticalBrush" Color="DarkOrange"/>
+    <SolidColorBrush x:Key="ValidInputBrush" Color="#9CD629"/>
+    <SolidColorBrush x:Key="InvalidInputBrush" Color="#FF5C5C"/>
+    
 
 </ResourceDictionary>
