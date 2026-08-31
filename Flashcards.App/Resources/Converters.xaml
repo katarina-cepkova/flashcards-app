@@ -17,5 +17,6 @@
     <converters:FrontBackVisibleConverter x:Key="FrontBackVisibleConverter"/>
     <converters:NullToVisibleConverter x:Key="NullToVisibleConverter"/>
     <converters:FlashcardStateVisibleConverter x:Key="FlashcardStateVisibleConverter"/>
+    <converters:FocusAndNotReadOnlyToVisibleConverter x:Key="FocusAndNotReadOnlyToVisibleConverter"/>
 
 </ResourceDictionary>

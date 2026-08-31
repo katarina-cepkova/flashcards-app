@@ -100,32 +100,56 @@
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
                             Orientation="Vertical" HorizontalAlignment="Center">
                     <!-- UpdateSourceTrigger=PropertyChanged = send updates on each typed character, not after leaving focus -->
-                    <TextBox x:Name="TopicNameTextBox"
-                             Style="{StaticResource TopicNameTextBoxStyle}"
-                             FontFamily="{StaticResource PrimaryFontFamily}"
-                             FontSize="{StaticResource TopicNameFontSize}"
-                             FontWeight="{StaticResource HeadingFontWeight}"
-                             Text="{Binding TopicName, UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="{Binding TopicMaxLength}"
-                             Visibility="{Binding CurrentState,
-                                          Converter={StaticResource StateToHiddenConverter},
-                                          ConverterParameter='OpenedSetView,OpenedSetEdit,LearningSession'}"
-                             IsReadOnly="{Binding CurrentState,
-                                          Converter={StaticResource StateToReadOnlyConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
+
+
+                        <TextBox x:Name="TopicNameTextBox"
+                                 Style="{StaticResource TopicNameTextBoxStyle}"
+                                 FocusVisualStyle="{x:Null}"
+                                 FontFamily="{StaticResource PrimaryFontFamily}"
+                                 FontSize="{StaticResource TopicNameFontSize}"
+                                 FontWeight="{StaticResource HeadingFontWeight}"
+                                 Text="{Binding TopicName, UpdateSourceTrigger=PropertyChanged}"
+                                 MaxLength="{Binding TopicMaxLength}"
+                                 Visibility="{Binding CurrentState,
+                                              Converter={StaticResource StateToHiddenConverter},
+                                              ConverterParameter='CreatingSet,OpenedSetView,OpenedSetEdit,LearningSession'}"
+                                 IsReadOnly="{Binding CurrentState,
+                                              Converter={StaticResource StateToReadOnlyConverter},ConverterParameter='ClosedSet,OpenedSetView,LearningSession'}"/>
+
+                        <Button x:Name="ConfirmTopicNameButton"
+                                Style="{StaticResource IconButtonStyle}"
+                                Width="32" Height="32"
+                                Background="{StaticResource SetButtonsBrush}"
+                                IsEnabled="{Binding IsTopicNameValid}"
+                                Focusable="False"
+                                Command="{Binding ConfirmTopicNameCommand}">
+                            <Button.Visibility>
+                                <MultiBinding Converter="{StaticResource FocusAndNotReadOnlyToVisibleConverter}">
+                                    <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
+                                    <Binding ElementName="TopicNameTextBox" Path="IsReadOnly"/>
+                                </MultiBinding>
+                            </Button.Visibility>
+                            <Image Source="{StaticResource ConfirmIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                        </Button>
+                    </StackPanel>
 
                     <TextBlock Text="{Binding RemainingCharactersText}"
-                               Foreground="{Binding RemainingCharactersColor}"
-                               HorizontalAlignment="Right">
-                        <TextBlock.Visibility>
-                            <!-- converter binding multiple values -->
-                            <MultiBinding Converter="{StaticResource RemainingCharactersLabelVisibilityConverter}">
-                                <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
-                                <Binding Path="CurrentState"/>
-                                <Binding Path="RemainingCharactersCount"/>
-                                <Binding Path="RemainingCharactersWarningThreshold"/>
-                            </MultiBinding>
-                        </TextBlock.Visibility>
-                    </TextBlock>
+                                   Foreground="{Binding RemainingCharactersColor}"
+                                   HorizontalAlignment="Right">
+                            <TextBlock.Visibility>
+                                <!-- converter binding multiple values -->
+                                <MultiBinding Converter="{StaticResource RemainingCharactersLabelVisibilityConverter}"
+                                              ConverterParameter='OpenedSetEdit,CreatingSet'>
+                                    <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
+                                    <Binding Path="CurrentState"/>
+                                    <Binding Path="RemainingCharactersCount"/>
+                                    <Binding Path="RemainingCharactersWarningThreshold"/>
+                                </MultiBinding>
+                            </TextBlock.Visibility>
+                        </TextBlock>
 
                 </StackPanel>
 

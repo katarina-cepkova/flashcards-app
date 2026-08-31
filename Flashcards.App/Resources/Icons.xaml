@@ -8,6 +8,10 @@
     <BitmapImage x:Key="RefreshIcon" UriSource="/Resources/Icons/refresh.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="StartLearningSessionIcon" UriSource="/Resources/Icons/cards.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="QuitLearningSessionIcon" UriSource="/Resources/Icons/logout.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    
+    <!-- Flahcard topic -->
+    <BitmapImage x:Key="ConfirmIcon" UriSource="/Resources/Icons/confirm.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+        
 
     <!-- Right panel: flashcard management -->
     <BitmapImage x:Key="CreateFlashcardIcon" UriSource="/Resources/Icons/square-plus.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
