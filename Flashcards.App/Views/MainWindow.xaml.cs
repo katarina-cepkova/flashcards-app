@@ -1,12 +1,16 @@
 ﻿using Flashcards.App.Services;
 using Flashcards.App.ViewModels;
 using Flashcards.App.Models;
+using Flashcards.Data.Repositories;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using Flashcards.Data.Database;
+using Flashcards.Core.Repositories;
+
 
 namespace Flashcards.App
 {
@@ -34,11 +38,14 @@ namespace Flashcards.App
         public MainWindow()
         {
             InitializeComponent();
-
+            string connectionString = DatabaseLocation.ConnectionString;
+            new DatabaseInitializer(connectionString).EnsureInitialized();
+            ITopicRepository topicRepository = new SqliteTopicRepository(connectionString);
+            IFlashcardRepository flashcardRepository = new SqliteFlashcardRepository(connectionString);
             // DataContext is assigned after InitializeComponent so every binding in the XAML
             // resolves against a fully constructed MainViewModel — nothing in the constructor
             // runs before this window's controls exist to bind to.
-            var viewModel = new MainViewModel(new LocalizationService());
+            var viewModel = new MainViewModel(new LocalizationService(), topicRepository, flashcardRepository);
             DataContext = viewModel;
 
             // Undo history is tied to the TextBox instance, not to which card/side is
