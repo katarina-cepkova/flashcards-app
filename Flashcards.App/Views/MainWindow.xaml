@@ -170,14 +170,17 @@
                                 Orientation="Vertical">
                     <Button x:Name="SaveButton"
                             Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource SetButtonsBrush}">
+                            Background="{StaticResource SetButtonsBrush}"
+                            IsEnabled="{Binding IsDirty}"
+                            Command="{Binding SaveCommand}">
                         <Image Source="{StaticResource SaveIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
                         
                     <Button x:Name="CreateSetButton"
-                                Style="{StaticResource IconButtonStyle}"
-                                Background="{StaticResource SetButtonsBrush}">
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource SetButtonsBrush}"
+                            Command="{Binding CreateSetCommand}">
                             <Image Source="{StaticResource CreateFlashcardSetIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
