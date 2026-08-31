@@ -83,11 +83,30 @@ namespace Flashcards.App
         /// </summary>
         private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.OriginalSource is DependencyObject source && IsInsideFocusExemptElement(source))
+                return;
+
             if (e.OriginalSource is not TextBoxBase)
             {
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), MainGrid);
                 Keyboard.Focus(MainGrid);
             }
+        }
+
+        /// <summary>
+        /// True if the clicked element is ConfirmCreateSetButton or something inside it (e.g. its
+        /// Image) — clicking it shouldn't steal focus from TopicNameTextBox first, since the button's
+        /// own Visibility depends on that TextBox staying focused through the click.
+        /// </summary>
+        private bool IsInsideFocusExemptElement(DependencyObject source)
+        {
+            while (source != null)
+            {
+                if (source == ConfirmTopicNameButton)
+                    return true;
+                source = VisualTreeHelper.GetParent(source);
+            }
+            return false;
         }
 
         /// <summary>
@@ -126,6 +145,20 @@ namespace Flashcards.App
         /// </summary>
         private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == nameof(MainViewModel.CurrentState) 
+                && DataContext is MainViewModel vm
+                && vm.CurrentState == AppState.CreatingSet)
+                // Calling Focus() directly here doesn't work: CurrentState just changed, so
+                // TopicNameTextBox's Visibility/IsReadOnly bindings haven't been re-evaluated yet —
+                // the TextBox is still in its previous (hidden/read-only) state at this exact moment,
+                // and WPF can't focus an element that isn't focusable yet. Dispatcher.BeginInvoke defers
+                // the Focus() call until after WPF finishes processing the pending binding/layout
+                // updates, by which point the TextBox is visible and editable.
+                Dispatcher.BeginInvoke(
+                    new Action(() => TopicNameTextBox.Focus()), 
+                    System.Windows.Threading.DispatcherPriority.Input
+                );
+
             if (e.PropertyName == nameof(MainViewModel.DisplayedText))
                 MarkdownEditingService.ClearUndoHistory(EditTextBox);
         }
