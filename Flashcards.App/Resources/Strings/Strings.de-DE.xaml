@@ -21,6 +21,11 @@
     <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">Der Name des Themas '@' existiert bereits. \r\nWenn Sie zustimmen, werden die aktuellen \r\nund ursprünglichen daten bei der nächsten \r\nAbfrage zu einem Satz zusammengeführt.</system:String>
     <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Warnung: Namenskonflikt</system:String>
 
+    <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
+    <system:String x:Key="UnsavedChangesTitle">Nicht gespeicherte Änderungen</system:String>
+    <system:String x:Key="UnsavedChangesMessage" xml:space="preserve">Sie haben nicht gespeicherte Änderungen in '@'.
+Möchten Sie sie vor dem Fortfahren speichern?</system:String>
+
     <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
     <system:String x:Key="InvalidTopicTitle">Fehler: Ungültiger Themenname</system:String>
 

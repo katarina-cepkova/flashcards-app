@@ -21,6 +21,11 @@
     <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">Názov témy '@' už existuje. \r\nAk budete súhlasiť, aktuálne a pôvodné \r\ndáta sa pri ďalšom dotaze zlúčia do jednej sady.</system:String>
     <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Upozornenie: Konflikt mien</system:String>
 
+    <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
+    <system:String x:Key="UnsavedChangesTitle">Neuložené zmeny</system:String>
+    <system:String x:Key="UnsavedChangesMessage" xml:space="preserve">Máte neuložené zmeny v sade '@'.
+Chcete ich uložiť pred pokračovaním?</system:String>
+    
     <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
     <system:String x:Key="InvalidTopicTitle">Chyba: Neplatný názov témy</system:String>
 

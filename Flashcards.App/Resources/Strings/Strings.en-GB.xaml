@@ -21,6 +21,11 @@
     <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">The topic name '@' already exists. \r\nBy agreeing, the current and the original data will merge\r\n into one set on the next query.</system:String>
     <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Warning: Name conflict</system:String>
 
+    <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
+    <system:String x:Key="UnsavedChangesTitle">Unsaved changes</system:String>
+    <system:String x:Key="UnsavedChangesMessage" xml:space="preserve">You have unsaved changes in '@'.
+Do you want to save them before continuing?</system:String>
+    
     <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
     <system:String x:Key="InvalidTopicTitle">Error: Invalid topic name</system:String>
 
