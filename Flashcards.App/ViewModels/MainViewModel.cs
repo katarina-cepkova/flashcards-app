@@ -103,6 +103,7 @@ namespace Flashcards.App.ViewModels
                     OnPropertyChanged(nameof(RemainingCharactersColor));
                     OnPropertyChanged(nameof(RemainingCharactersCount));
                     OnPropertyChanged(nameof(IsTopicNameValid));
+                    OnPropertyChanged(nameof(TopicNameValidationMessage));
                 }
             }
         }
@@ -119,6 +120,25 @@ namespace Flashcards.App.ViewModels
         public bool IsTopicNameValid =>
             !string.IsNullOrWhiteSpace(TopicName) &&
             !AvailableTopics.Any(t => t.Id != _topic?.Id && string.Equals(t.Name, TopicName.Trim(), StringComparison.OrdinalIgnoreCase));
+
+        /// <summary>
+        /// Explains why TopicName is currently invalid — empty, or colliding with an existing topic
+        /// — for display under TopicNameTextBox. Empty string when the name is valid (IsTopicNameValid).
+        /// </summary>
+        public string TopicNameValidationMessage
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(TopicName))
+                    return (string)_resources["CreateSet_InvalidSetTopicMessage"];
+
+                bool collides = AvailableTopics.Any(t => t.Id != _topic?.Id && string.Equals(t.Name, TopicName.Trim(), StringComparison.OrdinalIgnoreCase));
+                if (collides)
+                    return ((string)_resources["CreateSet_AlreadyExistingTopicMessage"]).Replace("@", TopicName.Trim());
+
+                return "";
+            }
+        }
 
         /// <summary>Maximum allowed length of a topic name.</summary>
         public int TopicMaxLength => 50;  // binding cannot have a static constant, use int instead
@@ -499,7 +519,11 @@ namespace Flashcards.App.ViewModels
 
             _flashcardManager = new FlashcardManager(Array.Empty<Flashcard>());
             _flashcardManager.PropertyChanged += OnFlashcardManagerPropertyChanged;
-            AvailableTopics.CollectionChanged += (_, _) => OnPropertyChanged(nameof(IsTopicNameValid));
+            AvailableTopics.CollectionChanged += (_, _) =>
+            {
+                OnPropertyChanged(nameof(IsTopicNameValid));
+                OnPropertyChanged(nameof(TopicNameValidationMessage));
+            };
 
             // commands
             NextCommand = new RelayCommand(() => _flashcardManager.MoveToNext(), () => _flashcardManager.CanMoveToNext());

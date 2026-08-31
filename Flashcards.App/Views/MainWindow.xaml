@@ -100,10 +100,10 @@
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
                             Orientation="Vertical" HorizontalAlignment="Center">
                     <!-- UpdateSourceTrigger=PropertyChanged = send updates on each typed character, not after leaving focus -->
-                    <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
 
 
-                        <TextBox x:Name="TopicNameTextBox"
+                    <TextBox x:Name="TopicNameTextBox"
                                  Style="{StaticResource TopicNameTextBoxStyle}"
                                  FocusVisualStyle="{x:Null}"
                                  FontFamily="{StaticResource PrimaryFontFamily}"
@@ -117,28 +117,41 @@
                                  IsReadOnly="{Binding CurrentState,
                                               Converter={StaticResource StateToReadOnlyConverter},ConverterParameter='ClosedSet,OpenedSetView,LearningSession'}"/>
 
-                        <Button x:Name="ConfirmTopicNameButton"
+                    <Button x:Name="ConfirmTopicNameButton"
                                 Style="{StaticResource IconButtonStyle}"
                                 Width="32" Height="32"
                                 Background="{StaticResource SetButtonsBrush}"
                                 IsEnabled="{Binding IsTopicNameValid}"
                                 Focusable="False"
                                 Command="{Binding ConfirmTopicNameCommand}">
-                            <Button.Visibility>
-                                <MultiBinding Converter="{StaticResource FocusAndNotReadOnlyToVisibleConverter}">
-                                    <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
-                                    <Binding ElementName="TopicNameTextBox" Path="IsReadOnly"/>
-                                </MultiBinding>
-                            </Button.Visibility>
-                            <Image Source="{StaticResource ConfirmIcon}"
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource FocusAndNotReadOnlyToVisibleConverter}">
+                                <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
+                                <Binding ElementName="TopicNameTextBox" Path="IsReadOnly"/>
+                            </MultiBinding>
+                        </Button.Visibility>
+                        <Image Source="{StaticResource ConfirmIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
 
-                        </Button>
-                    </StackPanel>
+                    </Button>
+                </StackPanel>
+                <TextBlock Text="{Binding TopicNameValidationMessage}"
+                               Foreground="{StaticResource InvalidInputBrush}"
+                               HorizontalAlignment="Center"
+                               FontSize="{StaticResource SmallFontSize}">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource MessageAndStateToVisibleConverter}"
+                                          ConverterParameter="CreatingSet,OpenedSetEdit">
+                                <Binding Path="TopicNameValidationMessage"/>
+                                <Binding Path="CurrentState"/>
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
+                               
 
                     <TextBlock Text="{Binding RemainingCharactersText}"
-                                   Foreground="{Binding RemainingCharactersColor}"
-                                   HorizontalAlignment="Right">
+                               Foreground="{Binding RemainingCharactersColor}"
+                               HorizontalAlignment="Right">
                             <TextBlock.Visibility>
                                 <!-- converter binding multiple values -->
                                 <MultiBinding Converter="{StaticResource RemainingCharactersLabelVisibilityConverter}"
