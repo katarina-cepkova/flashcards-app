@@ -27,9 +27,7 @@ namespace Flashcards.App.Converters
                 || parameter is not string editableStates)
                 return Visibility.Hidden;
 
-            IEnumerable<string> states = editableStates.Split(',', StringSplitOptions.TrimEntries);
-
-            bool isEditable = currentState == AppState.OpenedSetEdit;
+            bool isEditable = AppStateConverterHelpers.MatchesAnyState(editableStates, currentState);
             bool isNearLimit = remainingCount <= threshold;
 
             return (isFocused && isEditable && isNearLimit) ? Visibility.Visible : Visibility.Hidden;

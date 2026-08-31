@@ -7,6 +7,7 @@ namespace Flashcards.App.Models
     public enum AppState
     {
         ClosedSet,
+        CreatingSet,
         OpenedSetView,
         OpenedSetEdit,
         LearningSession
