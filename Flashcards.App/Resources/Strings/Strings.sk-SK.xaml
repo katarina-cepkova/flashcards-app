@@ -8,33 +8,23 @@
     <system:String x:Key="YesButtonText">Áno</system:String>
     <system:String x:Key="NoButtonText">Nie</system:String>
 
-    <!-- Default name given to a newly created topic before the user renames it -->
-    <system:String x:Key="DefaultTopicName">Téma</system:String>
-
-    <!-- Create new flashcard set dialog -->
-    <system:String x:Key="CreateNewSetTitle">Vytvoriť novú sadu kartičiek</system:String>
-    <system:String x:Key="CreateNewSetMessage">Ak chcete vytvoriť novú sadu kartičiek, \r\nprosím zadajte jej názov do poľa nižšie.</system:String>
-    <system:String x:Key="CreateSet_InvalidSetTopicMessage">Názov témy nemôže byť prázdny.</system:String>
-    <system:String x:Key="CreateSet_AlreadyExistingTopicMessage">Názov témy už existuje.</system:String>
-
-    <!-- Rename topic: shown when the new name collides with an existing topic (offers merge) -->
-    <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">Názov témy '@' už existuje. \r\nAk budete súhlasiť, aktuálne a pôvodné \r\ndáta sa pri ďalšom dotaze zlúčia do jednej sady.</system:String>
-    <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Upozornenie: Konflikt mien</system:String>
+    <!-- Create new flashcard messages -->
+    <system:String x:Key="CreateSet_InvalidSetTopic_Message">Názov témy nemôže byť prázdny.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">Názov témy '@' už existuje.</system:String>
 
     <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
-    <system:String x:Key="UnsavedChangesTitle">Neuložené zmeny</system:String>
-    <system:String x:Key="UnsavedChangesMessage" xml:space="preserve">Máte neuložené zmeny v sade '@'.
+    <system:String x:Key="UnsavedChanges_Caption">Neuložené zmeny</system:String>
+    <system:String x:Key="UnsavedChanges_Message" xml:space="preserve">Máte neuložené zmeny v sade '@'.
 Chcete ich uložiť pred pokračovaním?</system:String>
     
-    <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
-    <system:String x:Key="InvalidTopicTitle">Chyba: Neplatný názov témy</system:String>
-
     <!-- Delete flashcard set confirmation dialog -->
-    <system:String x:Key="DeleteSetTitle">Odstrániť súčasnú sadu kartičiek</system:String>
-    <system:String x:Key="DeleteSetMessage">Ste si naozaj istý, že chcete zmazať sadu kartičiek '@'? \r\nTáto akcia ho odstráni natrvalo. \r\nPotvrďte odstránenie.</system:String>
+    <system:String x:Key="DeleteSet_Caption">Odstrániť súčasnú sadu kartičiek</system:String>
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Ste si naozaj istý, že chcete zmazať sadu kartičiek '@'?
+Táto akcia ju odstráni natrvalo.
+Potvrďte odstránenie.</system:String>
 
     <!-- Open existing flashcard set dialog -->
-    <system:String x:Key="OpenSetTitle">Otvoriť existujúcu sadu kartičiek</system:String>
+    <system:String x:Key="OpenSet_Caption">Otvoriť existujúcu sadu kartičiek</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">predná strana</system:String>

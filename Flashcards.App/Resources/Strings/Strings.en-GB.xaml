@@ -8,33 +8,23 @@
     <system:String x:Key="YesButtonText">Yes</system:String>
     <system:String x:Key="NoButtonText">No</system:String>
 
-    <!-- Default name given to a newly created topic before the user renames it -->
-    <system:String x:Key="DefaultTopicName">Topic</system:String>
-
-    <!-- Create new flashcard set dialog -->
-    <system:String x:Key="CreateNewSetTitle">Create new flashcard set</system:String>
-    <system:String x:Key="CreateNewSetMessage">If you wish to create a new flashcard set, \r\nplease type in the topic name below.</system:String>
-    <system:String x:Key="CreateSet_InvalidSetTopicMessage">The topic name cannot be empty.</system:String>
-    <system:String x:Key="CreateSet_AlreadyExistingTopicMessage">The topic name '@' already exists.</system:String>
-
-    <!-- Rename topic: shown when the new name collides with an existing topic (offers merge) -->
-    <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">The topic name '@' already exists. \r\nBy agreeing, the current and the original data will merge\r\n into one set on the next query.</system:String>
-    <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Warning: Name conflict</system:String>
+    <!-- Create new flashcard messages -->
+    <system:String x:Key="CreateSet_InvalidSetTopic_Message">The topic name cannot be empty.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">The topic name '@' already exists.</system:String>
 
     <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
-    <system:String x:Key="UnsavedChangesTitle">Unsaved changes</system:String>
-    <system:String x:Key="UnsavedChangesMessage" xml:space="preserve">You have unsaved changes in '@'.
+    <system:String x:Key="UnsavedChanges_Caption">Unsaved changes</system:String>
+    <system:String x:Key="UnsavedChanges_Message" xml:space="preserve">You have unsaved changes in '@'.
 Do you want to save them before continuing?</system:String>
-    
-    <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
-    <system:String x:Key="InvalidTopicTitle">Error: Invalid topic name</system:String>
 
     <!-- Delete flashcard set confirmation dialog -->
-    <system:String x:Key="DeleteSetTitle">Delete current flashcard set</system:String>
-    <system:String x:Key="DeleteSetMessage">Are you sure you want to delete flashcard set '@'? \r\nThis action will remove it permanently. \r\nConfirm deletion.</system:String>
+    <system:String x:Key="DeleteSet_Caption">Delete current flashcard set</system:String>
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Are you sure you want to delete flashcard set '@'?
+This action will remove it permanently.
+Confirm deletion.</system:String>
 
     <!-- Open existing flashcard set dialog -->
-    <system:String x:Key="OpenSetTitle">Open existing flashcard set</system:String>
+    <system:String x:Key="OpenSet_Caption">Open existing flashcard set</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">front</system:String>
