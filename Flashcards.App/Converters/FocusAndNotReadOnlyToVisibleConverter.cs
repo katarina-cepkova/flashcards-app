@@ -15,9 +15,9 @@ namespace Flashcards.App.Converters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (values.Length != 2 || values[0] is not bool isFocused || values[1] is not bool isReadOnly)
-                return Visibility.Collapsed;
+                return Visibility.Hidden;
 
-            return (isFocused && !isReadOnly) ? Visibility.Visible : Visibility.Collapsed;
+            return (isFocused && !isReadOnly) ? Visibility.Visible : Visibility.Hidden;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

@@ -21,12 +21,12 @@ namespace Flashcards.App.Converters
                 || values[0] is not string message 
                 || values[1] is not AppState currentState
                 || parameter is not string allowedStates)
-                return Visibility.Collapsed;
+                return Visibility.Hidden;
 
             bool hasMessage = !string.IsNullOrEmpty(message);
             bool stateMatches = AppStateConverterHelpers.MatchesAnyState(allowedStates, currentState);
 
-            return (hasMessage && stateMatches) ? Visibility.Visible : Visibility.Collapsed;
+            return (hasMessage && stateMatches) ? Visibility.Visible : Visibility.Hidden;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>

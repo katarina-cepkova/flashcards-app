@@ -193,6 +193,9 @@
                     <Button x:Name="CreateSetButton"
                             Style="{StaticResource IconButtonStyle}"
                             Background="{StaticResource SetButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter},
+                                        ConverterParameter='ClosedSet,OpenedSetView,OpenedSetEdit'}"
                             Command="{Binding CreateSetCommand}">
                             <Image Source="{StaticResource CreateFlashcardSetIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>

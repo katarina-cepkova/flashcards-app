@@ -5,6 +5,8 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{StaticResource TextOnDarkBrush}"/>
         <Setter Property="Margin" Value="{StaticResource TextBoxMargin}"/>
+        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
         <Style.Triggers>
             <!-- trigger caused by multiple conditions -->
             <MultiTrigger>
@@ -21,7 +23,6 @@
                     <Condition Binding="{Binding CurrentState}" Value="CreatingSet"/>
                 </MultiDataTrigger.Conditions>
                 <Setter Property="BorderBrush" Value="{StaticResource InvalidInputBrush}"/>
-                <Setter Property="BorderThickness" Value="0,0,0,2"/>
             </MultiDataTrigger>
 
             <MultiDataTrigger>
@@ -30,7 +31,6 @@
                     <Condition Binding="{Binding CurrentState}" Value="CreatingSet"/>
                 </MultiDataTrigger.Conditions>
                 <Setter Property="BorderBrush" Value="{StaticResource ValidInputBrush}"/>
-                <Setter Property="BorderThickness" Value="0,0,0,2"/>
             </MultiDataTrigger>
         </Style.Triggers>
     </Style>
