@@ -41,6 +41,8 @@ namespace Flashcards.App.ViewModels
                 _currentLanguage = value;
                 OnPropertyChanged();
                 _localizationService.SetLanguage(value);  // change the language of the app
+
+                OnPropertyChanged(nameof(TopicNameValidationMessage));
             }
         }
 
@@ -130,11 +132,11 @@ namespace Flashcards.App.ViewModels
             get
             {
                 if (string.IsNullOrWhiteSpace(TopicName))
-                    return (string)_resources["CreateSet_InvalidSetTopicMessage"];
+                    return (string)_resources["CreateSet_InvalidSetTopic_Message"];
 
                 bool collides = AvailableTopics.Any(t => t.Id != _topic?.Id && string.Equals(t.Name, TopicName.Trim(), StringComparison.OrdinalIgnoreCase));
                 if (collides)
-                    return ((string)_resources["CreateSet_AlreadyExistingTopicMessage"]).Replace("@", TopicName.Trim());
+                    return ((string)_resources["CreateSet_AlreadyExistingTopic_Message"]).Replace("@", TopicName.Trim());
 
                 return "";
             }
@@ -342,11 +344,11 @@ namespace Flashcards.App.ViewModels
             if (!IsDirty)
                 return true;
 
-            string message = ((string)_resources["UnsavedChangesMessage"]).Replace("@", _topic?.Name ?? "");
-            string caption = (string)_resources["UnsavedChangesTitle"];
+            string message = ((string)_resources["UnsavedChanges_Message"]).Replace("@", _topic?.Name ?? "");
+            string caption = (string)_resources["UnsavedChanges_Caption"];
 
             MessageBoxResult result = MessageBox.Show(message, caption, MessageBoxButton.YesNoCancel);
-            Debug.WriteLine((string)_resources["UnsavedChangesMessage"]);
+            Debug.WriteLine((string)_resources["UnsavedChanges_Message"]);
             if (result == MessageBoxResult.Cancel)
                 return false;
 
