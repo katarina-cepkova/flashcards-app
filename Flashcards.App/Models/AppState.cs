@@ -8,6 +8,7 @@ namespace Flashcards.App.Models
     {
         ClosedSet,
         CreatingSet,
+        SelectingSet,
         OpenedSetView,
         OpenedSetEdit,
         LearningSession
