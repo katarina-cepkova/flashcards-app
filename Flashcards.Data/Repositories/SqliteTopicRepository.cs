@@ -2,6 +2,7 @@
 using Flashcards.Core.Repositories;
 using Flashcards.Data.Database;
 using Microsoft.Data.Sqlite;
+using System.Numerics;
 
 namespace Flashcards.Data.Repositories
 {
@@ -219,6 +220,43 @@ namespace Flashcards.Data.Repositories
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
             RepositoryHelpers.EnsureRowsAffected(rowsAffected, id);
+        }
+
+        /// <summary>
+        /// Returns all topics ordered by Name, alongside each one's flashcard count — used for the
+        /// topic-selection list, so it doesn't need a separate round-trip per topic (or an in-memory
+        /// join against a separately-loaded flashcard count) to show both. Counts every flashcard row
+        /// in the database directly; IsDeleted tombstones are an in-memory-only concept purged before
+        /// a card is ever persisted, so no row in Flashcards is ever "deleted" from this count's
+        /// perspective. Uses a LEFT JOIN so topics with zero flashcards still appear, with CardCount 0
+        /// rather than being dropped entirely.
+        /// </summary>
+        public async Task<IReadOnlyList<TopicListItem>> GetAllWithCardCountsAsync()
+        {
+            using SqliteConnection connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using SqliteCommand command = connection.CreateCommand();
+            command.CommandText = """
+                SELECT t.*, COUNT(f.Id) AS CardCount
+                FROM Topics t
+                   LEFT JOIN Flashcards f ON t.Id = f.TopicId
+                GROUP BY t.Id
+                ORDER BY t.Name;
+                """;
+
+            List<TopicListItem> results = new List<TopicListItem>();
+            using SqliteDataReader reader = await command.ExecuteReaderAsync();
+            TopicOrdinals ordinals = TopicOrdinals.FromReader(reader);
+            int cardCountOrdinal = reader.GetOrdinal("CardCount");
+
+            while (await reader.ReadAsync())
+            {
+                Topic topic = reader.ToTopic(ordinals);
+                int cardCount = reader.GetInt32(cardCountOrdinal);
+                results.Add(new TopicListItem() { Topic = topic, CardCount = cardCount });
+            }
+            return results;
         }
     }
 }

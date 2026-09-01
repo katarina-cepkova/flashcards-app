@@ -167,6 +167,84 @@ namespace Flashcards.Tests.Repositories
                 () => _topicRepository.MergeAsync(sourceTopicId, invalidTargetId));
             Assert.Equal(sourceTopicId, sourceCard.TopicId);
         }
+
+        [Fact]
+        public async Task GetAllWithCardCountsAsync_EmptyRepository_ReturnsEmpty()
+        {
+            // act
+            IReadOnlyList<TopicListItem> results = await _topicRepository.GetAllWithCardCountsAsync();
+
+            // assert
+            Assert.Empty(results);
+        }
+
+        [Fact]
+        public async Task GetAllWithCardCountsAsync_TopicWithNoFlashcards_ReturnsZeroCount()
+        {
+            // arrange
+            long topicId = await AddTopicAsync("C#");
+
+            // act
+            IReadOnlyList<TopicListItem> results = await _topicRepository.GetAllWithCardCountsAsync();
+
+            // assert
+            var topicWithCount = Assert.Single(results);
+            Assert.Equal(topicId, topicWithCount.Topic.Id);
+            Assert.Equal(0, topicWithCount.CardCount);
+        }
+
+        [Fact]
+        public async Task GetAllWithCardCountsAsync_TopicWithMultipleFlashcards_ReturnsCorrectCount()
+        {
+            // arrange
+            long topicId = await AddTopicAsync("C#");
+            await AddFlashcardAsync(CreateTestFlashcard(topicId, "Q1", "A1"));
+            await AddFlashcardAsync(CreateTestFlashcard(topicId, "Q2", "A2"));
+            await AddFlashcardAsync(CreateTestFlashcard(topicId, "Q3", "A3"));
+
+            // act
+            IReadOnlyList<TopicListItem> results = await _topicRepository.GetAllWithCardCountsAsync();
+
+            // assert
+            var topicWithCount = Assert.Single(results);
+            Assert.Equal(3, topicWithCount.CardCount);
+        }
+
+        [Fact]
+        public async Task GetAllWithCardCountsAsync_MultipleTopics_ReturnsEachWithOwnCount()
+        {
+            // arrange
+            long topicAId = await AddTopicAsync("C#");
+            long topicBId = await AddTopicAsync("Databases");
+
+            await AddFlashcardAsync(CreateTestFlashcard(topicAId, "Q1", "A1"));
+            await AddFlashcardAsync(CreateTestFlashcard(topicAId, "Q2", "A2"));
+            await AddFlashcardAsync(CreateTestFlashcard(topicBId, "Q1", "A1"));
+
+            // act
+            IReadOnlyList<TopicListItem> results = await _topicRepository.GetAllWithCardCountsAsync();
+
+            // assert
+            Assert.Equal(2, results.Count);
+            Assert.Equal(2, results.Single(r => r.Topic.Id == topicAId).CardCount);
+            Assert.Equal(1, results.Single(r => r.Topic.Id == topicBId).CardCount);
+        }
+
+        [Fact]
+        public async Task GetAllWithCardCountsAsync_MultipleTopics_OrderedByName()
+        {
+            // arrange — added out of alphabetical order, to verify the query sorts them, not insertion order
+            await AddTopicAsync("LINQ");
+            await AddTopicAsync("Async/Await");
+            await AddTopicAsync("Garbage Collection");
+
+            // act
+            IReadOnlyList<TopicListItem> results = await _topicRepository.GetAllWithCardCountsAsync();
+
+            // assert
+            Assert.Equal(new[] { "Async/Await", "Garbage Collection", "LINQ" }, results.Select(r => r.Topic.Name));
+        }
+
         #endregion
 
 

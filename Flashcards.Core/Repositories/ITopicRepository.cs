@@ -64,5 +64,13 @@ namespace Flashcards.Core.Repositories
         /// </summary>
         /// <param name="id">The identifier of the topic to delete.</param>
         Task DeleteAsync(long id);
+
+        /// <summary>
+        /// Loads every topic along with its non-deleted flashcard count, in one query — used for the
+        /// topic-selection list, avoiding both N separate round-trips (one per topic) and an in-memory
+        /// join between separately-loaded topics and counts, which could drift if the DB changed
+        /// between two queries.
+        /// </summary>
+        public Task<IReadOnlyList<TopicListItem>> GetAllWithCardCountsAsync();
     }
 }
