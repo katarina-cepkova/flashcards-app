@@ -424,6 +424,71 @@ namespace Flashcards.App.ViewModels
 
         #endregion
 
+        #region Delete set
+
+        /// <summary>
+        /// Clears the currently open/draft topic and its flashcards, returning the app to ClosedSet —
+        /// shared by discarding an in-progress draft (CreatingSet) and finishing a real deletion
+        /// (DeleteSetAsync), since both end up in the same empty state.
+        /// </summary>
+        private void CloseTopic()
+        {
+            _topic = null;
+            OnPropertyChanged(nameof(TopicName));
+            OnPropertyChanged(nameof(IsTopicNameValid));
+            OnPropertyChanged(nameof(TopicNameValidationMessage));
+
+            ReplaceFlashcardManager(Array.Empty<Flashcard>());
+            CurrentState = AppState.ClosedSet;
+        }
+
+
+        /// <summary>
+        /// In CreatingSet, discards the in-progress draft topic (nothing to delete from the DB yet)
+        /// and returns to ClosedSet. Otherwise, deletes the currently open (saved) topic and its
+        /// flashcards after confirming with the user, then returns to ClosedSet. Doesn't check IsDirty
+        /// first when deleting a saved topic — the whole set is going away regardless, so there's
+        /// nothing meaningful to save.
+        /// </summary>
+        private async Task DeleteSetAsync()
+        {
+            // Discarding a craft - nothing persisted yet, no confirmation needed
+            if (CurrentState == AppState.CreatingSet)
+            {
+                CloseTopic();
+                return;
+
+            }
+            if (_topic?.Id is not long topicId)
+            {
+                throw new InvalidOperationException("Cannot delete: no saved topic is open.");
+            }
+
+            // persisted set - confirming with the user
+            string message = ((string)_resources["DeleteSet_Message"]).Replace("@", _topic.Name);
+            string caption = (string)_resources["DeleteSet_Caption"];
+
+            MessageBoxResult result = MessageBox.Show(message, caption, MessageBoxButton.YesNo);
+            if (result == MessageBoxResult.No)
+                return;
+
+            // deleting
+            await _topicRepository.DeleteAsync(topicId); // deletes flashcards as well
+            AvailableTopics.Remove(_topic);
+
+            CloseTopic();
+        }
+
+        /// <summary>
+        /// Deletes the currently open flashcard set (with confirmation), or discards the in-progress
+        /// draft if still naming a new one. Enabled whenever a set is open or being created.
+        /// </summary>
+        public ICommand DeleteSetCommand { get; }
+
+
+
+        #endregion
+
         #region Modify flashcard set
 
         /// <summary>Adds a new default flashcard to the currently open topic.</summary>
@@ -518,6 +583,7 @@ namespace Flashcards.App.ViewModels
             EditFlashcardColorCommand = new RelayCommand(ChooseColor, () => CurrentFlashcard is not null);
 
             CreateSetCommand = new AsyncRelayCommand(EnterCreatingSetAsync);
+            DeleteSetCommand = new AsyncRelayCommand(DeleteSetAsync, () => _topic is not null);
             ConfirmTopicNameCommand = new AsyncRelayCommand(ConfirmTopicNameAsync, () => IsTopicNameValid);
             SaveCommand = new AsyncRelayCommand(SaveFlashcardsAsync, () => IsDirty);
         }

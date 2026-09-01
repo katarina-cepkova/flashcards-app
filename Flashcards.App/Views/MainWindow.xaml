@@ -207,7 +207,11 @@
 
                         <Button x:Name="DeleteSetButton"
                                 Style="{StaticResource IconButtonStyle}"
-                                Background="{StaticResource SetButtonsBrush}">
+                                Background="{StaticResource SetButtonsBrush}"
+                                IsEnabled="{Binding CurrentState, 
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                            ConverterParameter='CreatingSet,OpenedSetView,OpenedSetEdit'}"
+                                Command="{Binding DeleteSetCommand}">
                             <Image Source="{StaticResource DeleteFlashcardSetIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
