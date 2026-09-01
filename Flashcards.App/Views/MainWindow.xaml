@@ -237,12 +237,7 @@
                             <Image Source="{StaticResource QuitLearningSessionIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
-
-                    <Button x:Name="ChangeStateTestButton"
-                                Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource LogicButtonsBrush}"
-                            Command="{Binding CycleStateCommand}"/>
-                </StackPanel>
+                    </StackPanel>
 
                 </Grid>
 

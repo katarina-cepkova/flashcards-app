@@ -301,25 +301,6 @@ namespace Flashcards.App.ViewModels
             OnPropertyChanged(nameof(MaxCardIndex));
         }
 
-        #region Manual UI testing helper (temporary)
-
-        /// <summary>Manual UI testing helper: cycles CurrentState through every AppState value. Remove before submission.</summary>
-        public ICommand CycleStateCommand { get; }
-
-        /// <summary>All defined AppState values, in declaration order, used by CycleState to wrap around.</summary>
-        private static readonly AppState[] AllStates =
-            (AppState[])Enum.GetValues(typeof(AppState));
-
-        /// <summary>Cycles CurrentState through every AppState value in order, wrapping around.</summary>
-        private void CycleState()
-        {
-            int currentIndex = Array.IndexOf(AllStates, CurrentState);
-            int nextIndex = (currentIndex + 1) % AllStates.Length;
-            CurrentState = AllStates[nextIndex];
-        }
-
-        #endregion
-
         #region Save
 
         private bool _isDirty;
@@ -529,7 +510,7 @@ namespace Flashcards.App.ViewModels
             NextCommand = new RelayCommand(() => _flashcardManager.MoveToNext(), () => _flashcardManager.CanMoveToNext());
             PreviousCommand = new RelayCommand(() => _flashcardManager.MoveToPrevious(), () => _flashcardManager.CanMoveToPrevious());
             FlipCommand = new RelayCommand(() => IsFront = !IsFront, CanFlip);
-            CycleStateCommand = new RelayCommand(CycleState);
+
             CreateFlashcardCommand = new RelayCommand(AddFlashcard);
             DeleteFlashcardCommand = new RelayCommand(DeleteFlashcard);
             EditFlashcardColorCommand = new RelayCommand(ChooseColor, () => CurrentFlashcard is not null);
