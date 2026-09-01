@@ -5,6 +5,7 @@
     <BitmapImage x:Key="CreateFlashcardSetIcon" UriSource="/Resources/Icons/multiple.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="OpenFlashcardSetIcon" UriSource="/Resources/Icons/books.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="DeleteFlashcardSetIcon" UriSource="/Resources/Icons/trash-xmark.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="LeaveSetIcon" UriSource="/Resources/Icons/arrow-left-from-arc.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="RefreshIcon" UriSource="/Resources/Icons/refresh.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="StartLearningSessionIcon" UriSource="/Resources/Icons/cards.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="QuitLearningSessionIcon" UriSource="/Resources/Icons/logout.png" DecodePixelWidth="128" DecodePixelHeight="128"/>

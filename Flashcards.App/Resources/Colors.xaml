@@ -3,8 +3,7 @@
 
     <!-- form -->
     <SolidColorBrush x:Key="MainWindowBackgroundBrush" Color="#2C2622"/>
-    <SolidColorBrush x:Key="DialogBackgroundBrush" Color="#333333"/>
-    <SolidColorBrush x:Key="ControlsBackgroundBrush" Color="#696969"/>
+    <SolidColorBrush x:Key="SystemDialogBackgroundBrush" Color="#462F46"/>
 
     <!-- text -->
     <SolidColorBrush x:Key="TextOnDarkBrush" Color="White"/>
