@@ -25,6 +25,10 @@ Bestätigen Sie das Löschen.</system:String>
 
     <!-- Open existing flashcard set dialog -->
     <system:String x:Key="OpenSet_Caption">Ein vorhandenes Lernkarten-Set öffnen</system:String>
+    <system:String x:Key="NoExistingSets_Caption">Noch keine Sets</system:String>
+    <system:String x:Key="NoExistingSets_Message">Sie haben noch keine Kartensets erstellt. Erstellen Sie zuerst eines.</system:String>
+    <system:String x:Key="Topic_ColumnName">Thema</system:String>
+    <system:String x:Key="CardCount_ColumnName">Anzahl der Karten</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">Vorderseite</system:String>

@@ -25,7 +25,11 @@ Potvrďte smazání.</system:String>
 
     <!-- Open existing flashcard set dialog -->
     <system:String x:Key="OpenSet_Caption">Otevřít existujúcí sadu kartiček</system:String>
-
+    <system:String x:Key="NoExistingSets_Caption">Zatím žádné sady</system:String>
+    <system:String x:Key="NoExistingSets_Message">Ještě jste nevytvořili žádnou sadu kartiček. Nejprve nějakou vytvořte.</system:String>
+    <system:String x:Key="Topic_ColumnName">Téma</system:String>
+    <system:String x:Key="CardCount_ColumnName">Počet kartiček</system:String>
+    
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">přední strana</system:String>
     <system:String x:Key="Back">zadní strana</system:String>

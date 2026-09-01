@@ -25,6 +25,10 @@ Confirm deletion.</system:String>
 
     <!-- Open existing flashcard set dialog -->
     <system:String x:Key="OpenSet_Caption">Open existing flashcard set</system:String>
+    <system:String x:Key="NoExistingSets_Caption">No flashcard sets yet</system:String>
+    <system:String x:Key="NoExistingSets_Message">You haven't created any flashcard sets yet. Create one first.</system:String>
+    <system:String x:Key="Topic_ColumnName">Topic</system:String>
+    <system:String x:Key="CardCount_ColumnName">Card Count</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">front</system:String>

@@ -25,6 +25,10 @@ Potvrďte odstránenie.</system:String>
 
     <!-- Open existing flashcard set dialog -->
     <system:String x:Key="OpenSet_Caption">Otvoriť existujúcu sadu kartičiek</system:String>
+    <system:String x:Key="NoExistingSets_Caption">Zatiaľ žiadne sady</system:String>
+    <system:String x:Key="NoExistingSets_Message">Ešte ste nevytvorili žiadnu sadu kartičiek. Najprv nejakú vytvorte.</system:String>
+    <system:String x:Key="Topic_ColumnName">Téma</system:String>
+    <system:String x:Key="CardCount_ColumnName">Počet kartičiek</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">predná strana</system:String>
