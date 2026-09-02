@@ -121,7 +121,6 @@
                                 Style="{StaticResource IconButtonStyle}"
                                 Width="32" Height="32"
                                 Background="{StaticResource SetButtonsBrush}"
-                                IsEnabled="{Binding IsTopicNameValid}"
                                 Focusable="False"
                                 Command="{Binding ConfirmTopicNameCommand}">
                             <Button.Visibility>
@@ -184,7 +183,6 @@
                     <Button x:Name="SaveButton"
                             Style="{StaticResource IconButtonStyle}"
                             Background="{StaticResource SetButtonsBrush}"
-                            IsEnabled="{Binding IsDirty}"
                             Command="{Binding SaveCommand}">
                         <Image Source="{StaticResource SaveIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
