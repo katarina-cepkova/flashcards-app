@@ -390,6 +390,12 @@ namespace Flashcards.App.ViewModels
         public ICommand CreateSetCommand { get; }
 
         /// <summary>
+        /// Raised after a topic name is successfully created or renamed, so the view can move focus away from
+        /// TopicNameTextBox as feedback that the action happened.
+        /// </summary>
+        public event EventHandler? TopicNameConfirmed;
+
+        /// <summary>
         /// Persists changes to _topic's name: creates it (AddAsync) if this is a new draft from
         /// EnterCreatingSetAsync, or renames it (RenameAsync) if the user is editing an already-
         /// saved topic's name while a set is open. Trims whitespace before saving either way, since
@@ -417,6 +423,7 @@ namespace Flashcards.App.ViewModels
                 // Existing topic — renaming.
                 await _topicRepository.RenameAsync(topicId, _topic.Name);
             }
+            TopicNameConfirmed?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>Confirms the current topic name — creates a new topic or renames the open one, depending on context.</summary>

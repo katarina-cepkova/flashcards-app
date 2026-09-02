@@ -53,8 +53,10 @@ namespace Flashcards.App
             // switches to a different card or side — otherwise Undo could reach back into
             // content that's no longer showing.
             viewModel.PropertyChanged += OnViewModelPropertyChanged;
+            viewModel.TopicNameConfirmed += OnTopicRenamed;
 
             PreviewMouseDown += MainWindow_PreviewMouseDown;
+
         }
 
         /// <summary>
@@ -161,6 +163,12 @@ namespace Flashcards.App
 
             if (e.PropertyName == nameof(MainViewModel.DisplayedText))
                 MarkdownEditingService.ClearUndoHistory(EditTextBox);
+        }
+
+        /// <summary>Moves focus away from TopicNameTextBox after a successful rename, so the user sees the action took effect (the confirm button, tied to that focus, disappears).</summary>
+        private void OnTopicRenamed(object? sender, EventArgs e)
+        {
+            MainGrid.Focus();
         }
 
         /// <summary>Toggles "**" (bold) on the current selection/caret position.</summary>
