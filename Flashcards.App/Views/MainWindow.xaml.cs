@@ -171,6 +171,18 @@ namespace Flashcards.App
             MainGrid.Focus();
         }
 
+        private void TopicSelectionListView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is MainViewModel vm && vm.OpenSelectedSetCommand.CanExecute(null))
+                vm.OpenSelectedSetCommand.Execute(null);
+        }
+
+        private void TopicSelectionListView_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && DataContext is MainViewModel vm && vm.OpenSelectedSetCommand.CanExecute(null))
+                vm.OpenSelectedSetCommand.Execute(null);
+        }
+
         /// <summary>Toggles "**" (bold) on the current selection/caret position.</summary>
         private void BoldButton_OnClick(object sender, RoutedEventArgs e)
         {

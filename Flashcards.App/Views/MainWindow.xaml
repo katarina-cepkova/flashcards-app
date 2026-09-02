@@ -201,7 +201,11 @@
 
                         <Button x:Name="OpenSetButton"
                                 Style="{StaticResource IconButtonStyle}"
-                                Background="{StaticResource SetButtonsBrush}">
+                                Background="{StaticResource SetButtonsBrush}"
+                                IsEnabled="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter},
+                                            ConverterParameter='ClosedSet,OpenedSetView,OpenedSetEdit'}"
+                                Command="{Binding EnterSelectingSetCommand}">
                             <Image Source="{StaticResource OpenFlashcardSetIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
@@ -357,6 +361,39 @@
 
                     
                 </StackPanel>
+                <Border Grid.Row="2" Grid.Column="1"
+                        Margin="{StaticResource FlashcardMargin}"
+                        CornerRadius="12"
+                        Background="{StaticResource SystemDialogBackgroundBrush}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        MaxHeight="400"
+                        Visibility="{Binding CurrentState,
+                                     Converter={StaticResource StateToCollapsedConverter},
+                                     ConverterParameter='SelectingSet'}">
+                    <ListView x:Name="TopicSelectionListView"
+                              ItemsSource="{Binding TopicsForSelection}"
+                              SelectedItem="{Binding SelectedTopicToOpen}"
+                              FontSize="{StaticResource BodyFontSize}"
+                              KeyDown="TopicSelectionListView_OnKeyDown"
+                              MouseDoubleClick="TopicSelectionListView_OnMouseDoubleClick">
+                        <ListView.Resources>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="{DynamicResource Topic_ColumnName}"
+                                                DisplayMemberBinding="{Binding Topic.Name}"
+                                                Width="240"/>
+                                <GridViewColumn Header="{DynamicResource CardCount_ColumnName}"
+                                                DisplayMemberBinding="{Binding CardCount}"
+                                                Width="120"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Border>
 
                 <Grid x:Name="FlashcardEditor" Grid.Row="2" Grid.Column="1"
                       Margin="{StaticResource FlashcardMargin}"
