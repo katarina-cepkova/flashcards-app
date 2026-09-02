@@ -440,19 +440,27 @@ namespace Flashcards.App.ViewModels
 
             ReplaceFlashcardManager(Array.Empty<Flashcard>());
             CurrentState = AppState.ClosedSet;
+            IsDirty = false;
         }
 
 
         /// <summary>
-        /// In CreatingSet, discards the in-progress draft topic (nothing to delete from the DB yet)
-        /// and returns to ClosedSet. Otherwise, deletes the currently open (saved) topic and its
-        /// flashcards after confirming with the user, then returns to ClosedSet. Doesn't check IsDirty
-        /// first when deleting a saved topic — the whole set is going away regardless, so there's
-        /// nothing meaningful to save.
+        /// Deletes, discards, or cancels — depending on context. In OpenedSetView/OpenedSetEdit,
+        /// deletes the saved topic after confirmation. In CreatingSet, discards the in-progress draft
+        /// with no confirmation. In SelectingSet, cancels the current selection. All paths return to
+        /// ClosedSet.
         /// </summary>
-        private async Task DeleteSetAsync()
+        private async Task DeleteOrLeaveSetAsync()
         {
-            // Discarding a craft - nothing persisted yet, no confirmation needed
+            // Discarding topic selection
+            if (CurrentState == AppState.SelectingSet)
+            {
+                SelectedTopicToOpen = null;
+                CurrentState = AppState.ClosedSet;
+                return;
+            }
+
+            // Discarding a draft - nothing persisted yet, no confirmation needed
             if (CurrentState == AppState.CreatingSet)
             {
                 CloseTopic();
@@ -483,7 +491,7 @@ namespace Flashcards.App.ViewModels
         /// Deletes the currently open flashcard set (with confirmation), or discards the in-progress
         /// draft if still naming a new one. Enabled whenever a set is open or being created.
         /// </summary>
-        public ICommand DeleteSetCommand { get; }
+        public ICommand DeleteOrLeaveSetCommand { get; }
 
 
 
@@ -579,11 +587,12 @@ namespace Flashcards.App.ViewModels
             FlipCommand = new RelayCommand(() => IsFront = !IsFront, CanFlip);
 
             CreateFlashcardCommand = new RelayCommand(AddFlashcard);
-            DeleteFlashcardCommand = new RelayCommand(DeleteFlashcard);
+            DeleteFlashcardCommand = new RelayCommand(DeleteFlashcard, () => CurrentFlashcard is not null);
             EditFlashcardColorCommand = new RelayCommand(ChooseColor, () => CurrentFlashcard is not null);
 
             CreateSetCommand = new AsyncRelayCommand(EnterCreatingSetAsync);
-            DeleteSetCommand = new AsyncRelayCommand(DeleteSetAsync, () => _topic is not null);
+            
+            DeleteOrLeaveSetCommand = new AsyncRelayCommand(DeleteOrLeaveSetAsync);
             ConfirmTopicNameCommand = new AsyncRelayCommand(ConfirmTopicNameAsync, () => IsTopicNameValid);
             SaveCommand = new AsyncRelayCommand(SaveFlashcardsAsync, () => IsDirty);
         }

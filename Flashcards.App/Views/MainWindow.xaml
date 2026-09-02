@@ -213,10 +213,23 @@
                                 Background="{StaticResource SetButtonsBrush}"
                                 IsEnabled="{Binding CurrentState, 
                                             Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                            ConverterParameter='CreatingSet,OpenedSetView,OpenedSetEdit'}"
-                                Command="{Binding DeleteSetCommand}">
-                            <Image Source="{StaticResource DeleteFlashcardSetIcon}"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                                            ConverterParameter='CreatingSet,SelectingSet,OpenedSetView,OpenedSetEdit'}"
+                                Command="{Binding DeleteOrLeaveSetCommand}">
+                            <Image RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Source" Value="{StaticResource DeleteFlashcardSetIcon}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="CreatingSet">
+                                                <Setter Property="Source" Value="{StaticResource LeaveSetIcon}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="SelectingSet">
+                                                <Setter Property="Source" Value="{StaticResource LeaveSetIcon}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                         </Button>
 
                     </StackPanel>
