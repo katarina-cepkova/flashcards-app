@@ -292,10 +292,10 @@ namespace Flashcards.App.ViewModels
         #region Delete set
 
         /// <summary>
-        /// Deletes, discards, or cancels — depending on context. In OpenedSetView/OpenedSetEdit,
-        /// deletes the saved topic after confirmation. In CreatingSet, discards the in-progress draft
-        /// with no confirmation. In SelectingSet, cancels the current selection. All paths return to
-        /// ClosedSet.
+        /// Deletes, discards, leaves, or cancels — depending on context. In OpenedSetView/OpenedSetEdit, deletes the
+        /// saved topic after confirmation. In CreatingSet, discards the in-progress draft with no confirmation. In
+        /// SelectingSet, cancels the current selection. In LearningSession, prompts to save session progress (via
+        /// LeaveLearningSessionAsync) before leaving the set entirely. All paths return to ClosedSet.
         /// </summary>
         private async Task DeleteOrLeaveSetAsync()
         {
@@ -312,6 +312,16 @@ namespace Flashcards.App.ViewModels
             // Discarding a draft — nothing persisted yet, no confirmation needed.
             if (CurrentState == AppState.CreatingSet)
             {
+                CloseTopic();
+                return;
+            }
+
+            // Leaving a learning session — reuse LeaveLearningSessionAsync's own save/discard prompt
+            // for session progress, then finish the job by closing the set entirely (LeaveLearningSessionAsync
+            // on its own only returns to OpenedSetView, since that's what the toggle button needs).
+            if (CurrentState == AppState.LearningSession)
+            {
+                await LeaveLearningSessionAsync();
                 CloseTopic();
                 return;
             }
