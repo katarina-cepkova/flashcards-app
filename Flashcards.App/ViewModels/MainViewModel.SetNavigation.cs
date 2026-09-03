@@ -66,6 +66,9 @@ namespace Flashcards.App.ViewModels
             OnPropertyChanged(nameof(TopicNameValidationMessage));
             ReplaceFlashcardManager(cards ?? Array.Empty<Flashcard>());
 
+            _learningQueue = null;
+            _learningSessionInProgress = false;
+
             // IsDirty and CurrentState are deliberately NOT touched here — callers need different
             // values for each (e.g. CreatingSet keeps a non-null draft topic, SelectingSet needs a
             // different target state than ClosedSet), and IsDirty is usually already false by the
