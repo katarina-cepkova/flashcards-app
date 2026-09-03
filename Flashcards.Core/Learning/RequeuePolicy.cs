@@ -6,7 +6,7 @@
     /// correctness ratio for the session, adjusted up or down depending on whether the
     /// most recent answer was correct.
     /// </summary>
-    internal class RequeuePolicy : IRequeuePolicy
+    public class RequeuePolicy : IRequeuePolicy
     {
         private readonly uint _minCorrectAnswers;
         private readonly uint _maxCorrectAnswers;
