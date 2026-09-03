@@ -67,7 +67,7 @@ namespace Flashcards.App.ViewModels
         }
 
 
-        #region Restart
+        #region Restart session
         /// <summary>
         /// Discards the current learning queue's ordering and any unsaved in-session answer count changes, reloading
         /// the set's cards fresh from the database before building a new shuffled queue — a full reset, not just a
@@ -194,6 +194,81 @@ namespace Flashcards.App.ViewModels
 
         /// <summary>Toggles the learning session on/off, based on the ToggleButton's new checked state.</summary>
         public ICommand ToggleLearningSessionCommand { get; }
+
+        #endregion
+
+        #region Learning
+
+        /// <summary>
+        /// Flips the current card back to front and re-raises the bindings that depend on it, so the next card in the
+        /// queue starts unrevealed.
+        /// </summary>
+        private void ResetNextCard()
+        {
+            // flipping to front so user does not see answer first
+            IsFront = true;
+            OnPropertyChanged(nameof(CurrentFlashcard));
+            OnPropertyChanged(nameof(DisplayedText));
+        }
+
+        /// <summary>
+        /// Records a correct answer: increments the counter on the current card, advances the LearningQueue (which may
+        /// remove the card entirely if RequeuePolicy says it's learned, or requeue it further ahead), and resets to the
+        /// next card via ResetNextCard. Ends the session automatically if the queue is now finished.
+        /// </summary>
+        private async Task MarkCorrectAsync()
+        {
+            // nothing left to learn
+            if (CurrentFlashcard is null || _learningQueue is null) return;
+            _learningSessionInProgress = true;
+
+            // increment the correct answer count on the card -> future persisting
+            CurrentFlashcard.CorrectAnswersCount++;
+            IsDirty = true;
+
+            _learningQueue.MarkCorrect();
+            ResetNextCard();
+
+            // last card marked correct = queue is finished
+            if (_learningQueue.IsFinished)
+                await FinishLearningSessionAsync();
+        }
+
+        /// <summary>Marks the current card as answered correctly.</summary>
+        public ICommand MarkCorrectCommand { get; }
+
+        /// <summary>
+        /// Records an incorrect answer: increments the counter on the current card, requeues it (via LearningQueue) a
+        /// number of positions ahead based on RequeuePolicy, and resets to the next card via ResetNextCard.
+        /// </summary>
+        private void MarkIncorrect()
+        {
+            // nothing left to learn
+            if (CurrentFlashcard is null || _learningQueue is null) return;
+            _learningSessionInProgress = true;
+            // increment the incorrect answer count on the card -> future persisting
+            CurrentFlashcard.IncorrectAnswersCount++;
+            IsDirty = true;
+
+            _learningQueue.MarkIncorrect();
+            ResetNextCard();
+        }
+
+        /// <summary>Marks the current card as answered incorrectly.</summary>
+        public ICommand MarkIncorrectCommand { get; }
+
+        /// <summary>
+        /// Saves the session's answer counts and returns to OpenedSetView once the learning queue is
+        /// finished (every card met the requeue policy's removal criteria).
+        /// </summary>
+        private async Task FinishLearningSessionAsync()
+        {
+            await SaveFlashcardsAsync();
+            CurrentState = AppState.OpenedSetView;
+            OnPropertyChanged(nameof(CurrentFlashcard));
+            OnPropertyChanged(nameof(DisplayedText));
+        }
+
 
         #endregion
 

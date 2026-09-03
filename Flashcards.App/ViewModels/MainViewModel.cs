@@ -56,6 +56,8 @@ namespace Flashcards.App.ViewModels
             // learning session
             RestartLearningSessionCommand = new AsyncRelayCommand(RestartLearningSessionAsync, () => _learningQueue is not null);
             ToggleLearningSessionCommand = new AsyncRelayCommand(ToggleLearningSessionAsync, () => CurrentFlashcard is not null);
+            MarkCorrectCommand = new AsyncRelayCommand(MarkCorrectAsync, () => CurrentFlashcard is not null && _learningQueue is not null);
+            MarkIncorrectCommand = new RelayCommand(MarkIncorrect, () => CurrentFlashcard is not null && _learningQueue is not null);
         }
     }
 }
