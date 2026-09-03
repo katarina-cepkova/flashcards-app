@@ -269,6 +269,18 @@ namespace Flashcards.App.ViewModels
             OnPropertyChanged(nameof(DisplayedText));
         }
 
+        /// <summary>
+        /// True when there's a card to mark, an active learning queue, and CurrentState is
+        /// LearningSession — shared canExecute condition for MarkCorrectCommand/MarkIncorrectCommand,
+        /// so a stray Left/Right keypress (or stale command state) can't mark a card outside an active
+        /// session, even though _learningQueue itself can still exist while paused in edit mode.
+        /// </summary>
+        private bool CanExecuteMarkCommand()
+        {
+            return CurrentFlashcard is not null
+                && _learningQueue is not null
+                && _currentState == AppState.LearningSession;
+        }
 
         #endregion
 

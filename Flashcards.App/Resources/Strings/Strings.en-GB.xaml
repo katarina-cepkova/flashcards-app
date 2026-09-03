@@ -2,12 +2,6 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <!-- Generic dialog buttons, reused across multiple dialogs -->
-    <system:String x:Key="OKButtonText">OK</system:String>
-    <system:String x:Key="CancelButtonText">Cancel</system:String>
-    <system:String x:Key="YesButtonText">Yes</system:String>
-    <system:String x:Key="NoButtonText">No</system:String>
-
     <!-- Create new flashcard messages -->
     <system:String x:Key="CreateSet_InvalidSetTopic_Message">The topic name cannot be empty.</system:String>
     <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">The topic name '@' already exists.</system:String>
@@ -41,8 +35,5 @@ Do you want to save it before leaving?</system:String>
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">front</system:String>
     <system:String x:Key="Back">back</system:String>
-
-    <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
-    <system:String x:Key="SoundCheckBoxText">Sound</system:String>
 
 </ResourceDictionary>

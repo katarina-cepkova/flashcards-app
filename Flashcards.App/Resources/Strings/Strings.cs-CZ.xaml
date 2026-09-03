@@ -2,12 +2,6 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <!-- Generic dialog buttons, reused across multiple dialogs -->
-    <system:String x:Key="OKButtonText">OK</system:String>
-    <system:String x:Key="CancelButtonText">Zrušiť</system:String>
-    <system:String x:Key="YesButtonText">Ano</system:String>
-    <system:String x:Key="NoButtonText">Ne</system:String>
-
     <!-- Create new flashcard messages -->
     <system:String x:Key="CreateSet_InvalidSetTopic_Message">Název tématu nemůže být prázdný.</system:String>
     <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">Název tématu '@' již existuje.</system:String>
@@ -18,13 +12,13 @@
 Chcete je uložit před pokračováním?</system:String>
 
     <!-- Delete flashcard set confirmation dialog -->
-    <system:String x:Key="DeleteSet_Caption">Odstranit súčasnou sadu kartiček</system:String>
-    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Opravdu jste si jistý, že chcete smazat sadu kartiček '@'?
-Tato akce ji odstraní trvale.
+    <system:String x:Key="DeleteSet_Caption">Odstranit současnou sadu kartiček</system:String>
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Opravdu si přejete smazat sadu kartiček '@'?
+Tato akce ji trvale odstraní.
 Potvrďte smazání.</system:String>
 
     <!-- Open existing flashcard set dialog -->
-    <system:String x:Key="OpenSet_Caption">Otevřít existujúcí sadu kartiček</system:String>
+    <system:String x:Key="OpenSet_Caption">Otevřít existující sadu kartiček</system:String>
     <system:String x:Key="NoExistingSets_Caption">Zatím žádné sady</system:String>
     <system:String x:Key="NoExistingSets_Message">Ještě jste nevytvořili žádnou sadu kartiček. Nejprve nějakou vytvořte.</system:String>
     <system:String x:Key="Topic_ColumnName">Téma</system:String>
@@ -41,8 +35,5 @@ Chcete jej uložit před odchodem?</system:String>
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">přední strana</system:String>
     <system:String x:Key="Back">zadní strana</system:String>
-
-    <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
-    <system:String x:Key="SoundCheckBoxText">Zvuk</system:String>
 
 </ResourceDictionary>

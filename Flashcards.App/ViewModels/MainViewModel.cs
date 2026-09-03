@@ -1,5 +1,6 @@
 ﻿using Flashcards.App.Commands;
 using Flashcards.App.Services;
+using Flashcards.App.Models;
 using Flashcards.Core.Entities;
 using Flashcards.Core.Repositories;
 
@@ -39,8 +40,8 @@ namespace Flashcards.App.ViewModels
             };
 
             // commands
-            NextCommand = new RelayCommand(() => _flashcardManager.MoveToNext(), () => _flashcardManager.CanMoveToNext());
-            PreviousCommand = new RelayCommand(() => _flashcardManager.MoveToPrevious(), () => _flashcardManager.CanMoveToPrevious());
+            NextCommand = new RelayCommand(() => _flashcardManager.MoveToNext(), _flashcardManager.CanMoveToNext);
+            PreviousCommand = new RelayCommand(() => _flashcardManager.MoveToPrevious(), _flashcardManager.CanMoveToPrevious);
             FlipCommand = new RelayCommand(() => IsFront = !IsFront, CanFlip);
             // editing
             CreateFlashcardCommand = new RelayCommand(AddFlashcard);
@@ -56,8 +57,8 @@ namespace Flashcards.App.ViewModels
             // learning session
             RestartLearningSessionCommand = new AsyncRelayCommand(RestartLearningSessionAsync, () => _learningQueue is not null);
             ToggleLearningSessionCommand = new AsyncRelayCommand(ToggleLearningSessionAsync, () => CurrentFlashcard is not null);
-            MarkCorrectCommand = new AsyncRelayCommand(MarkCorrectAsync, () => CurrentFlashcard is not null && _learningQueue is not null);
-            MarkIncorrectCommand = new RelayCommand(MarkIncorrect, () => CurrentFlashcard is not null && _learningQueue is not null);
+            MarkCorrectCommand = new AsyncRelayCommand(MarkCorrectAsync, CanExecuteMarkCommand);
+            MarkIncorrectCommand = new RelayCommand(MarkIncorrect, CanExecuteMarkCommand);
         }
     }
 }

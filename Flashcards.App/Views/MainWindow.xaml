@@ -16,6 +16,8 @@
         <KeyBinding Command="ApplicationCommands.Redo" Key="Y" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding PreviousCommand}" Key="Up"/>
         <KeyBinding Command="{Binding NextCommand}" Key="Down"/>
+        <KeyBinding Command="{Binding MarkCorrectCommand}" Key="Right"/>
+        <KeyBinding Command="{Binding MarkIncorrectCommand}" Key="Left"/>
     </Window.InputBindings>
     
     <Grid x:Name="MainGrid" 
