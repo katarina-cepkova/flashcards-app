@@ -30,6 +30,14 @@ Bestätigen Sie das Löschen.</system:String>
     <system:String x:Key="Topic_ColumnName">Thema</system:String>
     <system:String x:Key="CardCount_ColumnName">Anzahl der Karten</system:String>
 
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Lernsitzung fortsetzen?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">Sie haben eine unvollständige Lernsitzung für dieses Set.
+Möchten Sie sie fortsetzen oder eine neue starten?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Lernsitzung verlassen?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">Sie haben nicht gespeicherten Fortschritt aus dieser Sitzung.
+Möchten Sie ihn vor dem Verlassen speichern?</system:String>
+
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">Vorderseite</system:String>
     <system:String x:Key="Back">Rückseite</system:String>

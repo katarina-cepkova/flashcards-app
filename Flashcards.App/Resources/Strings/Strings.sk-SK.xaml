@@ -30,6 +30,14 @@ Potvrďte odstránenie.</system:String>
     <system:String x:Key="Topic_ColumnName">Téma</system:String>
     <system:String x:Key="CardCount_ColumnName">Počet kartičiek</system:String>
 
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Pokračovať v učení?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">Máte nedokončenú reláciu učenia pre túto sadu.
+Chcete v nej pokračovať, alebo začať novú?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Opustiť učenie?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">Máte neuložený postup z tejto relácie.
+Chcete ho uložiť pred odchodom?</system:String>
+
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">predná strana</system:String>
     <system:String x:Key="Back">zadná strana</system:String>

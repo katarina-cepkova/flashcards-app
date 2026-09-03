@@ -30,6 +30,14 @@ Confirm deletion.</system:String>
     <system:String x:Key="Topic_ColumnName">Topic</system:String>
     <system:String x:Key="CardCount_ColumnName">Card Count</system:String>
 
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Resume learning session?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">You have an unfinished learning session for this set.
+Do you want to resume it, or start a new one?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Leave learning session?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">You have unsaved progress from this session.
+Do you want to save it before leaving?</system:String>
+
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">front</system:String>
     <system:String x:Key="Back">back</system:String>
