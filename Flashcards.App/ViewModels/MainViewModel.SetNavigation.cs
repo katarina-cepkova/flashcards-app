@@ -112,8 +112,14 @@ namespace Flashcards.App.ViewModels
         /// </summary>
         private async Task SaveFlashcardsAsync()
         {
+            int logicalIndex = _flashcardManager.LogicalIndex;
             IReadOnlyList<Flashcard> savedCards = await _flashcardRepository.SaveChangesAsync(_flashcardManager.Cards);
             ReplaceFlashcardManager(savedCards);
+
+            // Restore the user's position — ReplaceFlashcardManager always resets to the first card,
+            // which would otherwise jump the view away from whatever card they were looking at.
+            if (logicalIndex >= 0 && logicalIndex < _flashcardManager.ActiveFlashcardCount)
+                _flashcardManager.SelectIndex(logicalIndex);
             IsDirty = false;
         }
 
