@@ -215,7 +215,7 @@
                                 Background="{StaticResource SetButtonsBrush}"
                                 IsEnabled="{Binding CurrentState, 
                                             Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                            ConverterParameter='CreatingSet,SelectingSet,OpenedSetView,OpenedSetEdit'}"
+                                            ConverterParameter='CreatingSet,SelectingSet,OpenedSetView,OpenedSetEdit,LearningSession'}"
                                 Command="{Binding DeleteOrLeaveSetCommand}">
                             <Image RenderOptions.BitmapScalingMode="HighQuality">
                                 <Image.Style>
@@ -228,7 +228,10 @@
                                             <DataTrigger Binding="{Binding CurrentState}" Value="SelectingSet">
                                                 <Setter Property="Source" Value="{StaticResource LeaveSetIcon}"/>
                                             </DataTrigger>
-                                        </Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="LearningSession">
+                                                <Setter Property="Source" Value="{StaticResource LeaveSetIcon}"/>
+                                            </DataTrigger>
+                                    </Style.Triggers>
                                     </Style>
                                 </Image.Style>
                             </Image>
@@ -239,26 +242,32 @@
                     <StackPanel x:Name="LearningSessionPanel"
                                 Grid.Row="2"
                                 Orientation="Vertical">
-                        <Button x:Name="StartLearningSessionButton"
+                        <Button x:Name="RestartLearningSessionButton"
                                 Style="{StaticResource IconButtonStyle}"
-                                Background="{StaticResource LogicButtonsBrush}">
+                                Background="{StaticResource LogicButtonsBrush}"
+                                IsEnabled="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter},
+                                            ConverterParameter=LearningSession}"
+                                Command="{Binding RestartLearningSessionCommand}">
                             <Image Source="{StaticResource RefreshIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
-                        
-                        <Button x:Name="RefreshLearningSessionButton"
-                                Style="{StaticResource IconButtonStyle}"        
-                                Background="{StaticResource LogicButtonsBrush}">
+
+                        <ToggleButton x:Name="StartLearningSessionToggleButton"
+                                Style="{StaticResource IconToggleButtonStyle}"        
+                                Background="{StaticResource LogicButtonsBrush}"
+                                IsEnabled="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter},
+                                            ConverterParameter='OpenedSetView,LearningSession'}"
+                                IsChecked="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter},
+                                            ConverterParameter='LearningSession',
+                                            Mode=OneWay}"
+                                Command="{Binding ToggleLearningSessionCommand}">
                             <Image Source="{StaticResource StartLearningSessionIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
-                        </Button>
+                        </ToggleButton>
                         
-                        <Button x:Name="QuitLearningSessionButton"
-                                Style="{StaticResource IconButtonStyle}"        
-                                Background="{StaticResource LogicButtonsBrush}">
-                            <Image Source="{StaticResource QuitLearningSessionIcon}"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
-                        </Button>
                     </StackPanel>
 
                 </Grid>
@@ -503,7 +512,8 @@
 
                     <Button x:Name="IncorrectButton" Grid.Column="2"
                             Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource IncorrectAnswerBrush}">
+                            Background="{StaticResource IncorrectAnswerBrush}"
+                            Command="{Binding MarkIncorrectCommand}">
                         <Button.Visibility>
                             <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
                                            ConverterParameter="LearningSession">
@@ -518,7 +528,8 @@
 
                     <Button x:Name="CorrectButton" Grid.Column="4"
                             Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource CorrectAnswerBrush}">
+                            Background="{StaticResource CorrectAnswerBrush}"
+                            Command="{Binding MarkCorrectCommand}">
                         <Button.Visibility>
                             <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
                                           ConverterParameter="LearningSession">
@@ -549,9 +560,16 @@
                        LargeChange="1"
                        ViewportSize="1"
                        Value="{Binding CurrentCardIndex, Mode=TwoWay}"
-                       Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
+                       
                        Scroll="CardNavigationScrollBar_OnScroll"
                        Margin="{StaticResource ScrollBarMargin}">
+                    <ScrollBar.Visibility>
+                        <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                      ConverterParameter="OpenedSetView,OpenedSetEdit">
+                            <Binding Path="CurrentFlashcard"/>
+                            <Binding Path="CurrentState"/>
+                        </MultiBinding>
+                    </ScrollBar.Visibility>
                 </ScrollBar>
 
             <StackPanel Grid.Row="1" Grid.RowSpan="2" Grid.Column="3"
