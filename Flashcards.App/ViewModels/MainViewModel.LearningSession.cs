@@ -1,5 +1,8 @@
-﻿using Flashcards.Core.Entities;
+﻿using Flashcards.App.Models;
+using Flashcards.Core.Entities;
 using Flashcards.Core.Learning;
+using System.Windows;
+using System.Windows.Input;
 
 namespace Flashcards.App.ViewModels
 {
@@ -62,6 +65,137 @@ namespace Flashcards.App.ViewModels
                 (list[i], list[j]) = (list[j], list[i]);
             }
         }
+
+
+        #region Restart
+        /// <summary>
+        /// Discards the current learning queue's ordering and any unsaved in-session answer count changes, reloading
+        /// the set's cards fresh from the database before building a new shuffled queue — a full reset, not just a
+        /// reshuffle.
+        /// </summary>
+        private async Task RestartLearningSessionAsync()
+        {
+            if (_learningQueue is null)
+                throw new InvalidOperationException("Cannot restart learning session that has not started yet.");
+
+            if (_topic?.Id is not long topicId)
+                throw new InvalidOperationException("Cannot restart: no saved topic is open.");
+
+            ReplaceFlashcardManager(await _flashcardRepository.GetByTopicIdAsync(topicId));
+            IsDirty = false;
+
+            StartNewLearningQueue();
+            OnPropertyChanged(nameof(CurrentFlashcard));
+            OnPropertyChanged(nameof(DisplayedText));
+        }
+
+        /// <summary>
+        /// Restarts the learning session from scratch: reloads the set's cards from the database (discarding unsaved
+        /// answer-count changes from this session) and builds a freshly shuffled queue.
+        /// </summary>
+        public ICommand RestartLearningSessionCommand { get; }
+
+        #endregion
+
+        #region Toggle session
+        /// <summary>
+        /// Starts (or resumes) a learning session over the currently open set's active flashcards. Any pending
+        /// edit-mode changes are saved automatically first (no prompt). If a session is already in progress and
+        /// unfinished, asks whether to resume it or start a fresh one; an untouched queue is resumed silently, with
+        /// no prompt. Requires at least one active card — the button should already be disabled otherwise, but this
+        /// guards defensively.
+        /// </summary>
+        private async Task EnterLearningSessionAsync()
+        {
+            if (_flashcardManager.ActiveFlashcardCount == 0)
+                throw new InvalidOperationException("Cannot start a learning session: no flashcards in this set.");
+
+            // Any pending edits are saved automatically here (no prompt) — entering a learning session
+            // is a natural save point, and this keeps LeaveLearningSessionAsync's later prompt honestly
+            // about session progress only, not unrelated edit-mode changes.
+            if (IsDirty)
+                await SaveFlashcardsAsync();
+
+            // resuming
+            if (_learningQueue is not null && !_learningQueue.IsFinished)
+            {
+                if (_learningSessionInProgress)
+                {
+                    MessageBoxResult result = MessageBox.Show(
+                    (string)_resources["ResumeLearningSession_Message"],
+                    (string)_resources["ResumeLearningSession_Caption"],
+                    MessageBoxButton.YesNo);
+
+                    if (result == MessageBoxResult.No)
+                        await RestartLearningSessionAsync(); // discard progress + reload from DB, not just reshuffle
+                }
+                else
+                {
+                    // queue exists, nothing marked yet — just resume silently, no need to ask
+                }
+            }
+            else
+                StartNewLearningQueue(); // no existing queue at all — nothing to discard, just build fresh
+
+            CurrentState = AppState.LearningSession;
+            OnPropertyChanged(nameof(CurrentFlashcard));
+            OnPropertyChanged(nameof(DisplayedText));
+        }
+
+        /// <summary>
+        /// Leaves the learning session, prompting to save if there are unsaved changes (e.g. answer
+        /// counts updated by MarkCorrect/MarkIncorrect this session). Choosing not to save reloads the
+        /// set's cards from the database, discarding any in-memory changes since the last save.
+        /// _learningQueue itself is left untouched either way, so a later EnterLearningSessionAsync can
+        /// still offer to resume it.
+        /// </summary>
+        private async Task LeaveLearningSessionAsync()
+        {
+            if (IsDirty)
+            {
+                MessageBoxResult result = MessageBox.Show(
+                    (string)_resources["LeaveLearningSession_Message"],
+                    (string)_resources["LeaveLearningSession_Caption"],
+                    MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes)
+                    await SaveFlashcardsAsync();
+                else
+                {
+                    if (_topic?.Id is not long topicId)
+                        throw new InvalidOperationException("Cannot reload cards: no saved topic is open.");
+
+                    // _learningQueue was built from references to the same Flashcard instances
+                    // _flashcardManager holds, so MarkCorrect/MarkIncorrect's CorrectAnswersCount++/
+                    // IncorrectAnswersCount++ mutated those objects in place. A no-op here would leave the
+                    // increments sitting in memory — reloading from the DB replaces those objects
+                    ReplaceFlashcardManager(await _flashcardRepository.GetByTopicIdAsync(topicId));
+                    IsDirty = false;  // reload discarded the in-memory changes IsDirty was tracking
+                }
+            }
+
+            CurrentState = AppState.OpenedSetView;
+            OnPropertyChanged(nameof(CurrentFlashcard));
+            OnPropertyChanged(nameof(DisplayedText));
+        }
+
+        /// <summary>
+        /// Handles the LearningSessionToggle's Click: enters/resumes the session if not currently in one, or leaves it
+        /// (with a save prompt if needed) if currently in one. Reads CurrentState directly rather than a
+        /// CommandParameter from the ToggleButton.
+        /// </summary>
+        private async Task ToggleLearningSessionAsync()
+        {
+            if (CurrentState == AppState.LearningSession)
+                await LeaveLearningSessionAsync();
+            else
+                await EnterLearningSessionAsync();
+        }
+
+        /// <summary>Toggles the learning session on/off, based on the ToggleButton's new checked state.</summary>
+        public ICommand ToggleLearningSessionCommand { get; }
+
+        #endregion
 
     }
 }

@@ -53,6 +53,9 @@ namespace Flashcards.App.ViewModels
             DeleteOrLeaveSetCommand = new AsyncRelayCommand(DeleteOrLeaveSetAsync);
             ConfirmTopicNameCommand = new AsyncRelayCommand(ConfirmTopicNameAsync, () => IsTopicNameValid);
             SaveCommand = new AsyncRelayCommand(SaveFlashcardsAsync, () => IsDirty);
+            // learning session
+            RestartLearningSessionCommand = new AsyncRelayCommand(RestartLearningSessionAsync, () => _learningQueue is not null);
+            ToggleLearningSessionCommand = new AsyncRelayCommand(ToggleLearningSessionAsync, () => CurrentFlashcard is not null);
         }
     }
 }
