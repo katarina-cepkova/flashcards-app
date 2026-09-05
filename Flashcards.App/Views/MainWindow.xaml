@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Flashcards.App"
         xmlns:converters="clr-namespace:Flashcards.App.Converters"
         mc:Ignorable="d"
-        Title="Flashcards App" Height="650" Width="1000"
+        Title="Flashcards App" Height="700" Width="900"
+                               MinHeight="580" MinWidth="650"
         Icon="{StaticResource FlashcardsAppIcon}"
         ThemeMode="Dark"
         Loaded="MainWindow_OnLoaded">
@@ -14,6 +15,7 @@
         <KeyBinding Command="{Binding FlipCommand}" Key="Space"/>
         <KeyBinding Command="ApplicationCommands.Undo" Key="Z" Modifiers="Ctrl"/>
         <KeyBinding Command="ApplicationCommands.Redo" Key="Y" Modifiers="Ctrl"/>
+        <KeyBinding Command="{Binding SaveCommand}" Key="S" Modifiers="Ctrl"/>
         <KeyBinding Command="{Binding PreviousCommand}" Key="Up"/>
         <KeyBinding Command="{Binding NextCommand}" Key="Down"/>
         <KeyBinding Command="{Binding MarkCorrectCommand}" Key="Right"/>
@@ -518,7 +520,7 @@
                             Command="{Binding MarkIncorrectCommand}">
                         <Button.Visibility>
                             <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
-                                           ConverterParameter="LearningSession">
+                                          ConverterParameter="LearningSession">
                                 <Binding Path="CurrentFlashcard"/>
                                 <Binding Path="CurrentState"/>
                             </MultiBinding>
