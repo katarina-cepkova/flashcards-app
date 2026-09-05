@@ -40,8 +40,16 @@ namespace Flashcards.App.ViewModels
             };
 
             // commands
-            NextCommand = new RelayCommand(() => _flashcardManager.MoveToNext(), _flashcardManager.CanMoveToNext);
-            PreviousCommand = new RelayCommand(() => _flashcardManager.MoveToPrevious(), _flashcardManager.CanMoveToPrevious);
+            // Lambda here (not a bare method-group reference like _flashcardManager.CanMoveToNext) is
+            // required, not stylistic: ReplaceFlashcardManager reassigns _flashcardManager to a new
+            // instance whenever a set opens/saves/closes. A method-group delegate captures the specific
+            // instance it was bound to at construction time, so it would keep calling CanMoveToNext() on
+            // the original (empty) FlashcardManager forever — the lambda re-reads the _flashcardManager
+            // field on every call, so it always targets whichever instance is current.
+            NextCommand = new RelayCommand(() => _flashcardManager.MoveToNext(), 
+                () => _flashcardManager.CanMoveToNext() && _currentState != AppState.LearningSession);
+            PreviousCommand = new RelayCommand(() => _flashcardManager.MoveToPrevious(), 
+                () => _flashcardManager.CanMoveToPrevious() && _currentState != AppState.LearningSession);
             FlipCommand = new RelayCommand(() => IsFront = !IsFront, CanFlip);
             // editing
             CreateFlashcardCommand = new RelayCommand(AddFlashcard);
