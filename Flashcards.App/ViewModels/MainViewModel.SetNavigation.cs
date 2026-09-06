@@ -12,6 +12,8 @@ namespace Flashcards.App.ViewModels
 {
     partial class MainViewModel
     {
+        /// <summary>Displays the current card's 1-based position among active cards, e.g. "3/15".</summary>
+        public string CardPositionText => $"{CurrentCardIndex + 1}/{MaxCardIndex + 1}";
         /// <summary>
         /// Forwards FlashcardManager's own PropertyChanged notifications so bindings on this view model (e.g. Cards,
         /// CurrentFlashcard) stay in sync. CurrentFlashcard changes also need to re-raise DisplayedText, LogicalIndex
@@ -25,10 +27,16 @@ namespace Flashcards.App.ViewModels
                 OnPropertyChanged(nameof(DisplayedText));
 
             if (e.PropertyName == nameof(FlashcardManager.LogicalIndex))
+            {
                 OnPropertyChanged(nameof(CurrentCardIndex));
+                OnPropertyChanged(nameof(CardPositionText));
+            }
 
             if (e.PropertyName == nameof(FlashcardManager.ActiveFlashcardCount))
+            {
                 OnPropertyChanged(nameof(MaxCardIndex));
+                OnPropertyChanged(nameof(CardPositionText));
+            }
         }
 
         /// <summary>
@@ -51,6 +59,7 @@ namespace Flashcards.App.ViewModels
             OnPropertyChanged(nameof(DisplayedText));
             OnPropertyChanged(nameof(CurrentCardIndex));
             OnPropertyChanged(nameof(MaxCardIndex));
+            OnPropertyChanged(nameof(CardPositionText));
         }
 
         /// <summary>

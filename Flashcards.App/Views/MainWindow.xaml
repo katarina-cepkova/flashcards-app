@@ -641,7 +641,20 @@
 
                 </StackPanel>
 
-                </Grid>
+                <TextBlock x:Name="CardPositionBlock" Grid.Row="3" Grid.Column="3"
+                           Text="{Binding CardPositionText}"
+                           Foreground="{StaticResource TextOnDarkBrush}"
+                           FontFamily="{StaticResource PrimaryFontFamily}"
+                           FontSize="{StaticResource BodyFontSize}"
+                           Margin="1">
+                <TextBlock.Visibility>
+                    <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                  ConverterParameter="OpenedSetView,OpenedSetEdit">
+                        <Binding Path="CurrentFlashcard"/>
+                        <Binding Path="CurrentState"/>
+                    </MultiBinding>
+                </TextBlock.Visibility>
+            </TextBlock>                                             
 
             </Grid>
 

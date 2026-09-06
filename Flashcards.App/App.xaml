@@ -27,7 +27,7 @@
                 <ResourceDictionary Source="Resources/Styles/FormattingInnerPanelStyle.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/SideTextBoxStyle.xaml"/>
                 <ResourceDictionary Source="Resources/Styles/FlashcardTextBoxStyle.xaml"/>
-                
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
         
