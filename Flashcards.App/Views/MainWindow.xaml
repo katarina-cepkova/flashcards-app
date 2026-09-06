@@ -647,16 +647,27 @@
                            FontFamily="{StaticResource PrimaryFontFamily}"
                            FontSize="{StaticResource BodyFontSize}"
                            Margin="1">
-                <TextBlock.Visibility>
-                    <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
-                                  ConverterParameter="OpenedSetView,OpenedSetEdit">
-                        <Binding Path="CurrentFlashcard"/>
-                        <Binding Path="CurrentState"/>
-                    </MultiBinding>
-                </TextBlock.Visibility>
-            </TextBlock>                                             
+                    <TextBlock.Visibility>
+                        <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                      ConverterParameter="OpenedSetView,OpenedSetEdit">
+                            <Binding Path="CurrentFlashcard"/>
+                            <Binding Path="CurrentState"/>
+                        </MultiBinding>
+                    </TextBlock.Visibility>
+                </TextBlock>
 
-            </Grid>
+                <ProgressBar Grid.Row="4" Grid.Column="1"
+                             Minimum="0"
+                             Maximum="{Binding TotalLearningCardCount}"
+                             Value="{Binding LearnedCardCount, Mode=OneWay}"
+                             Height="15"
+                             Margin="10"
+                             Foreground="{StaticResource CorrectAnswerBrush}"
+                             Visibility="{Binding CurrentState,
+                                          Converter={StaticResource StateToCollapsedConverter},
+                                          ConverterParameter='LearningSession'}"/>
+
+        </Grid>
 
     </Grid>
 </Window>

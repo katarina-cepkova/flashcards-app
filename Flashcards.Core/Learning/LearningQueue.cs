@@ -9,10 +9,20 @@ namespace Flashcards.Core.Learning
     /// </summary>
     public class LearningQueue
     {
+        /// <summary>Decides when a card leaves the queue and how far ahead it's requeued after an answer.</summary>
         private readonly IRequeuePolicy _policy;
+
+        /// <summary>The cards still in the queue, in their current (possibly reordered) sequence.</summary>
         private readonly LinkedList<LearningSessionCard> _cards = new LinkedList<LearningSessionCard>();
+
+        /// <summary>The node holding the card currently being reviewed, or null once the queue is finished.</summary>
         private LinkedListNode<LearningSessionCard>? _current;
 
+        /// <summary>Number of cards removed from the queue so far (RequeuePolicy decided they're learned).</summary>
+        public int LearnedCount { get; private set; }
+
+        /// <summary>Total number of cards this queue started with, before any were removed.</summary>
+        public int TotalCount { get; private set; }
 
         /// <summary>
         /// Creates a learning session queue over the given flashcards, in the order provided.
@@ -33,6 +43,8 @@ namespace Flashcards.Core.Learning
                 _cards.AddLast(card);
             }
             _current = _cards.First;
+            TotalCount = _cards.Count;
+            LearnedCount = 0;
         }
 
 
@@ -96,6 +108,7 @@ namespace Flashcards.Core.Learning
             else
                 Advance();
             _cards.Remove(originalCurrent);
+            LearnedCount++;
         
         }
 

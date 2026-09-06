@@ -23,6 +23,11 @@ namespace Flashcards.App.ViewModels
         /// <summary>Shared source of randomness for Shuffle, so each call doesn't construct a new Random.</summary>
         private static readonly Random _random = new();
 
+        /// <summary>Number of cards fully learned (removed from the queue) so far this session — used for a progress bar. 0 if no session has started yet.</summary>
+        public int LearnedCardCount => _learningQueue?.LearnedCount ?? 0;
+
+        /// <summary>Total cards this learning session started with — used as a progress bar's Maximum. 0 if no session has started yet.</summary>
+        public int TotalLearningCardCount => _learningQueue?.TotalCount ?? 0;
 
         /// <summary>
         /// Builds a fresh LearningQueue from the currently open set's active flashcards, in
@@ -48,6 +53,8 @@ namespace Flashcards.App.ViewModels
             Shuffle(activeCards);
             _learningSessionInProgress = false;  // fresh queue, nothing marked yet
             _learningQueue = new LearningQueue(activeCards, policy);
+            OnPropertyChanged(nameof(LearnedCardCount));
+            OnPropertyChanged(nameof(TotalLearningCardCount));
         }
 
         /// <summary>
@@ -227,6 +234,7 @@ namespace Flashcards.App.ViewModels
             IsDirty = true;
 
             _learningQueue.MarkCorrect();
+            OnPropertyChanged(nameof(LearnedCardCount));
             ResetNextCard();
 
             // last card marked correct = queue is finished
@@ -264,6 +272,12 @@ namespace Flashcards.App.ViewModels
         private async Task FinishLearningSessionAsync()
         {
             await SaveFlashcardsAsync();
+
+            // Brief pause so the user actually sees the progress bar reach 100% before the view
+            // switches away — without this, completing the last card and leaving LearningSession
+            // happen in the same instant, and the filled bar is never visible.
+            await Task.Delay(800);
+
             CurrentState = AppState.OpenedSetView;
             OnPropertyChanged(nameof(CurrentFlashcard));
             OnPropertyChanged(nameof(DisplayedText));
