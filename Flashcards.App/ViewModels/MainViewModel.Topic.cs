@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace Flashcards.App.ViewModels
 {
-    partial class MainViewModel
+    internal partial class MainViewModel
     {
         #region Topic
 

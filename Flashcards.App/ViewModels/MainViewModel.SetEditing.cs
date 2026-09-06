@@ -8,7 +8,7 @@ using System.Windows.Controls.Primitives;
 
 namespace Flashcards.App.ViewModels
 {
-    partial class MainViewModel
+    internal partial class MainViewModel
     {
         #region Flashcards and navigation
 

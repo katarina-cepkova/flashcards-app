@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 
 namespace Flashcards.App.Converters
@@ -9,7 +8,7 @@ namespace Flashcards.App.Converters
     /// and whether a specific RadioButton (identified by its ConverterParameter)
     /// should appear checked.
     /// </summary>
-    public class LanguageToIsCheckedConverter : IValueConverter
+    internal class LanguageToIsCheckedConverter : IValueConverter
     {
         // value = SelectedLanguage ("en-GB"), parameter = ConverterParameter from XAML
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)

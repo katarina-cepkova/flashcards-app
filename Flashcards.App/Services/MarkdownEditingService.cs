@@ -9,7 +9,7 @@ namespace Flashcards.App.Services
     /// EmphasisInline.Span is unreliable in this Markdig version (confirmed via direct testing: it always returns
     /// 0,0), so parsing the document can't tell us where markers actually sit in the source text.
     /// </summary>
-    public static class MarkdownEditingService
+    internal static class MarkdownEditingService
     {
         /// <summary>
         /// Reports whether the caret/selection currently sits inside a marker pair matching

@@ -10,7 +10,7 @@ namespace Flashcards.App.Converters
     /// directly to Background. One-way only — color changes go through ColorPickerDialog, not
     /// through the user editing a Brush in the UI.
     /// </summary>
-    public class ArgbToBrushConverter : IValueConverter
+    internal class ArgbToBrushConverter : IValueConverter
     {
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {

@@ -7,7 +7,7 @@ namespace Flashcards.App.ViewModels
     /// <see cref="ObservableObject"/>, but exists as an explicit extension
     /// point for view-model-specific behavior.
     /// </summary>
-    public abstract class ViewModelBase : ObservableObject
+    internal abstract class ViewModelBase : ObservableObject
     {
     }
 }

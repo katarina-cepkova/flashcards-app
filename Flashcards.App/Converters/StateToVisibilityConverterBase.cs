@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Flashcards.App.Models;
@@ -12,7 +10,7 @@ namespace Flashcards.App.Converters
     /// is one of the states listed (comma-separated) in the converter parameter.
     /// Derived classes decide what "not shown" means (Collapsed vs Hidden).
     /// </summary>
-    public abstract class StateToVisibilityConverterBase : IValueConverter
+    internal abstract class StateToVisibilityConverterBase : IValueConverter
     {
         protected abstract Visibility HiddenVisibility { get; }
 

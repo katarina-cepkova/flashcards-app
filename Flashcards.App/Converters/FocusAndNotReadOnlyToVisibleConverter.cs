@@ -10,7 +10,7 @@ namespace Flashcards.App.Converters
     /// edit that specific field, derived directly from IsReadOnly rather than duplicating
     /// the state logic that already computes it.
     /// </summary>
-    public class FocusAndNotReadOnlyToVisibleConverter : IMultiValueConverter
+    internal class FocusAndNotReadOnlyToVisibleConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {

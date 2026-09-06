@@ -1,11 +1,8 @@
 ﻿using Flashcards.App.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Flashcards.App.ViewModels
 {
-    partial class MainViewModel
+    internal partial class MainViewModel
     {
         #region Language
 

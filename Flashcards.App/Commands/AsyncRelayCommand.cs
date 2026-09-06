@@ -10,7 +10,7 @@ namespace Flashcards.App.Commands
     /// CanExecute as false until the running call completes.
     /// </summary>
     /// <typeparam name="T">The type of the parameter passed to the wrapped delegate.</typeparam>
-    public class AsyncRelayCommand<T> : ICommand
+    internal class AsyncRelayCommand<T> : ICommand
     {
         private readonly Func<T?, Task> _execute;  // reference to the async method that should be executed
         private readonly Func<T?, bool>? _canExecute;  // determines if executing should happen
@@ -83,7 +83,7 @@ namespace Flashcards.App.Commands
     /// Non-generic convenience wrapper over <see cref="AsyncRelayCommand{T}"/> for commands
     /// that don't need a parameter.
     /// </summary>
-    public class AsyncRelayCommand : AsyncRelayCommand<object>
+    internal class AsyncRelayCommand : AsyncRelayCommand<object>
     {
         public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
             : base(_ => execute(), canExecute is null ? null : _ => canExecute())

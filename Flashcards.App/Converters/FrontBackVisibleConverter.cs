@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Flashcards.Core.Entities;
@@ -10,7 +9,7 @@ namespace Flashcards.App.Converters
     /// Shows a front/back side label only when a flashcard is selected AND the
     /// requested side (via ConverterParameter, "Front" or "Back") is currently active.
     /// </summary>
-    public class FrontBackVisibleConverter : IMultiValueConverter
+    internal class FrontBackVisibleConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
         {

@@ -10,7 +10,7 @@ using System.Windows.Input;
 
 namespace Flashcards.App.ViewModels
 {
-    partial class MainViewModel
+    internal partial class MainViewModel
     {
         /// <summary>Displays the current card's 1-based position among active cards, e.g. "3/15".</summary>
         public string CardPositionText => $"{CurrentCardIndex + 1}/{MaxCardIndex + 1}";

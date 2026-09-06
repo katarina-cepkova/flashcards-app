@@ -11,7 +11,7 @@ namespace Flashcards.App.Converters
     /// Shows an element only when a flashcard is selected AND the current AppState
     /// is one of the states listed (comma-separated) in the converter parameter.
     /// </summary>
-    public class FlashcardStateVisibleConverter : IMultiValueConverter
+    internal class FlashcardStateVisibleConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Flashcards.App.Models;
@@ -11,7 +10,7 @@ namespace Flashcards.App.Converters
     /// focused, currently editable, and the remaining character count has
     /// dropped to or below a threshold (given as ConverterParameter).
     /// </summary>
-    public class RemainingCharactersLabelVisibilityConverter : IMultiValueConverter
+    internal class RemainingCharactersLabelVisibilityConverter : IMultiValueConverter
     {
         // values[0] = IsFocused (bool), values[1] = CurrentState (AppState),
         // values[2] = RemainingCharactersCount (int), values[3] = threshold

@@ -12,7 +12,7 @@ namespace Flashcards.App.ViewModels
     /// <summary>
     /// View model for the main application window.
     /// </summary>
-    partial class MainViewModel : ViewModelBase
+    internal partial class MainViewModel : ViewModelBase
     {
         private readonly ResourceDictionary _resources = Application.Current.Resources;
         private readonly ILocalizationService _localizationService;

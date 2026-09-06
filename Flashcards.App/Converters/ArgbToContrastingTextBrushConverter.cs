@@ -11,7 +11,7 @@ namespace Flashcards.App.Converters
     /// whichever contrasts better — computed dynamically from luminance rather than stored,
     /// so it always matches the current background even after the color changes.
     /// </summary>
-    public class ArgbToContrastingTextBrushConverter : IValueConverter
+    internal class ArgbToContrastingTextBrushConverter : IValueConverter
     {
         /// <summary>Below this luminance the background counts as dark and gets white text; at or above, black text.</summary>
         private const double LuminanceThreshold = 128;

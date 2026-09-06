@@ -1,6 +1,5 @@
 ﻿using System.Windows.Input;
 
-
 namespace Flashcards.App.Commands
 {
     /// <summary>
@@ -8,7 +7,7 @@ namespace Flashcards.App.Commands
     /// don't need their own ICommand class.
     /// </summary>
     /// <typeparam name="T">The type of the parameter passed to the wrapped delegate.</typeparam>
-    public class RelayCommand<T> : ICommand
+    internal class RelayCommand<T> : ICommand
     {
         private readonly Action<T?> _execute;  // reference to the method that should be executed
         private readonly Func<T?, bool>? _canExecute;  // determines if executing should happen
@@ -66,7 +65,7 @@ namespace Flashcards.App.Commands
     /// Non-generic convenience wrapper over <see cref="RelayCommand{T}"/> for commands
     /// that don't need a parameter.
     /// </summary>
-    public class RelayCommand : RelayCommand<object>
+    internal class RelayCommand : RelayCommand<object>
     {
         public RelayCommand(Action execute, Func<bool>? canExecute = null)
             : base(_ => execute(), canExecute is null ? null : _ => canExecute())

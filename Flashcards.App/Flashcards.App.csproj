@@ -7,7 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+	<InternalsVisibleTo Include="Flashcards.Tests" />
+  </ItemGroup>
+	
   <ItemGroup>
 	<FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
   </ItemGroup>
