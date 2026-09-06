@@ -2,16 +2,27 @@
 
 namespace Flashcards.Data.Database
 {
+    /// <summary>
+    /// Creates the SQLite database file and its schema on startup, if they don't already exist.
+    /// </summary>
     public class DatabaseInitializer
     {
 
-       private readonly string _connectionString;
+        private readonly string _connectionString;
 
+        /// <summary>
+        /// Creates an initializer that will operate against the database identified by <paramref name="connectionString"/>.
+        /// </summary>
+        /// <param name="connectionString">The SQLite connection string to initialize.</param>
         public DatabaseInitializer(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// Creates the <c>Topics</c> and <c>Flashcards</c> tables if they don't already exist, and creates
+        /// the underlying database file itself as a side effect of opening the connection.
+        /// </summary>
         public void EnsureInitialized()
         {
             using SqliteConnection connection = new SqliteConnection(_connectionString);  // will close after finishing the function
