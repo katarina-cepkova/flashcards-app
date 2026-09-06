@@ -576,70 +576,73 @@
                     </ScrollBar.Visibility>
                 </ScrollBar>
 
-            <StackPanel Grid.Row="1" Grid.RowSpan="2" Grid.Column="3"
-                        Orientation="Vertical">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Grid.RowSpan="2" Grid.Column="3"
+                            Orientation="Vertical">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                    <ToggleButton x:Name="EditButton" Grid.Row="0" Grid.Column="0"
-                            Style="{StaticResource IconToggleButtonStyle}"
-                            Background="{StaticResource EditButtonsBrush}"
-                            IsChecked="{Binding CurrentState,
-                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter=OpenedSetEdit,
-                                        Mode=OneWay}"
-                            IsEnabled="{Binding CurrentState,
-                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter='OpenedSetEdit,OpenedSetView'}"
-                            Click="EditButton_OnClick">
-                        <Image Source="{StaticResource EditFlashcardIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
+                        <ToggleButton x:Name="EditButton" Grid.Row="0" Grid.Column="0"
+                                      Style="{StaticResource IconToggleButtonStyle}"
+                                      Background="{StaticResource EditButtonsBrush}"
+                                      IsChecked="{Binding CurrentState,
+                                                  Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                                  ConverterParameter=OpenedSetEdit,
+                                                  Mode=OneWay}"
+                                      IsEnabled="{Binding CurrentState,
+                                                  Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                                  ConverterParameter='OpenedSetEdit,OpenedSetView'}"
+                                      Click="EditButton_OnClick">
+                            <Image Source="{StaticResource EditFlashcardIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
 
-                    <Button x:Name="ColorButton" Grid.Row="0" Grid.Column="1"
-                            Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource EditButtonsBrush}"
-                            IsEnabled="{Binding CurrentState,
-                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter=OpenedSetEdit}"
-                            Command="{Binding EditFlashcardColorCommand}">
-                        <Image Source="{StaticResource ColorFillIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
+                        <Button x:Name="ColorButton" Grid.Row="0" Grid.Column="1"
+                                Style="{StaticResource IconButtonStyle}"
+                                Background="{StaticResource EditButtonsBrush}"
+                                IsEnabled="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                            ConverterParameter=OpenedSetEdit}"
+                                Command="{Binding EditFlashcardColorCommand}">
+                            <Image Source="{StaticResource ColorFillIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
 
-                    <Button x:Name="AddFlashcardButton" Grid.Row="1" Grid.Column="0"
-                            Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource EditButtonsBrush}"
-                            IsEnabled="{Binding CurrentState,
-                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter=OpenedSetEdit}"
-                            Command="{Binding CreateFlashcardCommand}">
-                        <Image Source="{StaticResource CreateFlashcardIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
+                        <Button x:Name="AddFlashcardButton" Grid.Row="1" Grid.Column="0"
+                                Style="{StaticResource IconButtonStyle}"
+                                Background="{StaticResource EditButtonsBrush}"
+                                IsEnabled="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                            ConverterParameter=OpenedSetEdit}"
+                                Command="{Binding CreateFlashcardCommand}">
+                            <Image Source="{StaticResource CreateFlashcardIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
 
-                    <Button x:Name="DeleteFlashcardButton" Grid.Row="1" Grid.Column="1"
-                            Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource EditButtonsBrush}"
-                            IsEnabled="{Binding CurrentState,
-                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
-                                        ConverterParameter=OpenedSetEdit}"
-                            Command="{Binding DeleteFlashcardCommand}">
-                        <Image Source="{StaticResource DeleteFlashcardIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
+                        <Button x:Name="DeleteFlashcardButton" Grid.Row="1" Grid.Column="1"
+                                Style="{StaticResource IconButtonStyle}"
+                                Background="{StaticResource EditButtonsBrush}"
+                                IsEnabled="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                            ConverterParameter=OpenedSetEdit}"
+                                Command="{Binding DeleteFlashcardCommand}">
+                            <Image Source="{StaticResource DeleteFlashcardIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+
+                    </Grid>
+
+                </StackPanel>
 
                 </Grid>
 
-            </StackPanel>
             </Grid>
 
     </Grid>
