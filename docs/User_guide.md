@@ -39,8 +39,8 @@ Nothing else to do — the app is already running, so skip straight to
 
 | Your PC | Download |
 |---|---|
-| Most Windows PCs | [win-x64.zip](./publish/win-x64.zip) |
-| ARM-based Windows PCs (some newer Surface devices, "Copilot+ PCs") | [win-arm64.zip](./publish/win-arm64.zip) |
+| Most Windows PCs | [win-x64.zip](../publish/win-x64.zip) |
+| ARM-based Windows PCs (some newer Surface devices, "Copilot+ PCs") | [win-arm64.zip](../publish/win-arm64.zip) |
 
 If you're not sure which you have, use win-x64. Download the matching zip and extract
 it to a folder of your choice — it's self-contained, so that's everything: no install
