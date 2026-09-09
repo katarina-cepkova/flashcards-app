@@ -86,6 +86,7 @@ BenchmarkDotNet.Artifacts/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+.artifacts/
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
@@ -205,6 +206,8 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+# Click-Once directory
+publish/
 
 # Publish Web Output
 *.[Pp]ublish.xml
@@ -424,4 +427,3 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-/Flashcards.App/ViewModels/MainViewModel.cs
