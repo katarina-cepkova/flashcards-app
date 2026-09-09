@@ -11,7 +11,7 @@
 
     <!-- Right panel: flashcard management -->
     <BitmapImage x:Key="CreateFlashcardIcon" UriSource="/Resources/Icons/square-plus.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
-    <BitmapImage x:Key="SaveFlashcardIcon" UriSource="/Resources/Icons/floppy-disk-pen.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="SaveIcon" UriSource="/Resources/Icons/floppy-disk-pen.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="DeleteFlashcardIcon" UriSource="/Resources/Icons/rectangle-xmark.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="EditFlashcardIcon" UriSource="/Resources/Icons/pencil.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="ColorFillIcon" UriSource="/Resources/Icons/paint-bucket.png" DecodePixelWidth="128" DecodePixelHeight="128"/>

@@ -16,17 +16,17 @@
         public string? FrontSoundPath { get; set; }
         public string? BackSoundPath { get; set; }
 
-        public int CorrectAnswersCount { get; set; }
-        public int IncorrectAnswersCount { get; set; }
+        public int CorrectAnswersCount { get; set; } = 0;
+        public int IncorrectAnswersCount { get; set; } = 0;
 
         // ARGB color value for the card background (.NET/WPF uses natively ARGB, not RGBA as web technologies)
         public int ColorArgb { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? LastReviewedAt { get; set; }
         public DateTime? NextReviewAt { get; set; } // time-permitting: scheduling
 
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
 
 
         /// <summary>Equality by <see cref="Id"/>; unsaved (null-id) flashcards are never equal.</summary>
@@ -51,5 +51,13 @@
             $"LastReviewedAt={LastReviewedAt?.ToString("O") ?? "null"}, " +
             $"NextReviewAt={NextReviewAt?.ToString("O") ?? "null"}, " +
             $"IsDeleted={IsDeleted} }}";
+
+        public static Flashcard CreateDefault(long topicId, int colorArgb)
+        {
+            return new Flashcard() { 
+                TopicId = topicId,
+                ColorArgb = colorArgb,
+            };
+        }
     }
 }

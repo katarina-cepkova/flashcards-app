@@ -1,5 +1,6 @@
 ﻿using Flashcards.App.Services;
 using Flashcards.App.ViewModels;
+using Flashcards.App.Models;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -397,6 +398,15 @@ namespace Flashcards.App
                     viewModel.CurrentCardIndex = (int)Math.Round(e.NewValue);
                     break;
             }
+        }
+
+        private void EditButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var viewModel = (MainViewModel)DataContext;
+            if (viewModel.CurrentState == AppState.OpenedSetView)
+                viewModel.CurrentState = AppState.OpenedSetEdit;
+            else if (viewModel.CurrentState == AppState.OpenedSetEdit)
+                viewModel.CurrentState = AppState.OpenedSetView;
         }
     }
 }

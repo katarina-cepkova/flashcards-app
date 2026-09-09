@@ -5,7 +5,7 @@ using Microsoft.Data.Sqlite;
 
 namespace Flashcards.Data.Repositories
 {
-    internal class SqliteTopicRepository : ITopicRepository
+    public class SqliteTopicRepository : ITopicRepository
     {
         private readonly string _connectionString;
 

@@ -2,18 +2,20 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:Flashcards.App.Converters">
     <converters:LanguageToIsCheckedConverter x:Key="LanguageToIsCheckedConverter"/>
-    <converters:AlignmentToIsCheckedConverter x:Key="AlignmentToIsCheckedConverter"/>
-    
+    <converters:MarkdownToFlowDocumentConverter x:Key="MarkdownToFlowDocumentConverter"/>
+    <converters:ArgbToBrushConverter x:Key="ArgbToBrushConverter"/>
+    <converters:ArgbToContrastingTextBrushConverter x:Key="ArgbToContrastingTextBrushConverter"/>
+
     <converters:StateToCollapsedConverter x:Key="StateToCollapsedConverter"/>
     <converters:StateToHiddenConverter x:Key="StateToHiddenConverter"/>
     <converters:StateToEditableConverter x:Key="StateToEditableConverter"/>
     <converters:StateToReadOnlyConverter x:Key="StateToReadOnlyConverter"/>
-    
+    <converters:StateToCheckedOrEnabledConverter x:Key="StateToCheckedOrEnabledConverter"/>
+    <converters:StateToColumnWidthConverter x:Key="StateToColumnWidthConverter"/>
+
     <converters:RemainingCharactersLabelVisibilityConverter x:Key="RemainingCharactersLabelVisibilityConverter"/>
     <converters:FrontBackVisibleConverter x:Key="FrontBackVisibleConverter"/>
     <converters:NullToVisibleConverter x:Key="NullToVisibleConverter"/>
     <converters:FlashcardStateVisibleConverter x:Key="FlashcardStateVisibleConverter"/>
 
-    <converters:MarkdownToFlowDocumentConverter x:Key="MarkdownToFlowDocumentConverter"/>
-    <converters:StateToColumnWidthConverter x:Key="StateToColumnWidthConverter"/>
 </ResourceDictionary>

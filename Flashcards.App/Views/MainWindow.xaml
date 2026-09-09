@@ -130,7 +130,7 @@
                 </StackPanel>
 
                 <Grid x:Name="LeftGrid" 
-                      Grid.Column="0" Grid.Row="1" Grid.RowSpan="3"
+                      Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"
                       Margin="{StaticResource ControlParentMargin}">
                     <Grid.RowDefinitions>
                         <!-- set buttons -->
@@ -144,7 +144,14 @@
                     <StackPanel x:Name="FlashcardSetPanel"
                                 Grid.Row="0"
                                 Orientation="Vertical">
-                        <Button x:Name="CreateSetButton"
+                    <Button x:Name="SaveButton"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource SetButtonsBrush}">
+                        <Image Source="{StaticResource SaveIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                        
+                    <Button x:Name="CreateSetButton"
                                 Style="{StaticResource IconButtonStyle}"
                                 Background="{StaticResource SetButtonsBrush}">
                             <Image Source="{StaticResource CreateFlashcardSetIcon}"
@@ -300,7 +307,7 @@
 
                 <Grid x:Name="FlashcardEditor" Grid.Row="2" Grid.Column="1"
                       Margin="{StaticResource FlashcardMargin}"
-                      Background="{StaticResource DefaultFlashcardBackgroundBrush}"
+                      Background="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToBrushConverter}}"
                       Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
                       MouseWheel="FlashcardEditor_OnMouseWheel">   
                     <Grid.ColumnDefinitions>
@@ -314,6 +321,7 @@
 
                     <!-- Edit panel: plain TextBox, no scrollbar of its own -->
                     <TextBox x:Name="EditTextBox" Grid.Column="0"
+                             Style="{StaticResource FlashcardTextBoxStyle}"
                              Background="{StaticResource DefaultFlashcardBackgroundBrush}"
                              Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
                              FontFamily="{StaticResource PrimaryFontFamily}"
@@ -341,12 +349,18 @@
 
 
                     <FlowDocumentScrollViewer x:Name="PreviewViewer" Grid.Column="2"
-                                              
-                                              Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
+                                              Foreground="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToContrastingTextBrushConverter}}"
                                               Padding="{StaticResource FlashcardPadding}"
-                                              VerticalScrollBarVisibility="Hidden"
-                                              Document="{Binding ElementName=EditTextBox, Path=Text, 
-                                                         Converter={StaticResource MarkdownToFlowDocumentConverter}}">
+                                              VerticalScrollBarVisibility="Hidden">
+
+                        <FlowDocumentScrollViewer.Document>
+                            <MultiBinding Converter="{StaticResource MarkdownToFlowDocumentConverter}">
+                                <Binding ElementName="EditTextBox" Path="Text"/>
+                                <Binding Path="CurrentFlashcard.ColorArgb" Converter="{StaticResource ArgbToContrastingTextBrushConverter}"/>
+                                <Binding Path="CurrentFlashcard.ColorArgb" Converter="{StaticResource ArgbToBrushConverter}"/>
+                            </MultiBinding>
+                        </FlowDocumentScrollViewer.Document>
+                        
                         <FlowDocumentScrollViewer.Resources>
                             <Style TargetType="Paragraph">
                                 <Setter Property="Margin" Value="0,0,0,4"/>
@@ -361,7 +375,7 @@
                                SmallChange="1"
                                LargeChange="1"
                                Scroll="EditPreviewScrollBar_OnScroll"/>
-            </Grid>
+                </Grid>
                 <Grid Grid.Row="3" Grid.Column="1" Margin="{StaticResource ControlParentMargin}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -437,7 +451,7 @@
                     </Button>
                 </Grid>
 
-            <ScrollBar x:Name="CardNavigationScrollBar" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2"
+                <ScrollBar x:Name="CardNavigationScrollBar" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2"
                        Orientation="Vertical"
                        Minimum="0"
                        Maximum="{Binding MaxCardIndex}"
@@ -448,7 +462,72 @@
                        Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
                        Scroll="CardNavigationScrollBar_OnScroll"
                        Margin="{StaticResource ScrollBarMargin}">
-            </ScrollBar>
+                </ScrollBar>
+
+            <StackPanel Grid.Row="1" Grid.RowSpan="2" Grid.Column="3"
+                        Orientation="Vertical">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ToggleButton x:Name="EditButton" Grid.Row="0" Grid.Column="0"
+                            Style="{StaticResource IconToggleButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsChecked="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit,
+                                        Mode=OneWay}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter='OpenedSetEdit,OpenedSetView'}"
+                            Click="EditButton_OnClick">
+                        <Image Source="{StaticResource EditFlashcardIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </ToggleButton>
+
+                    <Button x:Name="ColorButton" Grid.Row="0" Grid.Column="1"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit}"
+                            Command="{Binding EditFlashcardColorCommand}">
+                        <Image Source="{StaticResource ColorFillIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                    <Button x:Name="AddFlashcardButton" Grid.Row="1" Grid.Column="0"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit}"
+                            Command="{Binding CreateFlashcardCommand}">
+                        <Image Source="{StaticResource CreateFlashcardIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                    <Button x:Name="DeleteFlashcardButton" Grid.Row="1" Grid.Column="1"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource EditButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                        ConverterParameter=OpenedSetEdit}"
+                            Command="{Binding DeleteFlashcardCommand}">
+                        <Image Source="{StaticResource DeleteFlashcardIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+
+                </Grid>
+
+            </StackPanel>
             </Grid>
 
     </Grid>

@@ -1,0 +1,39 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="FlashcardTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <!--
+                    Minimal template, no MouseOver/Focused triggers: the built-in Fluent dark
+                    theme (ThemeMode="Dark" on Window) normally swaps in its own background on
+                    focus regardless of the Background property set on the TextBox. This template
+                    only uses TemplateBinding, so Background/Foreground always show exactly what's
+                    set on the element — the flashcard's own color, even while focused.
+                -->
+                    <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <!-- PART_ContentHost: required exact name — TextBox uses it internally
+                         to host the actual editable text, not for visual scrollbar styling. -->
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                  Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <!-- Hover and focus both highlight the border using the flashcard's own color
+             (same brush as Background), rather than the Fluent theme's default accent color. -->
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="BorderBrush" Value="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToBrushConverter}}"/>
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="BorderBrush" Value="{Binding CurrentFlashcard.ColorArgb, Converter={StaticResource ArgbToBrushConverter}}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>
