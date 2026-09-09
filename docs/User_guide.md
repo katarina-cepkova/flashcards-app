@@ -31,8 +31,10 @@ steps below don't involve a command line.
 There are three ways to get it running, depending on what you have available. Pick one.
 
 **Option 1 — Open it in Visual Studio.** Open `Flashcards.sln` and press Start/F5.
-Nothing else to do — the app is already running, so skip straight to
-[Step 2](#step-2-launch-the-app).
+If nothing happens (Visual Studio just builds without opening a window), right-click
+**Flashcards.App** in Solution Explorer and choose **Set as Startup Project**, then
+try F5 again — a fresh clone doesn't always default to the right one. Otherwise,
+skip straight to [Step 2](#step-2-launch-the-app); the app is already running.
 
 **Option 2 — Use the pre-built version.** In the repository root, open the
 **`publish`** folder. It contains two `.zip` files:
@@ -120,6 +122,13 @@ the limit. Reaching the 5-character threshold, the color changes from orange to 
 ![warning-length](screenshots/warning-topic-length.png)
 
 ![critical-length](screenshots/critical-topic-length.png)
+
+If you click away while the name is invalid, it stays exactly as you left it —
+invalid, not reverted back to the previous valid name. This doesn't hold up
+anything else: the invalid name simply never gets saved (a rename only actually
+happens once you confirm it), and saving the rest of your changes still works
+independently — cards belong to a set internally, not by its name, so an
+unconfirmed name sitting in the box doesn't block saving them.
 
 *The same name field, with the exact same rules, is reused when [renaming a set](#35-renaming-a-set).*
 

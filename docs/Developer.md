@@ -30,10 +30,13 @@ project before — including a future version of myself.
  
 **Building and running.** The solution targets **.NET 10** (`Flashcards.App` targets
 `net10.0-windows` specifically, since it's a WPF project — Windows only). Open
-`Flashcards.sln` in Visual Studio and run `Flashcards.App` (F5), or from the command
-line: `dotnet build` from the repository root, then
-`dotnet Flashcards.App/bin/Debug/net10.0-windows/Flashcards.App.dll` to run it. Run the
-test suite with `dotnet test`, or through Visual Studio's Test Explorer.
+`Flashcards.sln` in Visual Studio and run `Flashcards.App` (F5) — Visual Studio
+doesn't always default to the right startup project on a fresh clone, so if F5 just
+builds without launching a window, right-click **Flashcards.App** in Solution
+Explorer and choose **Set as Startup Project** first. From the command line:
+`dotnet build` from the repository root, then
+`dotnet Flashcards.App/bin/Debug/net10.0-windows/Flashcards.App.dll` to run it. Run
+the test suite with `dotnet test`, or through Visual Studio's Test Explorer.
 
 ---
 
