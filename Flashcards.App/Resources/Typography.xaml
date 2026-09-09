@@ -5,7 +5,7 @@
     <FontFamily x:Key="PrimaryFontFamily">Segoe UI</FontFamily>
     
     <system:Double x:Key="TopicNameFontSize">24</system:Double>
-    <system:Double x:Key="BodyFontSize">14</system:Double>
+    <system:Double x:Key="BodyFontSize">16</system:Double>
     <system:Double x:Key="SmallFontSize">11</system:Double>
 
     <FontWeight x:Key="HeadingFontWeight">Bold</FontWeight>

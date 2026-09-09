@@ -16,9 +16,10 @@
 
     <!-- buttons -->
     <SolidColorBrush x:Key="SetButtonsBrush" Color="#8B7355"/>
-    <SolidColorBrush x:Key="EditButtonsBrush" Color="#708238"/>
+    <SolidColorBrush x:Key="EditButtonsBrush" Color="#996699"/>
     <SolidColorBrush x:Key="SoundButtonsBrush" Color="#996699"/>
     <SolidColorBrush x:Key="LogicButtonsBrush" Color="#A57E7C"/>
+    <SolidColorBrush x:Key="NavigationButtonsBrush" Color="#708238"/>
     <SolidColorBrush x:Key="FormattingButtonsBrush" Color="#F5F5DC"/>
     <SolidColorBrush x:Key="SelectedFormattingButtonBrush" Color="#967C5C"/>
     <SolidColorBrush x:Key="SelectedButtonBrush" Color="#F5F5DC"/>
@@ -26,8 +27,8 @@
 
     <!-- -->
     <!-- colors indicating state -->
-    <SolidColorBrush x:Key="CorrectAnswerBrush" Color="YellowGreen"/>
-    <SolidColorBrush x:Key="IncorrectAnswerBrush" Color="Red"/>
+    <SolidColorBrush x:Key="CorrectAnswerBrush" Color="#D2EC9C"/>
+    <SolidColorBrush x:Key="IncorrectAnswerBrush" Color="#FFB8B8"/>
     <SolidColorBrush x:Key="UnansweredBrush" Color="Gray"/>
     <SolidColorBrush x:Key="CriticalBrush" Color="Red"/>
     <SolidColorBrush x:Key="AlmostCriticalBrush" Color="DarkOrange"/>

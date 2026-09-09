@@ -2,9 +2,15 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:converters="clr-namespace:Flashcards.App.Converters">
     <converters:LanguageToIsCheckedConverter x:Key="LanguageToIsCheckedConverter"/>
+    <converters:AlignmentToIsCheckedConverter x:Key="AlignmentToIsCheckedConverter"/>
+    
     <converters:StateToCollapsedConverter x:Key="StateToCollapsedConverter"/>
     <converters:StateToHiddenConverter x:Key="StateToHiddenConverter"/>
     <converters:StateToEditableConverter x:Key="StateToEditableConverter"/>
     <converters:StateToReadOnlyConverter x:Key="StateToReadOnlyConverter"/>
+    
     <converters:RemainingCharactersLabelVisibilityConverter x:Key="RemainingCharactersLabelVisibilityConverter"/>
+    <converters:FrontBackVisibleConverter x:Key="FrontBackVisibleConverter"/>
+    <converters:NullToVisibleConverter x:Key="NullToVisibleConverter"/>
+    <converters:FlashcardStateVisibleConverter x:Key="FlashcardStateVisibleConverter"/>
 </ResourceDictionary>

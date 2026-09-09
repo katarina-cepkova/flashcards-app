@@ -24,6 +24,11 @@
     <BitmapImage x:Key="StrikethroughIcon" UriSource="/Resources/Icons/strikethrough.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="ColorFillIcon" UriSource="/Resources/Icons/paint-bucket.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
     <BitmapImage x:Key="FontSizeIcon" UriSource="/Resources/Icons/text-size.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="AlignLeftIcon" UriSource="/Resources/Icons/align-left.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="AlignRightIcon" UriSource="/Resources/Icons/align-right.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="AlignCenterIcon" UriSource="/Resources/Icons/align-center.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+    <BitmapImage x:Key="AlignBlockIcon" UriSource="/Resources/Icons/align-block.png" DecodePixelWidth="128" DecodePixelHeight="128"/>
+
 
     <!-- Navigation -->
     <BitmapImage x:Key="ArrowLeftIcon" UriSource="/Resources/Icons/arrow-left.png" DecodePixelWidth="128" DecodePixelHeight="128"/>

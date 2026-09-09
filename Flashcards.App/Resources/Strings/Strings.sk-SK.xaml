@@ -32,8 +32,8 @@
     <system:String x:Key="OpenSetTitle">Otvoriť existujúcu sadu kartičiek</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
-    <system:String x:Key="FrontOfFlashcardLabelText">predná strana</system:String>
-    <system:String x:Key="BackOfFlashcardLabelText">zadná strana</system:String>
+    <system:String x:Key="Front">predná strana</system:String>
+    <system:String x:Key="Back">zadná strana</system:String>
 
     <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
     <system:String x:Key="SoundCheckBoxText">Zvuk</system:String>

@@ -5,18 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Flashcards.App"
         xmlns:converters="clr-namespace:Flashcards.App.Converters"
+        xmlns:attachedProperties="clr-namespace:Flashcards.App.AttachedProperties"
         mc:Ignorable="d"
         Title="Flashcards App" Height="650" Width="1000"
         Icon="{StaticResource FlashcardsAppIcon}">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding FlipCommand}" Key="Space"/>
+        <KeyBinding Command="ApplicationCommands.Undo" Key="Z" Modifiers="Ctrl"/>
+        <KeyBinding Command="ApplicationCommands.Redo" Key="Y" Modifiers="Ctrl"/>
+        <KeyBinding Command="EditingCommands.ToggleBold" Key="B" Modifiers="Ctrl"/>
+        <KeyBinding Command="EditingCommands.ToggleItalic" Key="I" Modifiers="Ctrl"/>
+        <KeyBinding Command="EditingCommands.ToggleUnderline" Key="U" Modifiers="Ctrl"/>
 
-    <Window.Resources>
-        <converters:LanguageToIsCheckedConverter x:Key="LanguageToIsCheckedConverter"/>
-        <converters:StateToCollapsedConverter x:Key="StateToCollapsedConverter"/>
-        <converters:StateToHiddenConverter x:Key="StateToHiddenConverter"/>
-        <converters:StateToEditableConverter x:Key="StateToEditableConverter"/>
-        <converters:StateToReadOnlyConverter x:Key="StateToReadOnlyConverter"/>
-        <converters:RemainingCharactersLabelVisibilityConverter x:Key="RemainingCharactersLabelVisibilityConverter"/>
-    </Window.Resources>
+        <!-- CommandTarget needed here: unlike Undo/Bold/Italic/Underline above (built into WPF,
+             work via focus alone), ToggleStrikethrough only has a CommandBinding on this one
+             RichTextBox, which focus-based routing doesn't reliably find without it. -->
+        <KeyBinding Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}" Key="X" Modifiers="Ctrl+Shift"
+                    CommandTarget="{Binding ElementName=Flashcard}"/>
+
+    </Window.InputBindings>
+    
     <Grid x:Name="MainGrid" 
           Background="{StaticResource MainWindowBackgroundBrush}" 
           Focusable="True">
@@ -72,32 +80,31 @@
 
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <!-- flashcard topic -->
                     <RowDefinition Height="Auto"/>
                     <!-- formatting buttons -->
-                    <RowDefinition Height="*"/>
-                    <!-- flashcard -->
                     <RowDefinition Height="Auto"/>
+                    <!-- flashcard -->
+                    <RowDefinition Height="*"/>
                     <!-- flipping section -->
                     <RowDefinition Height="Auto"/>
                     <!-- answer buttons -->
                     <RowDefinition Height="Auto"/>
                     <!-- progress bar -->
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <!-- left grid -->
-                    <ColumnDefinition Width="*"/>
-                    <!-- flashcard main area -->
                     <ColumnDefinition Width="Auto"/>
+                    <!-- flashcard main area -->
+                    <ColumnDefinition Width="*"/>
                     <!-- scrollbar -->
                     <ColumnDefinition Width="Auto"/>
                     <!-- right panel -->
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Column = begins at column 0, ColumnSpan = spans over N columns -->
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
                             Orientation="Vertical" HorizontalAlignment="Center">
                     <!-- UpdateSourceTrigger=PropertyChanged = send updates on each typed character, not after leaving focus -->
@@ -134,12 +141,12 @@
                       Grid.Column="0" Grid.Row="1" Grid.RowSpan="3"
                       Margin="{StaticResource ControlParentMargin}">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
                         <!-- set buttons -->
-                        <RowDefinition Height="*"/>
-                        <!-- empty space -->
                         <RowDefinition Height="Auto"/>
+                        <!-- empty space -->
+                        <RowDefinition Height="*"/>
                         <!-- learning session buttons -->
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <StackPanel x:Name="FlashcardSetPanel"
@@ -171,12 +178,12 @@
                     <StackPanel x:Name="LearningSessionPanel"
                                 Grid.Row="2"
                                 Orientation="Vertical">
-                    <Button x:Name="StartLearningSessionButton"
+                        <Button x:Name="StartLearningSessionButton"
                                 Style="{StaticResource IconButtonStyle}"
                                 Background="{StaticResource LogicButtonsBrush}">
-                        <Image Source="{StaticResource RefreshIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
+                            <Image Source="{StaticResource RefreshIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
                         
                         <Button x:Name="RefreshLearningSessionButton"
                                 Style="{StaticResource IconButtonStyle}"        
@@ -191,60 +198,247 @@
                             <Image Source="{StaticResource QuitLearningSessionIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
-                </StackPanel>
+                    </StackPanel>
 
                 </Grid>
 
-            <StackPanel x:Name="FormattingPanel" Grid.Row="1" Grid.Column="1" 
-                        Orientation="Horizontal" Margin="{StaticResource ControlParentMargin}">
-                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                    <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}">
+                <!-- Requires both a selected card AND edit mode: formatting controls are
+                     meaningless without a card to format, and shouldn't appear outside
+                     of editing (e.g. while viewing or during a learning session). -->
+                <StackPanel x:Name="FormattingPanel" Grid.Row="1" Grid.Column="1" 
+                            Orientation="Horizontal" Margin="{StaticResource ControlParentMargin}">
+                    <StackPanel.Visibility>
+                        <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                      ConverterParameter="OpenedSetEdit">
+                            <Binding Path="CurrentFlashcard"/>
+                            <Binding Path="CurrentState"/>
+                        </MultiBinding>
+                    </StackPanel.Visibility>
+                    
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <!-- ApplicationCommands.Undo/Redo are handled natively by RichTextBox
+                             (via TextBoxBase) — no custom logic needed, just point the command
+                             at the RichTextBox. -->
+                        <Button x:Name="UndoButton" Style="{StaticResource FormattingButtonStyle}"
+                                Command="ApplicationCommands.Undo"
+                                CommandTarget="{Binding ElementName=Flashcard}">
                         <Image Source="{StaticResource UndoIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
-                    <Button x:Name="RedoButton" Style="{StaticResource FormattingButtonStyle}">
-                        <Image Source="{StaticResource RedoIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </Button>
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+                        <Button x:Name="RedoButton" Style="{StaticResource FormattingButtonStyle}"
+                                Command="ApplicationCommands.Redo"
+                                CommandTarget="{Binding ElementName=Flashcard}">
+                            <Image Source="{StaticResource RedoIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <!-- EditingCommands.ToggleBold is built into WPF and toggles formatting
+                             on its own; IsBold (from RichTextBoxHelper) only reflects that state
+                             back onto the button — it doesn't drive the toggle itself. -->
+                        <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="EditingCommands.ToggleBold"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsBold), ElementName=Flashcard, Mode=OneWay}">
+                            <Image Source="{StaticResource BoldIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+
+                        <ToggleButton x:Name="ItalicButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="EditingCommands.ToggleItalic"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsItalic), ElementName=Flashcard, Mode=OneWay}">
+                            <Image Source="{StaticResource ItalicIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+
+                        <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="EditingCommands.ToggleUnderline"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsUnderline), ElementName=Flashcard, Mode=OneWay}">
+                            <Image Source="{StaticResource UnderlineIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+
+                        <!-- No built-in EditingCommand for strikethrough, unlike the three above —
+                             this uses RichTextBoxHelper's own custom RoutedUICommand instead. -->
+                        <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}"
+                                      Command="{x:Static attachedProperties:RichTextBoxHelper.ToggleStrikethrough}"
+                                      CommandTarget="{Binding ElementName=Flashcard}"
+                                      IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.IsStrikethrough), ElementName=Flashcard, Mode=OneWay}">
+                            <Image Source="{StaticResource StrikethroughIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </ToggleButton>
+                    </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}">
+                            <Image Source="{StaticResource FontSizeIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+
+                        <Button x:Name="DownsizeButton" Style="{StaticResource FormattingButtonStyle}"
+                                Padding="6">
+                            <Image Source="{StaticResource FontSizeIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+
+                    </StackPanel>
+
+                    <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
+                        <!-- IsChecked needs AlignmentToIsCheckedConverter because CurrentAlignment is a
+                             TextAlignment enum (one value can't drive four RadioButtons' bool IsChecked
+                             directly) — the converter compares it against each button's own ConverterParameter. -->
+                        <RadioButton x:Name="AlignLeftButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignLeft"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Left, Mode=OneWay}">
+                            <Image Source="{StaticResource AlignLeftIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                        <RadioButton x:Name="AlignCenterButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignCenter"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Center, Mode=OneWay}">
+                            <Image Source="{StaticResource AlignCenterIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                        <RadioButton x:Name="AlignRightButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignRight"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Right, Mode=OneWay}">
+                            <Image Source="{StaticResource AlignRightIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                        <RadioButton x:Name="AlignBlockButton"
+                                     Style="{StaticResource FormattingToggleButtonStyle}"
+                                     GroupName="AlignGroup"
+                                     Command="EditingCommands.AlignJustify"
+                                     CommandTarget="{Binding ElementName=Flashcard}"
+                                     IsChecked="{Binding Path=(attachedProperties:RichTextBoxHelper.CurrentAlignment), ElementName=Flashcard, 
+                                                 Converter={StaticResource AlignmentToIsCheckedConverter}, ConverterParameter=Justify, Mode=OneWay}">
+                            <Image Source="{StaticResource AlignBlockIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </RadioButton>
+
+                    </StackPanel>
                 </StackPanel>
 
-                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                    <ToggleButton x:Name="BoldButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource BoldIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
+                <RichTextBox x:Name="Flashcard" Grid.Row="2" Grid.Column="1" 
+                             Background="{StaticResource DefaultFlashcardBackgroundBrush}"
+                             Foreground="{StaticResource DefaultFlashcardForegroundBrush}"
+                             FontFamily="{StaticResource PrimaryFontFamily}"
+                             FontSize="{StaticResource BodyFontSize}"
+                             Margin="{StaticResource FlashcardMargin}"
+                             Padding="{StaticResource FlashcardPadding}"
+                         
+                             CaretBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
+                             SelectionBrush="{Binding Foreground, RelativeSource={RelativeSource Self}}"
+                             SelectionOpacity="0.3"
+                             AllowDrop="False"
+                             ContextMenu="{x:Null}"
+                             AcceptsTab="True"
+                         
+                             attachedProperties:RichTextBoxHelper.DocumentText="{Binding DisplayedText, Mode=TwoWay}"
+                             Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
+                             IsReadOnly="{Binding CurrentState, Converter={StaticResource StateToReadOnlyConverter}}">
+                    <RichTextBox.Resources>
+                        <!-- Default WPF paragraph spacing was excessively large — tightened so
+                             pressing Enter doesn't leave a big visible gap between lines. -->
+                        <Style TargetType="Paragraph">
+                            <Setter Property="Margin" Value="0,0,0,4"/>
+                        </Style>
+                    </RichTextBox.Resources>
+                </RichTextBox>
 
-                    <ToggleButton x:Name="ItalicButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource ItalicIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
+                <Grid Grid.Row="3" Grid.Column="1" Margin="{StaticResource ControlParentMargin}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                    <ToggleButton x:Name="UnderlineButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource UnderlineIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
+                    <!-- Default WPF paragraph spacing was excessively large — tightened so
+                         pressing Enter doesn't leave a big visible gap between lines. -->
+                    <TextBlock x:Name="FrontTextBlock" Grid.Column="0"
+                               Text="{DynamicResource Front}"
+                               Style="{StaticResource SideTextBoxStyle}">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource FrontBackVisibleConverter}" ConverterParameter="Front">
+                                <Binding Path="IsFront"/>
+                                <Binding Path="CurrentFlashcard"/>
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
 
-                    <ToggleButton x:Name="StrikethroughButton" Style="{StaticResource FormattingToggleButtonStyle}">
-                        <Image Source="{StaticResource StrikethroughIcon}"
-                               RenderOptions.BitmapScalingMode="HighQuality"/>
-                    </ToggleButton>
-                </StackPanel>
+                    <TextBlock x:Name="BackTextBlock" Grid.Column="0"
+                               Text="{DynamicResource Back}"
+                               Style="{StaticResource SideTextBoxStyle}">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource FrontBackVisibleConverter}" ConverterParameter="Back">
+                                <Binding Path="IsFront"/>
+                                <Binding Path="CurrentFlashcard"/>
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
 
-                <StackPanel Style="{StaticResource FormattingInnerPanelStyle}">
-                    <Button x:Name="UpsizeButton" Style="{StaticResource FormattingButtonStyle}">
-                        <Image Source="{StaticResource FontSizeIcon}"
+                    <Button x:Name="IncorrectButton" Grid.Column="2"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource IncorrectAnswerBrush}">
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                           ConverterParameter="LearningSession">
+                                <Binding Path="CurrentFlashcard"/>
+                                <Binding Path="CurrentState"/>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    
+                        <Image Source="{StaticResource ArrowLeftIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
 
-                    <Button x:Name="DownsizeButton" Style="{StaticResource FormattingButtonStyle}"
-                            Padding="6">
-                        <Image Source="{StaticResource FontSizeIcon}"
+                    <Button x:Name="CorrectButton" Grid.Column="4"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource CorrectAnswerBrush}">
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource FlashcardStateVisibleConverter}"
+                                          ConverterParameter="LearningSession">
+                                <Binding Path="CurrentFlashcard"/>
+                                <Binding Path="CurrentState"/>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    
+                        <Image Source="{StaticResource ArrowRightIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
 
-                </StackPanel>
-            </StackPanel>
-        </Grid>
+                    <Button x:Name="FlipButton" Grid.Column="6"
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource NavigationButtonsBrush}"
+                            Visibility="{Binding CurrentFlashcard, Converter={StaticResource NullToVisibleConverter}}"
+                            Command="{Binding FlipCommand}">
+                        <Image Source="{StaticResource TurnOverIcon}"
+                               RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                </Grid>
+            </Grid>
 
     </Grid>
 </Window>
