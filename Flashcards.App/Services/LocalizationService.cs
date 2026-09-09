@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Collections.ObjectModel;
 
 namespace Flashcards.App.Services
 {
 
-    public class LocalizationService : ILocalizationService
+    internal class LocalizationService : ILocalizationService
     {
         public void SetLanguage(string cultureCode)
         {

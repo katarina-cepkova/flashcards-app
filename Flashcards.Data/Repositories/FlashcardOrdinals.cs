@@ -1,12 +1,11 @@
-﻿using Flashcards.Core.Entities;
-using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
+﻿using Microsoft.Data.Sqlite;
 
 namespace Flashcards.Data.Repositories
 {
+    /// <summary>
+    /// Caches the column ordinals of a <c>Flashcards</c> query's <see cref="SqliteDataReader"/>,
+    /// so each row can be read back by resolved position instead of a per-row column name lookup.
+    /// </summary>
     internal struct FlashcardOrdinals
     {
         public int IdOrdinal;
@@ -22,6 +21,10 @@ namespace Flashcards.Data.Repositories
         public int LastReviewedAtOrdinal;
         public int NextReviewAtOrdinal;
 
+        /// <summary>
+        /// Resolves every column's ordinal from <paramref name="reader"/>. Must be called once, before
+        /// the read loop starts — a reader's column layout does not change between rows of the same query.
+        /// </summary>
         public static FlashcardOrdinals FromReader(SqliteDataReader reader)
         {
             return new FlashcardOrdinals

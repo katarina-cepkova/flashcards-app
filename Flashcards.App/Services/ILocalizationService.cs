@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Flashcards.App.Services
+﻿namespace Flashcards.App.Services
 {
     /// <summary>
     /// Switches the application's active language by swapping the merged
     /// string resource dictionary at runtime.
     /// </summary>
-    public interface ILocalizationService
+    internal interface ILocalizationService
     {
         /// <summary>
         /// Replaces the currently active language dictionary with the one

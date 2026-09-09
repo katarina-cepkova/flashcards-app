@@ -1,12 +1,10 @@
 ﻿using Flashcards.App.Models;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Data;
 
 namespace Flashcards.App.Converters
 {
-    public class StateToReadOnlyConverter : IValueConverter
+    internal class StateToReadOnlyConverter : IValueConverter
     {
         /// <summary>
         /// Returns false (editable) when CurrentState matches any of the comma-separated AppState

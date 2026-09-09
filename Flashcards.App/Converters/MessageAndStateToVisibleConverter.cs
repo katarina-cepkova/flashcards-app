@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using Flashcards.App.Models;
@@ -13,7 +10,7 @@ namespace Flashcards.App.Converters
     /// comma-separated AppState names in ConverterParameter — so a validation message never
     /// shows in states where the field it refers to isn't even on screen (e.g. ClosedSet).
     /// </summary>
-    public class MessageAndStateToVisibleConverter : IMultiValueConverter
+    internal class MessageAndStateToVisibleConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {

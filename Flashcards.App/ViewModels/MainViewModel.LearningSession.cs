@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace Flashcards.App.ViewModels
 {
-    partial class MainViewModel
+    internal partial class MainViewModel
     {
         /// <summary>
         /// The active/paused learning session's card queue for the currently open topic, or null if none has started

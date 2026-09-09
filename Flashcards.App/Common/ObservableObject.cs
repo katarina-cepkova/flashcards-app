@@ -7,7 +7,7 @@ namespace Flashcards.App.Common
     /// Base class providing INotifyPropertyChanged support so derived classes
     /// don't have to implement it themselves.
     /// </summary>
-    public abstract class ObservableObject : INotifyPropertyChanged
+    internal abstract class ObservableObject : INotifyPropertyChanged
     {
         /// <summary>
         /// Raised whenever a property on this object changes, so that

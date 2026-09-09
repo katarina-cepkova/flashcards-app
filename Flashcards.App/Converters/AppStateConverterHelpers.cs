@@ -1,7 +1,4 @@
 ﻿using Flashcards.App.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Flashcards.App.Converters
 {

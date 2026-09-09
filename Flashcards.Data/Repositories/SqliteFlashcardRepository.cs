@@ -5,11 +5,19 @@ using Microsoft.Data.Sqlite;
 
 namespace Flashcards.Data.Repositories
 {
+    /// <summary>
+    /// SQLite-backed implementation of <see cref="IFlashcardRepository"/>, using
+    /// <see cref="Microsoft.Data.Sqlite"/> directly rather than an ORM.
+    /// </summary>
     public class SqliteFlashcardRepository : IFlashcardRepository
     {
         private readonly string _connectionString;
 
 
+        /// <summary>
+        /// Creates a repository that will operate against the database identified by <paramref name="connectionString"/>.
+        /// </summary>
+        /// <param name="connectionString">The SQLite connection string to use for every operation.</param>
         public SqliteFlashcardRepository(string connectionString)
         {
             _connectionString = connectionString;
@@ -93,7 +101,7 @@ namespace Flashcards.Data.Repositories
             command.Parameters.AddWithValue("$id", id);
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
-            RepositoryHelpers.EnsureRowsAffected(rowsAffected, id);
+            RepositoryHelpers.EnsureRowsAffected(rowsAffected, id, "Flashcard");
         }
 
         /// <summary>
@@ -250,7 +258,7 @@ namespace Flashcards.Data.Repositories
             LoadFlashcardDataIntoCommand(flashcard, command);
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
-            RepositoryHelpers.EnsureRowsAffected(rowsAffected, id);
+            RepositoryHelpers.EnsureRowsAffected(rowsAffected, id, "Flashcard");
         }
 
 

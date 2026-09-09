@@ -2,15 +2,23 @@
 using Flashcards.Core.Repositories;
 using Flashcards.Data.Database;
 using Microsoft.Data.Sqlite;
-using System.Numerics;
 
 namespace Flashcards.Data.Repositories
 {
+    /// <summary>
+    /// SQLite-backed implementation of <see cref="ITopicRepository"/>, using <see cref="Microsoft.Data.Sqlite"/>
+    /// directly rather than an ORM.
+    /// </summary>
     public class SqliteTopicRepository : ITopicRepository
     {
         private readonly string _connectionString;
 
 
+        /// <summary>
+        /// Creates a repository that will operate against the database identified by
+        /// <paramref name="connectionString"/>.
+        /// </summary>
+        /// <param name="connectionString">The SQLite connection string to use for every operation.</param>
         public SqliteTopicRepository(string connectionString)
         {
             _connectionString = connectionString;
@@ -181,7 +189,9 @@ namespace Flashcards.Data.Repositories
         /// Renames the topic with the given id.
         /// </summary>
         /// <exception cref="EntityNotFoundException">No topic with the given id exists.</exception>
-        /// <exception cref="DuplicateEntityException">A topic with <paramref name="newName"/> already exists.</exception>
+        /// <exception cref="DuplicateEntityException">
+        /// A topic with <paramref name="newName"/> already exists.
+        /// </exception>
         public async Task RenameAsync(long id, string newName)
         {
             using SqliteConnection connection = new SqliteConnection(_connectionString);
@@ -195,7 +205,7 @@ namespace Flashcards.Data.Repositories
             try
             {
                 int rowsAffected = await command.ExecuteNonQueryAsync();
-                RepositoryHelpers.EnsureRowsAffected(rowsAffected, id);
+                RepositoryHelpers.EnsureRowsAffected(rowsAffected, id, "Topic");
             }
             catch (SqliteException ex) when (ex.SqliteErrorCode == 19) // UNIQUE violation on Name
             {
@@ -219,17 +229,16 @@ namespace Flashcards.Data.Repositories
             command.Parameters.AddWithValue("$id", id);
 
             int rowsAffected = await command.ExecuteNonQueryAsync();
-            RepositoryHelpers.EnsureRowsAffected(rowsAffected, id);
+            RepositoryHelpers.EnsureRowsAffected(rowsAffected, id, "Topic");
         }
 
         /// <summary>
-        /// Returns all topics ordered by Name, alongside each one's flashcard count — used for the
-        /// topic-selection list, so it doesn't need a separate round-trip per topic (or an in-memory
-        /// join against a separately-loaded flashcard count) to show both. Counts every flashcard row
-        /// in the database directly; IsDeleted tombstones are an in-memory-only concept purged before
-        /// a card is ever persisted, so no row in Flashcards is ever "deleted" from this count's
-        /// perspective. Uses a LEFT JOIN so topics with zero flashcards still appear, with CardCount 0
-        /// rather than being dropped entirely.
+        /// Returns all topics ordered by Name, alongside each one's flashcard count — used for the topic-selection
+        /// list, so it doesn't need a separate round-trip per topic (or an in-memory join against a separately-loaded
+        /// flashcard count) to show both. Counts every flashcard row in the database directly; IsDeleted tombstones are
+        /// an in-memory-only concept purged before a card is ever persisted, so no row in Flashcards is ever "deleted"
+        /// from this count's perspective. Uses a LEFT JOIN so topics with zero flashcards still appear, with CardCount
+        /// 0 rather than being dropped entirely.
         /// </summary>
         public async Task<IReadOnlyList<TopicListItem>> GetAllWithCardCountsAsync()
         {

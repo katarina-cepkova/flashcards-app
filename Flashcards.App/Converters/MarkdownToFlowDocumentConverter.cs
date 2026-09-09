@@ -17,7 +17,7 @@ namespace Flashcards.App.Converters
     /// rendering, by CodeBlockHighlightRenderer) — so both quotes and code blocks stay visually tied to whatever color
     /// the current card has.
     /// </summary>
-    public class MarkdownToFlowDocumentConverter : IMultiValueConverter
+    internal class MarkdownToFlowDocumentConverter : IMultiValueConverter
     {
         /// <summary>Alpha applied to the text color for quote blocks (0-255). Lower = more faded.</summary>
         private const byte QuoteAlpha = 200;

@@ -52,9 +52,16 @@
             $"NextReviewAt={NextReviewAt?.ToString("O") ?? "null"}, " +
             $"IsDeleted={IsDeleted} }}";
 
+        /// <summary>
+        /// Creates a new, not-yet-saved flashcard for <paramref name="topicId"/> with blank front/back
+        /// text and the given background color, and every other field at its default value.
+        /// </summary>
+        /// <param name="topicId">The topic the new flashcard will belong to.</param>
+        /// <param name="colorArgb">The card's initial background color, in ARGB format.</param>
         public static Flashcard CreateDefault(long topicId, int colorArgb)
         {
-            return new Flashcard() { 
+            return new Flashcard()
+            {
                 TopicId = topicId,
                 ColorArgb = colorArgb,
             };
