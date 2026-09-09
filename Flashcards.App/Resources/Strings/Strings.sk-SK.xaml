@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Create new flashcard messages -->
+    <system:String x:Key="CreateSet_InvalidSetTopic_Message">Názov témy nemôže byť prázdny.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">Názov témy '@' už existuje.</system:String>
+
+    <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
+    <system:String x:Key="UnsavedChanges_Caption">Neuložené zmeny</system:String>
+    <system:String x:Key="UnsavedChanges_Message" xml:space="preserve">Máte neuložené zmeny v sade '@'.
+Chcete ich uložiť pred pokračovaním?</system:String>
+    
+    <!-- Delete flashcard set confirmation dialog -->
+    <system:String x:Key="DeleteSet_Caption">Odstrániť súčasnú sadu kartičiek</system:String>
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Naozaj chcete zmazať sadu kartičiek '@'?
+Táto akcia ju odstráni natrvalo.
+Potvrďte odstránenie.</system:String>
+
+    <!-- Open existing flashcard set dialog -->
+    <system:String x:Key="OpenSet_Caption">Otvoriť existujúcu sadu kartičiek</system:String>
+    <system:String x:Key="NoExistingSets_Caption">Zatiaľ žiadne sady</system:String>
+    <system:String x:Key="NoExistingSets_Message">Ešte ste nevytvorili žiadnu sadu kartičiek. Najprv nejakú vytvorte.</system:String>
+    <system:String x:Key="Topic_ColumnName">Téma</system:String>
+    <system:String x:Key="CardCount_ColumnName">Počet kartičiek</system:String>
+
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Pokračovať v učení?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">Máte nedokončenú reláciu učenia pre túto sadu.
+Chcete v nej pokračovať, alebo začať novú?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Opustiť učenie?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">Máte neuložený postup z tejto relácie.
+Chcete ho uložiť pred odchodom?</system:String>
+
+    <!-- Flashcard side indicator, shown below the card -->
+    <system:String x:Key="Front">predná strana</system:String>
+    <system:String x:Key="Back">zadná strana</system:String>
+
+</ResourceDictionary>

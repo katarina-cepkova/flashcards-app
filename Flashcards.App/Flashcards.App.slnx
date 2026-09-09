@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../Flashcards.Core/Flashcards.Core.csproj" />
+  <Project Path="../Flashcards.Data/Flashcards.Data.csproj" />
+  <Project Path="../Flashcards.Tests/Flashcards.Tests.csproj" />
+  <Project Path="Flashcards.App.csproj" />
+</Solution>

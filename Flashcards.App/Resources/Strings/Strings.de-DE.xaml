@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Create new flashcard messages -->
+    <system:String x:Key="CreateSet_InvalidSetTopic_Message">Der Themenname darf nicht leer sein.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">Der Name des Themas '@' existiert bereits.</system:String>
+
+    <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
+    <system:String x:Key="UnsavedChanges_Caption">Nicht gespeicherte Änderungen</system:String>
+    <system:String x:Key="UnsavedChanges_Message" xml:space="preserve">Sie haben nicht gespeicherte Änderungen in '@'.
+Möchten Sie sie vor dem Fortfahren speichern?</system:String>
+
+    <!-- Delete flashcard set confirmation dialog -->
+    <system:String x:Key="DeleteSet_Caption">Aktuelles Kartenset löschen</system:String>
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Sind Sie sich sicher, dass Sie das Karteikartenset '@' löschen möchten?
+Diese Aktion wird es dauerhaft entfernen.
+Bestätigen Sie das Löschen.</system:String>
+
+    <!-- Open existing flashcard set dialog -->
+    <system:String x:Key="OpenSet_Caption">Ein vorhandenes Lernkarten-Set öffnen</system:String>
+    <system:String x:Key="NoExistingSets_Caption">Noch keine Sets</system:String>
+    <system:String x:Key="NoExistingSets_Message">Sie haben noch keine Kartensets erstellt. Erstellen Sie zuerst eines.</system:String>
+    <system:String x:Key="Topic_ColumnName">Thema</system:String>
+    <system:String x:Key="CardCount_ColumnName">Anzahl der Karten</system:String>
+
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Lernsitzung fortsetzen?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">Sie haben eine unvollständige Lernsitzung für dieses Set.
+Möchten Sie sie fortsetzen oder eine neue starten?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Lernsitzung verlassen?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">Sie haben nicht gespeicherten Fortschritt aus dieser Sitzung.
+Möchten Sie ihn vor dem Verlassen speichern?</system:String>
+
+    <!-- Flashcard side indicator, shown below the card -->
+    <system:String x:Key="Front">Vorderseite</system:String>
+    <system:String x:Key="Back">Rückseite</system:String>
+
+</ResourceDictionary>

@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<InternalsVisibleTo Include="Flashcards.Tests" />
+  </ItemGroup>
+	
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Folder Include="AttachedProperties\" />
+    <Folder Include="Resources\Strings\" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Resource Include="Resources\Icons\**\*.ico" />
+	  <Resource Include="Resources\Icons\**\*.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
+	<PackageReference Include="Coltr.ColorCode.Wpf" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Flashcards.Core\Flashcards.Core.csproj" />
+    <ProjectReference Include="..\Flashcards.Data\Flashcards.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Dialogs\ColorPickerDialog.cs">
+      <Generator>MSBuild:Compile</Generator>
+    </Compile>
+  </ItemGroup>
+
+</Project>

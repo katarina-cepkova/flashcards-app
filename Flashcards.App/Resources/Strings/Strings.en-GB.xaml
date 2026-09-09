@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Create new flashcard messages -->
+    <system:String x:Key="CreateSet_InvalidSetTopic_Message">The topic name cannot be empty.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">The topic name '@' already exists.</system:String>
+
+    <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
+    <system:String x:Key="UnsavedChanges_Caption">Unsaved changes</system:String>
+    <system:String x:Key="UnsavedChanges_Message" xml:space="preserve">You have unsaved changes in '@'.
+Do you want to save them before continuing?</system:String>
+
+    <!-- Delete flashcard set confirmation dialog -->
+    <system:String x:Key="DeleteSet_Caption">Delete current flashcard set</system:String>
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Are you sure you want to delete flashcard set '@'?
+This action will remove it permanently.
+Confirm deletion.</system:String>
+
+    <!-- Open existing flashcard set dialog -->
+    <system:String x:Key="OpenSet_Caption">Open existing flashcard set</system:String>
+    <system:String x:Key="NoExistingSets_Caption">No flashcard sets yet</system:String>
+    <system:String x:Key="NoExistingSets_Message">You haven't created any flashcard sets yet. Create one first.</system:String>
+    <system:String x:Key="Topic_ColumnName">Topic</system:String>
+    <system:String x:Key="CardCount_ColumnName">Card Count</system:String>
+
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Resume learning session?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">You have an unfinished learning session for this set.
+Do you want to resume it, or start a new one?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Leave learning session?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">You have unsaved progress from this session.
+Do you want to save it before leaving?</system:String>
+
+    <!-- Flashcard side indicator, shown below the card -->
+    <system:String x:Key="Front">front</system:String>
+    <system:String x:Key="Back">back</system:String>
+
+</ResourceDictionary>
