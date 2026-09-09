@@ -58,10 +58,32 @@ namespace Flashcards.App.Converters
             renderer.Render(parsedDocument);
 
             if (textBrush is SolidColorBrush solidBrush)
+            {
                 ApplyQuoteForeground(document, solidBrush.Color);
-
+                ApplyHeadingForeground(document, solidBrush.Color);
+            }
             ApplyCodeBackground(document, cardIsDark);
+            ApplyInlineCodeBackground(document, cardIsDark);
             return document;
+        }
+
+        /// <summary>
+        /// Walks the document looking for heading Paragraphs and overrides their Foreground to match
+        /// the resolved text color, so headings aren't always black regardless of the card's
+        /// background.
+        /// </summary>
+        private static void ApplyHeadingForeground(FlowDocument document, Color textColor)
+        {
+            Brush textBrush = new SolidColorBrush(textColor);
+            ForEachParagraph(document, paragraph =>
+            {
+                // Markdig.Wpf hardcodes headings' Foreground directly on the element (no Style to
+                // inspect, unlike quotes/code) — and from debugging, H5/H6 headings otherwise render
+                // identically to body text (same FontSize, no TextDecorations), so this exact
+                // hardcoded black value is the only marker that works across all heading levels.
+                if (paragraph.Foreground is SolidColorBrush brush && brush.Color == Colors.Black)
+                    paragraph.Foreground = textBrush;
+            });
         }
 
         /// <summary>
@@ -69,7 +91,7 @@ namespace Flashcards.App.Converters
         /// Markdig-assigned Style, since there's no simpler type/tag to check) and sets their
         /// Foreground to textColor with QuoteAlpha instead of the library's default gray.
         /// </summary>
-        private void ApplyQuoteForeground(FlowDocument document, Color textColor)
+        private static void ApplyQuoteForeground(FlowDocument document, Color textColor)
         {
             Color dimmedColor = Color.FromArgb(QuoteAlpha, textColor.R, textColor.G, textColor.B);
             Brush dimmedBrush = new SolidColorBrush(dimmedColor);
@@ -83,7 +105,7 @@ namespace Flashcards.App.Converters
         /// nested inside those are rare enough for flashcard content not to be worth the extra
         /// traversal code) so a quote nested inside another quote still gets dimmed.
         /// </summary>
-        private void ApplyQuoteForegroundRecursive(Block block, Brush dimmedBrush)
+        private static void ApplyQuoteForegroundRecursive(Block block, Brush dimmedBrush)
         {
             if (block is Section section)
             {
@@ -104,39 +126,97 @@ namespace Flashcards.App.Converters
         }
 
         /// <summary>
-        /// Walks the document looking for Paragraphs tagged by CodeBlockHighlightRenderer as code blocks, and gives
-        /// them a translucent white (light card) or black (dark card) overlay. WPF composites this against the card's
-        /// own background at render time, so the code block reads as visually distinct while nudging its effective
-        /// shade toward what the chosen ColorCode theme (light/dark formatter) expects for contrast.
+        /// Walks every Paragraph in the document (recursing into Sections), invoking the given action
+        /// on each one — shared traversal logic for ApplyCodeBackground (tagged fenced-code Paragraphs)
+        /// and ApplyInlineCodeBackground (Runs with CodeStyleKey inside any Paragraph).
         /// </summary>
-        private void ApplyCodeBackground(FlowDocument document, bool cardIsDark)
+        private static void ForEachParagraph(FlowDocument document, Action<Paragraph> action)
         {
-            // lighter color for dark background, darker for light
-            // - so even white and black backgrounds have distinct colors for code blocks
-
-            Color overlay = cardIsDark ? Colors.White : Colors.Black;
-            Color translucentCodeBackground = Color.FromArgb(CodeBackgroundAlpha, overlay.R, overlay.G, overlay.B);
-            Brush backgroundBrush = new SolidColorBrush(translucentCodeBackground);
-
             foreach (Block block in document.Blocks)
-                ApplyCodeBackgroundRecursive(block, backgroundBrush);
+                ForEachParagraphRecursive(block, action);
+        }
+
+        /// <summary>Recurses into Section children looking for Paragraphs; invokes action on each one found.</summary>
+        private static void ForEachParagraphRecursive(Block block, Action<Paragraph> action)
+        {
+            if (block is Paragraph paragraph)
+                action(paragraph);
+            else if (block is Section section)
+            {
+                foreach (Block childBlock in section.Blocks)
+                    ForEachParagraphRecursive(childBlock, action);
+            }
+            else if (block is List list)
+            {
+                foreach (ListItem item in list.ListItems)
+                    foreach (Block childBlock in item.Blocks)
+                        ForEachParagraphRecursive(childBlock, action);
+            }
         }
 
         /// <summary>
-        /// Recurses into Section children looking for the tagged code-block Paragraph. Code
-        /// blocks are always rendered as a direct Paragraph (never nested inside another
-        /// Section themselves), so once one is found there's nothing further to recurse into.
+        /// Builds the translucent white/black overlay brush used for code backgrounds, contrasting with the card's own
+        /// color.
         /// </summary>
-        private void ApplyCodeBackgroundRecursive(Block block, Brush backgroundBrush)
+        private static Brush CreateOverlayBrush(bool cardIsDark)
         {
-            if (block is Paragraph paragraph && Equals(paragraph.Tag, CodeBlockHighlightRenderer.CodeBlockTag))
+            // lighter color for dark background, darker for light
+            // - so even white and black backgrounds have distinct colors for code blocks
+            Color overlay = cardIsDark ? Colors.White : Colors.Black;
+            Color translucentOverlay = Color.FromArgb(CodeBackgroundAlpha, overlay.R, overlay.G, overlay.B);
+            return new SolidColorBrush(translucentOverlay);
+        }
+
+        /// <summary>
+        /// Walks the document looking for Paragraphs tagged by CodeBlockHighlightRenderer as code blocks, and gives
+        /// them a translucent white (dark card) or black (light card) overlay. WPF composites this against the card's
+        /// own background at render time, so the code block reads as visually distinct.
+        /// </summary>
+        private static void ApplyCodeBackground(FlowDocument document, bool cardIsDark)
+        { 
+            Brush backgroundBrush = CreateOverlayBrush(cardIsDark);
+            ForEachParagraph(document, paragraph =>
             {
-                paragraph.Background = backgroundBrush;
+                if (Equals(paragraph.Tag, CodeBlockHighlightRenderer.CodeBlockTag))
+                    paragraph.Background = backgroundBrush;
+            });
+            
+        }
+
+        /// <summary>
+        /// Walks the document looking for inline code Runs and gives them the same translucent overlay as
+        /// ApplyCodeBackground uses for fenced code blocks, so inline code reads as visually distinct too.
+        /// </summary>
+        private static void ApplyInlineCodeBackground(FlowDocument document, bool cardIsDark)
+        {
+            Brush backgroundBrush = CreateOverlayBrush(cardIsDark);
+            ForEachParagraph(document, paragraph =>
+            {
+                foreach (Inline inline in paragraph.Inlines)
+                    ApplyInlineCodeBackgroundToInline(inline, backgroundBrush);
+            });
+        }
+
+        /// <summary>
+        /// Recurses into Span-derived inlines (Bold, Italic, Strikethrough, etc.) looking for Runs —
+        /// inline code inside e.g. ~~strikethrough~~ text is nested inside that Span, not a direct
+        /// child of the Paragraph's Inlines.
+        /// </summary>
+        private static void ApplyInlineCodeBackgroundToInline(Inline inline, Brush backgroundBrush)
+        {
+            if (inline is Run run)
+            {
+                // Inline code Runs have no tag of their own (unlike fenced code block Paragraphs,
+                // which CodeBlockHighlightRenderer tags itself) — so instead this looks for any Run
+                // whose Style sets Background, which is specific to Markdig.Wpf's CodeStyleKey style
+                // and unlikely to appear on any other inline text
+                if (run.Style?.Setters.OfType<Setter>().Any(s => s.Property == TextElement.BackgroundProperty) == true)
+                    run.Background = backgroundBrush;
             }
-            else if (block is Section section)
+            else if (inline is Span span)
             {
-                foreach (Block child in section.Blocks)
-                    ApplyCodeBackgroundRecursive(child, backgroundBrush);
+                foreach (Inline child in span.Inlines)
+                    ApplyInlineCodeBackgroundToInline(child, backgroundBrush);
             }
         }
 
