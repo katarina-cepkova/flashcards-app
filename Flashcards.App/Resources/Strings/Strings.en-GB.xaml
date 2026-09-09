@@ -2,12 +2,6 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <!-- Generic dialog buttons, reused across multiple dialogs -->
-    <system:String x:Key="OKButtonText">OK</system:String>
-    <system:String x:Key="CancelButtonText">Cancel</system:String>
-    <system:String x:Key="YesButtonText">Yes</system:String>
-    <system:String x:Key="NoButtonText">No</system:String>
-
     <!-- Create new flashcard messages -->
     <system:String x:Key="CreateSet_InvalidSetTopic_Message">The topic name cannot be empty.</system:String>
     <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">The topic name '@' already exists.</system:String>
@@ -30,11 +24,16 @@ Confirm deletion.</system:String>
     <system:String x:Key="Topic_ColumnName">Topic</system:String>
     <system:String x:Key="CardCount_ColumnName">Card Count</system:String>
 
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Resume learning session?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">You have an unfinished learning session for this set.
+Do you want to resume it, or start a new one?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Leave learning session?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">You have unsaved progress from this session.
+Do you want to save it before leaving?</system:String>
+
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">front</system:String>
     <system:String x:Key="Back">back</system:String>
-
-    <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
-    <system:String x:Key="SoundCheckBoxText">Sound</system:String>
 
 </ResourceDictionary>

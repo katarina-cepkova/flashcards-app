@@ -2,12 +2,6 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <!-- Generic dialog buttons, reused across multiple dialogs -->
-    <system:String x:Key="OKButtonText">OK</system:String>
-    <system:String x:Key="CancelButtonText">Stornieren</system:String>
-    <system:String x:Key="YesButtonText">Ja</system:String>
-    <system:String x:Key="NoButtonText">Nein</system:String>
-
     <!-- Create new flashcard messages -->
     <system:String x:Key="CreateSet_InvalidSetTopic_Message">Der Themenname darf nicht leer sein.</system:String>
     <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">Der Name des Themas '@' existiert bereits.</system:String>
@@ -30,11 +24,16 @@ Bestätigen Sie das Löschen.</system:String>
     <system:String x:Key="Topic_ColumnName">Thema</system:String>
     <system:String x:Key="CardCount_ColumnName">Anzahl der Karten</system:String>
 
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Lernsitzung fortsetzen?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">Sie haben eine unvollständige Lernsitzung für dieses Set.
+Möchten Sie sie fortsetzen oder eine neue starten?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Lernsitzung verlassen?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">Sie haben nicht gespeicherten Fortschritt aus dieser Sitzung.
+Möchten Sie ihn vor dem Verlassen speichern?</system:String>
+
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">Vorderseite</system:String>
     <system:String x:Key="Back">Rückseite</system:String>
-
-    <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
-    <system:String x:Key="SoundCheckBoxText">der Ton</system:String>
 
 </ResourceDictionary>

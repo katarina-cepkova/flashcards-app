@@ -2,12 +2,6 @@
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <!-- Generic dialog buttons, reused across multiple dialogs -->
-    <system:String x:Key="OKButtonText">OK</system:String>
-    <system:String x:Key="CancelButtonText">Zrušiť</system:String>
-    <system:String x:Key="YesButtonText">Áno</system:String>
-    <system:String x:Key="NoButtonText">Nie</system:String>
-
     <!-- Create new flashcard messages -->
     <system:String x:Key="CreateSet_InvalidSetTopic_Message">Názov témy nemôže byť prázdny.</system:String>
     <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">Názov témy '@' už existuje.</system:String>
@@ -19,7 +13,7 @@ Chcete ich uložiť pred pokračovaním?</system:String>
     
     <!-- Delete flashcard set confirmation dialog -->
     <system:String x:Key="DeleteSet_Caption">Odstrániť súčasnú sadu kartičiek</system:String>
-    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Ste si naozaj istý, že chcete zmazať sadu kartičiek '@'?
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Naozaj chcete zmazať sadu kartičiek '@'?
 Táto akcia ju odstráni natrvalo.
 Potvrďte odstránenie.</system:String>
 
@@ -30,11 +24,16 @@ Potvrďte odstránenie.</system:String>
     <system:String x:Key="Topic_ColumnName">Téma</system:String>
     <system:String x:Key="CardCount_ColumnName">Počet kartičiek</system:String>
 
+    <!-- Learning session -->
+    <system:String x:Key="ResumeLearningSession_Caption">Pokračovať v učení?</system:String>
+    <system:String x:Key="ResumeLearningSession_Message" xml:space="preserve">Máte nedokončenú reláciu učenia pre túto sadu.
+Chcete v nej pokračovať, alebo začať novú?</system:String>
+    <system:String x:Key="LeaveLearningSession_Caption">Opustiť učenie?</system:String>
+    <system:String x:Key="LeaveLearningSession_Message" xml:space="preserve">Máte neuložený postup z tejto relácie.
+Chcete ho uložiť pred odchodom?</system:String>
+
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">predná strana</system:String>
     <system:String x:Key="Back">zadná strana</system:String>
-
-    <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
-    <system:String x:Key="SoundCheckBoxText">Zvuk</system:String>
 
 </ResourceDictionary>

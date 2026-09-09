@@ -12,6 +12,8 @@ namespace Flashcards.App.ViewModels
 {
     partial class MainViewModel
     {
+        /// <summary>Displays the current card's 1-based position among active cards, e.g. "3/15".</summary>
+        public string CardPositionText => $"{CurrentCardIndex + 1}/{MaxCardIndex + 1}";
         /// <summary>
         /// Forwards FlashcardManager's own PropertyChanged notifications so bindings on this view model (e.g. Cards,
         /// CurrentFlashcard) stay in sync. CurrentFlashcard changes also need to re-raise DisplayedText, LogicalIndex
@@ -25,10 +27,16 @@ namespace Flashcards.App.ViewModels
                 OnPropertyChanged(nameof(DisplayedText));
 
             if (e.PropertyName == nameof(FlashcardManager.LogicalIndex))
+            {
                 OnPropertyChanged(nameof(CurrentCardIndex));
+                OnPropertyChanged(nameof(CardPositionText));
+            }
 
             if (e.PropertyName == nameof(FlashcardManager.ActiveFlashcardCount))
+            {
                 OnPropertyChanged(nameof(MaxCardIndex));
+                OnPropertyChanged(nameof(CardPositionText));
+            }
         }
 
         /// <summary>
@@ -51,6 +59,7 @@ namespace Flashcards.App.ViewModels
             OnPropertyChanged(nameof(DisplayedText));
             OnPropertyChanged(nameof(CurrentCardIndex));
             OnPropertyChanged(nameof(MaxCardIndex));
+            OnPropertyChanged(nameof(CardPositionText));
         }
 
         /// <summary>
@@ -65,6 +74,9 @@ namespace Flashcards.App.ViewModels
             OnPropertyChanged(nameof(IsTopicNameValid));
             OnPropertyChanged(nameof(TopicNameValidationMessage));
             ReplaceFlashcardManager(cards ?? Array.Empty<Flashcard>());
+
+            _learningQueue = null;
+            _learningSessionInProgress = false;
 
             // IsDirty and CurrentState are deliberately NOT touched here — callers need different
             // values for each (e.g. CreatingSet keeps a non-null draft topic, SelectingSet needs a
@@ -109,8 +121,14 @@ namespace Flashcards.App.ViewModels
         /// </summary>
         private async Task SaveFlashcardsAsync()
         {
+            int logicalIndex = _flashcardManager.LogicalIndex;
             IReadOnlyList<Flashcard> savedCards = await _flashcardRepository.SaveChangesAsync(_flashcardManager.Cards);
             ReplaceFlashcardManager(savedCards);
+
+            // Restore the user's position — ReplaceFlashcardManager always resets to the first card,
+            // which would otherwise jump the view away from whatever card they were looking at.
+            if (logicalIndex >= 0 && logicalIndex < _flashcardManager.ActiveFlashcardCount)
+                _flashcardManager.SelectIndex(logicalIndex);
             IsDirty = false;
         }
 
@@ -283,10 +301,10 @@ namespace Flashcards.App.ViewModels
         #region Delete set
 
         /// <summary>
-        /// Deletes, discards, or cancels — depending on context. In OpenedSetView/OpenedSetEdit,
-        /// deletes the saved topic after confirmation. In CreatingSet, discards the in-progress draft
-        /// with no confirmation. In SelectingSet, cancels the current selection. All paths return to
-        /// ClosedSet.
+        /// Deletes, discards, leaves, or cancels — depending on context. In OpenedSetView/OpenedSetEdit, deletes the
+        /// saved topic after confirmation. In CreatingSet, discards the in-progress draft with no confirmation. In
+        /// SelectingSet, cancels the current selection. In LearningSession, prompts to save session progress (via
+        /// LeaveLearningSessionAsync) before leaving the set entirely. All paths return to ClosedSet.
         /// </summary>
         private async Task DeleteOrLeaveSetAsync()
         {
@@ -303,6 +321,16 @@ namespace Flashcards.App.ViewModels
             // Discarding a draft — nothing persisted yet, no confirmation needed.
             if (CurrentState == AppState.CreatingSet)
             {
+                CloseTopic();
+                return;
+            }
+
+            // Leaving a learning session — reuse LeaveLearningSessionAsync's own save/discard prompt
+            // for session progress, then finish the job by closing the set entirely (LeaveLearningSessionAsync
+            // on its own only returns to OpenedSetView, since that's what the toggle button needs).
+            if (CurrentState == AppState.LearningSession)
+            {
+                await LeaveLearningSessionAsync();
                 CloseTopic();
                 return;
             }

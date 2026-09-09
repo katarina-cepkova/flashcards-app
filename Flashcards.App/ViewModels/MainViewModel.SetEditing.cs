@@ -15,8 +15,9 @@ namespace Flashcards.App.ViewModels
         /// <summary>The flashcards belonging to the currently open set.</summary>
         public ObservableCollection<Flashcard> Cards => _flashcardManager.Cards;
 
-        /// <summary>The flashcard currently shown/edited.</summary>
-        public Flashcard? CurrentFlashcard => _flashcardManager.CurrentFlashcard;
+        /// <summary>The flashcard currently shown/edited/studied.</summary>
+        public Flashcard? CurrentFlashcard => CurrentState == Models.AppState.LearningSession
+            ? _learningQueue?.Current?.Flashcard : _flashcardManager.CurrentFlashcard;
 
         /// <summary>
         /// The highest valid position on CardNavigationScrollBar — one less than the number of active (non-deleted)
