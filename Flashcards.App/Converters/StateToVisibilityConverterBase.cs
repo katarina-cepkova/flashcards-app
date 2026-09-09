@@ -18,12 +18,10 @@ namespace Flashcards.App.Converters
 
         public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is not AppState currentState || parameter is not string allowedStatesString)
+            if (value is not AppState currentState || parameter is not string allowedStates)
                 return HiddenVisibility;
 
-            string[] allowedStates = allowedStatesString.Split(',');
-            bool isAllowed = allowedStates.Any(s => s.Trim() == currentState.ToString());  // enum.ToString() -> textual name
-
+            bool isAllowed = AppStateConverterHelpers.MatchesAnyState(allowedStates, currentState);
             return isAllowed ? Visibility.Visible : HiddenVisibility;
         }
 

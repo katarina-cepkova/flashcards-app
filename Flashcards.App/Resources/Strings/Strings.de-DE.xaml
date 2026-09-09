@@ -8,28 +8,27 @@
     <system:String x:Key="YesButtonText">Ja</system:String>
     <system:String x:Key="NoButtonText">Nein</system:String>
 
-    <!-- Default name given to a newly created topic before the user renames it -->
-    <system:String x:Key="DefaultTopicName">Thema</system:String>
+    <!-- Create new flashcard messages -->
+    <system:String x:Key="CreateSet_InvalidSetTopic_Message">Der Themenname darf nicht leer sein.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopic_Message">Der Name des Themas '@' existiert bereits.</system:String>
 
-    <!-- Create new flashcard set dialog -->
-    <system:String x:Key="CreateNewSetTitle">Neues LernKarten-Set erstellen</system:String>
-    <system:String x:Key="CreateNewSetMessage">Wenn Sie ein neues Lernkarten-Set erstellen möchten, \r\ngeben Sie den Namen des Themas in das Feld unten ein.</system:String>
-    <system:String x:Key="CreateSet_InvalidSetTopicMessage">Der Themenname darf nicht leer sein.</system:String>
-    <system:String x:Key="CreateSet_AlreadyExistingTopicMessage">Der Name des Themas '@' existiert bereits.</system:String>
-
-    <!-- Rename topic: shown when the new name collides with an existing topic (offers merge) -->
-    <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">Der Name des Themas '@' existiert bereits. \r\nWenn Sie zustimmen, werden die aktuellen \r\nund ursprünglichen daten bei der nächsten \r\nAbfrage zu einem Satz zusammengeführt.</system:String>
-    <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Warnung: Namenskonflikt</system:String>
-
-    <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
-    <system:String x:Key="InvalidTopicTitle">Fehler: Ungültiger Themenname</system:String>
+    <!-- Unsaved changes confirmation: shown before creating/opening another set while there are unsaved edits -->
+    <system:String x:Key="UnsavedChanges_Caption">Nicht gespeicherte Änderungen</system:String>
+    <system:String x:Key="UnsavedChanges_Message" xml:space="preserve">Sie haben nicht gespeicherte Änderungen in '@'.
+Möchten Sie sie vor dem Fortfahren speichern?</system:String>
 
     <!-- Delete flashcard set confirmation dialog -->
-    <system:String x:Key="DeleteSetTitle">Aktuelles Kartenset löschen</system:String>
-    <system:String x:Key="DeleteSetMessage">Sind Sie sich sicher, dass Sie das Karteikartenset '@' löschen möchten? \r\nDiese Aktion wird es dauerhaft entfernen. \r\nBestätigen Sie das Löschen.</system:String>
+    <system:String x:Key="DeleteSet_Caption">Aktuelles Kartenset löschen</system:String>
+    <system:String x:Key="DeleteSet_Message" xml:space="preserve">Sind Sie sich sicher, dass Sie das Karteikartenset '@' löschen möchten?
+Diese Aktion wird es dauerhaft entfernen.
+Bestätigen Sie das Löschen.</system:String>
 
     <!-- Open existing flashcard set dialog -->
-    <system:String x:Key="OpenSetTitle">Ein vorhandenes Lernkarten-Set öffnen</system:String>
+    <system:String x:Key="OpenSet_Caption">Ein vorhandenes Lernkarten-Set öffnen</system:String>
+    <system:String x:Key="NoExistingSets_Caption">Noch keine Sets</system:String>
+    <system:String x:Key="NoExistingSets_Message">Sie haben noch keine Kartensets erstellt. Erstellen Sie zuerst eines.</system:String>
+    <system:String x:Key="Topic_ColumnName">Thema</system:String>
+    <system:String x:Key="CardCount_ColumnName">Anzahl der Karten</system:String>
 
     <!-- Flashcard side indicator, shown below the card -->
     <system:String x:Key="Front">Vorderseite</system:String>

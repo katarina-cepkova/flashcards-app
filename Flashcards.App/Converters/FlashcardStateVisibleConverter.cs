@@ -15,16 +15,14 @@ namespace Flashcards.App.Converters
     {
         public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (values is not [var currentFlashcard, AppState currentState])
+            if (values is not [var currentFlashcard, AppState currentState]
+            || currentFlashcard is null
+            || parameter is not string allowedStates)
                 return Visibility.Collapsed;
 
-            if (currentFlashcard is null)
-                return Visibility.Collapsed;
+            bool stateMatches = AppStateConverterHelpers.MatchesAnyState(allowedStates, currentState);
 
-            string[] allowedStates = (parameter as string ?? "").Split(',');
-            bool isAllowedState = allowedStates.Contains(currentState.ToString());
-
-            return isAllowedState ? Visibility.Visible : Visibility.Collapsed;
+            return stateMatches ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object? parameter, CultureInfo culture)

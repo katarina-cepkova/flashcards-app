@@ -1,12 +1,16 @@
 ﻿using Flashcards.App.Services;
 using Flashcards.App.ViewModels;
 using Flashcards.App.Models;
+using Flashcards.Data.Repositories;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using Flashcards.Data.Database;
+using Flashcards.Core.Repositories;
+
 
 namespace Flashcards.App
 {
@@ -34,11 +38,14 @@ namespace Flashcards.App
         public MainWindow()
         {
             InitializeComponent();
-
+            string connectionString = DatabaseLocation.ConnectionString;
+            new DatabaseInitializer(connectionString).EnsureInitialized();
+            ITopicRepository topicRepository = new SqliteTopicRepository(connectionString);
+            IFlashcardRepository flashcardRepository = new SqliteFlashcardRepository(connectionString);
             // DataContext is assigned after InitializeComponent so every binding in the XAML
             // resolves against a fully constructed MainViewModel — nothing in the constructor
             // runs before this window's controls exist to bind to.
-            var viewModel = new MainViewModel(new LocalizationService());
+            var viewModel = new MainViewModel(new LocalizationService(), topicRepository, flashcardRepository);
             DataContext = viewModel;
 
             // Undo history is tied to the TextBox instance, not to which card/side is
@@ -46,8 +53,10 @@ namespace Flashcards.App
             // switches to a different card or side — otherwise Undo could reach back into
             // content that's no longer showing.
             viewModel.PropertyChanged += OnViewModelPropertyChanged;
+            viewModel.TopicNameConfirmed += OnTopicRenamed;
 
             PreviewMouseDown += MainWindow_PreviewMouseDown;
+
         }
 
         /// <summary>
@@ -76,11 +85,30 @@ namespace Flashcards.App
         /// </summary>
         private void MainWindow_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (e.OriginalSource is DependencyObject source && IsInsideFocusExemptElement(source))
+                return;
+
             if (e.OriginalSource is not TextBoxBase)
             {
                 FocusManager.SetFocusedElement(FocusManager.GetFocusScope(this), MainGrid);
                 Keyboard.Focus(MainGrid);
             }
+        }
+
+        /// <summary>
+        /// True if the clicked element is ConfirmCreateSetButton or something inside it (e.g. its
+        /// Image) — clicking it shouldn't steal focus from TopicNameTextBox first, since the button's
+        /// own Visibility depends on that TextBox staying focused through the click.
+        /// </summary>
+        private bool IsInsideFocusExemptElement(DependencyObject source)
+        {
+            while (source != null)
+            {
+                if (source == ConfirmTopicNameButton)
+                    return true;
+                source = VisualTreeHelper.GetParent(source);
+            }
+            return false;
         }
 
         /// <summary>
@@ -119,8 +147,40 @@ namespace Flashcards.App
         /// </summary>
         private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == nameof(MainViewModel.CurrentState) 
+                && DataContext is MainViewModel vm
+                && vm.CurrentState == AppState.CreatingSet)
+                // Calling Focus() directly here doesn't work: CurrentState just changed, so
+                // TopicNameTextBox's Visibility/IsReadOnly bindings haven't been re-evaluated yet —
+                // the TextBox is still in its previous (hidden/read-only) state at this exact moment,
+                // and WPF can't focus an element that isn't focusable yet. Dispatcher.BeginInvoke defers
+                // the Focus() call until after WPF finishes processing the pending binding/layout
+                // updates, by which point the TextBox is visible and editable.
+                Dispatcher.BeginInvoke(
+                    new Action(() => TopicNameTextBox.Focus()), 
+                    System.Windows.Threading.DispatcherPriority.Input
+                );
+
             if (e.PropertyName == nameof(MainViewModel.DisplayedText))
                 MarkdownEditingService.ClearUndoHistory(EditTextBox);
+        }
+
+        /// <summary>Moves focus away from TopicNameTextBox after a successful rename, so the user sees the action took effect (the confirm button, tied to that focus, disappears).</summary>
+        private void OnTopicRenamed(object? sender, EventArgs e)
+        {
+            MainGrid.Focus();
+        }
+
+        private void TopicSelectionListView_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is MainViewModel vm && vm.OpenSelectedSetCommand.CanExecute(null))
+                vm.OpenSelectedSetCommand.Execute(null);
+        }
+
+        private void TopicSelectionListView_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && DataContext is MainViewModel vm && vm.OpenSelectedSetCommand.CanExecute(null))
+                vm.OpenSelectedSetCommand.Execute(null);
         }
 
         /// <summary>Toggles "**" (bold) on the current selection/caret position.</summary>

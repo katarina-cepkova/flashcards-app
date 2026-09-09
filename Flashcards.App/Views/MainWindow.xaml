@@ -100,25 +100,61 @@
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
                             Orientation="Vertical" HorizontalAlignment="Center">
                     <!-- UpdateSourceTrigger=PropertyChanged = send updates on each typed character, not after leaving focus -->
-                    <TextBox x:Name="TopicNameTextBox"
-                             Style="{StaticResource TopicNameTextBoxStyle}"
-                             FontFamily="{StaticResource PrimaryFontFamily}"
-                             FontSize="{StaticResource TopicNameFontSize}"
-                             FontWeight="{StaticResource HeadingFontWeight}"
-                             Text="{Binding TopicName, UpdateSourceTrigger=PropertyChanged}"
-                             MaxLength="{Binding TopicMaxLength}"
-                             Visibility="{Binding CurrentState,
-                                          Converter={StaticResource StateToHiddenConverter},
-                                          ConverterParameter='OpenedSetView,OpenedSetEdit,LearningSession'}"
-                             IsReadOnly="{Binding CurrentState,
-                                          Converter={StaticResource StateToReadOnlyConverter}}"/>
+                    <StackPanel Orientation="Horizontal">
 
+
+                        <TextBox x:Name="TopicNameTextBox"
+                                 Style="{StaticResource TopicNameTextBoxStyle}"
+                                 FocusVisualStyle="{x:Null}"
+                                 FontFamily="{StaticResource PrimaryFontFamily}"
+                                 FontSize="{StaticResource TopicNameFontSize}"
+                                 FontWeight="{StaticResource HeadingFontWeight}"
+                                 Text="{Binding TopicName, UpdateSourceTrigger=PropertyChanged}"
+                                 MaxLength="{Binding TopicMaxLength}"
+                                 Visibility="{Binding CurrentState,
+                                              Converter={StaticResource StateToHiddenConverter},
+                                              ConverterParameter='CreatingSet,OpenedSetView,OpenedSetEdit,LearningSession'}"
+                                 IsReadOnly="{Binding CurrentState,
+                                              Converter={StaticResource StateToReadOnlyConverter},ConverterParameter='ClosedSet,OpenedSetView,LearningSession'}"/>
+
+                        <Button x:Name="ConfirmTopicNameButton"
+                                Style="{StaticResource IconButtonStyle}"
+                                Width="32" Height="32"
+                                Background="{StaticResource SetButtonsBrush}"
+                                Focusable="False"
+                                Command="{Binding ConfirmTopicNameCommand}">
+                            <Button.Visibility>
+                                <MultiBinding Converter="{StaticResource FocusAndNotReadOnlyToVisibleConverter}">
+                                  <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
+                                   <Binding ElementName="TopicNameTextBox" Path="IsReadOnly"/>
+                                </MultiBinding>
+                            </Button.Visibility>
+                            <Image Source="{StaticResource ConfirmIcon}"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                        </Button>
+                    </StackPanel>
+                    
+                    <TextBlock Text="{Binding TopicNameValidationMessage}"
+                               Foreground="{StaticResource InvalidInputBrush}"
+                               HorizontalAlignment="Center"
+                               FontSize="{StaticResource SmallFontSize}">
+                        <TextBlock.Visibility>
+                            <MultiBinding Converter="{StaticResource MessageAndStateToVisibleConverter}"
+                                          ConverterParameter="CreatingSet,OpenedSetEdit">
+                                <Binding Path="TopicNameValidationMessage"/>
+                                <Binding Path="CurrentState"/>
+                            </MultiBinding>
+                        </TextBlock.Visibility>
+                    </TextBlock>
+                               
                     <TextBlock Text="{Binding RemainingCharactersText}"
                                Foreground="{Binding RemainingCharactersColor}"
                                HorizontalAlignment="Right">
                         <TextBlock.Visibility>
                             <!-- converter binding multiple values -->
-                            <MultiBinding Converter="{StaticResource RemainingCharactersLabelVisibilityConverter}">
+                            <MultiBinding Converter="{StaticResource RemainingCharactersLabelVisibilityConverter}"
+                                          ConverterParameter='OpenedSetEdit,CreatingSet'>
                                 <Binding ElementName="TopicNameTextBox" Path="IsFocused"/>
                                 <Binding Path="CurrentState"/>
                                 <Binding Path="RemainingCharactersCount"/>
@@ -146,30 +182,56 @@
                                 Orientation="Vertical">
                     <Button x:Name="SaveButton"
                             Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource SetButtonsBrush}">
+                            Background="{StaticResource SetButtonsBrush}"
+                            Command="{Binding SaveCommand}">
                         <Image Source="{StaticResource SaveIcon}"
                                RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
                         
                     <Button x:Name="CreateSetButton"
-                                Style="{StaticResource IconButtonStyle}"
-                                Background="{StaticResource SetButtonsBrush}">
+                            Style="{StaticResource IconButtonStyle}"
+                            Background="{StaticResource SetButtonsBrush}"
+                            IsEnabled="{Binding CurrentState,
+                                        Converter={StaticResource StateToCheckedOrEnabledConverter},
+                                        ConverterParameter='ClosedSet,OpenedSetView,OpenedSetEdit'}"
+                            Command="{Binding CreateSetCommand}">
                             <Image Source="{StaticResource CreateFlashcardSetIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
 
                         <Button x:Name="OpenSetButton"
                                 Style="{StaticResource IconButtonStyle}"
-                                Background="{StaticResource SetButtonsBrush}">
+                                Background="{StaticResource SetButtonsBrush}"
+                                IsEnabled="{Binding CurrentState,
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter},
+                                            ConverterParameter='ClosedSet,OpenedSetView,OpenedSetEdit'}"
+                                Command="{Binding EnterSelectingSetCommand}">
                             <Image Source="{StaticResource OpenFlashcardSetIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
 
                         <Button x:Name="DeleteSetButton"
                                 Style="{StaticResource IconButtonStyle}"
-                                Background="{StaticResource SetButtonsBrush}">
-                            <Image Source="{StaticResource DeleteFlashcardSetIcon}"
-                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                                Background="{StaticResource SetButtonsBrush}"
+                                IsEnabled="{Binding CurrentState, 
+                                            Converter={StaticResource StateToCheckedOrEnabledConverter}, 
+                                            ConverterParameter='CreatingSet,SelectingSet,OpenedSetView,OpenedSetEdit'}"
+                                Command="{Binding DeleteOrLeaveSetCommand}">
+                            <Image RenderOptions.BitmapScalingMode="HighQuality">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Source" Value="{StaticResource DeleteFlashcardSetIcon}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="CreatingSet">
+                                                <Setter Property="Source" Value="{StaticResource LeaveSetIcon}"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CurrentState}" Value="SelectingSet">
+                                                <Setter Property="Source" Value="{StaticResource LeaveSetIcon}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                         </Button>
 
                     </StackPanel>
@@ -197,12 +259,7 @@
                             <Image Source="{StaticResource QuitLearningSessionIcon}"
                                    RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Button>
-
-                    <Button x:Name="ChangeStateTestButton"
-                                Style="{StaticResource IconButtonStyle}"
-                            Background="{StaticResource LogicButtonsBrush}"
-                            Command="{Binding CycleStateCommand}"/>
-                </StackPanel>
+                    </StackPanel>
 
                 </Grid>
 
@@ -304,6 +361,39 @@
 
                     
                 </StackPanel>
+                <Border Grid.Row="2" Grid.Column="1"
+                        Margin="{StaticResource FlashcardMargin}"
+                        CornerRadius="12"
+                        Background="{StaticResource SystemDialogBackgroundBrush}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        MaxHeight="400"
+                        Visibility="{Binding CurrentState,
+                                     Converter={StaticResource StateToCollapsedConverter},
+                                     ConverterParameter='SelectingSet'}">
+                    <ListView x:Name="TopicSelectionListView"
+                              ItemsSource="{Binding TopicsForSelection}"
+                              SelectedItem="{Binding SelectedTopicToOpen}"
+                              FontSize="{StaticResource BodyFontSize}"
+                              KeyDown="TopicSelectionListView_OnKeyDown"
+                              MouseDoubleClick="TopicSelectionListView_OnMouseDoubleClick">
+                        <ListView.Resources>
+                            <Style TargetType="GridViewColumnHeader">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="{DynamicResource Topic_ColumnName}"
+                                                DisplayMemberBinding="{Binding Topic.Name}"
+                                                Width="240"/>
+                                <GridViewColumn Header="{DynamicResource CardCount_ColumnName}"
+                                                DisplayMemberBinding="{Binding CardCount}"
+                                                Width="120"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Border>
 
                 <Grid x:Name="FlashcardEditor" Grid.Row="2" Grid.Column="1"
                       Margin="{StaticResource FlashcardMargin}"
