@@ -1,8 +1,8 @@
-﻿using Flashcards.App.AttachedProperties;
-using Flashcards.App.Services;
+﻿using Flashcards.App.Services;
 using Flashcards.App.ViewModels;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
@@ -59,7 +59,107 @@ namespace Flashcards.App
         private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(MainViewModel.DisplayedText))
-                RichTextBoxHelper.ClearUndoHistory(Flashcard);
+                MarkdownEditingService.ClearUndoHistory(EditTextBox);
+        }
+
+
+
+        private void BoldButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "**");
+        }
+
+        private void ItalicButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "*");
+        }
+
+
+        private void StrikethroughButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "~~");
+        }
+
+        private void InlineCodeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.ToggleEmphasis(EditTextBox, "`");
+        }
+
+        private void UpsizeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.IncreaseHeadingLevel(EditTextBox);
+        }
+
+        private void DownsizeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.DecreaseHeadingLevel(EditTextBox);
+        }
+
+        private void EditTextBox_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            BoldButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "**");
+            ItalicButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "*");
+            StrikethroughButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "~~");
+            InlineCodeButton.IsChecked = MarkdownEditingService.IsMarkerActive(textBox, "`");
+
+            int headingLevel = MarkdownEditingService.GetHeadingLevel(textBox);
+            UpsizeButton.IsEnabled = headingLevel != 1;
+            DownsizeButton.IsEnabled = headingLevel != 0;
+        }
+
+        private void QuoteButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.InsertQuote(EditTextBox);
+        }
+
+        private void LinkButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.InsertLink(EditTextBox);
+        }
+
+        private void CodeBlockButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MarkdownEditingService.InsertCodeBlock(EditTextBox);
+        }
+
+        private void EditTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            // scrollbar Maximum/ViewportSize recalculation
+        }
+
+        private void EditTextBox_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // scrollbar Maximum/ViewportSize recalculation
+        }
+
+        private void EditTextBox_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.B when Keyboard.Modifiers == ModifierKeys.Control:
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "**");
+                    e.Handled = true; // stop propagation to other components
+                    break;
+                case Key.I when Keyboard.Modifiers == ModifierKeys.Control:
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "*");
+                    e.Handled = true;
+                    break;
+                case Key.E when Keyboard.Modifiers == ModifierKeys.Control:
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "`");
+                    e.Handled = true;
+                    break;
+                // keyboard modifiers represented as enum - bitwise OR
+                case Key.X when Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift):
+                    MarkdownEditingService.ToggleEmphasis(EditTextBox, "~~");
+                    e.Handled = true;
+                    break;
+            }
+        }
+
+        private void EditPreviewScrollBar_OnScroll(object sender, ScrollEventArgs e)
+        {
+            // scroll sync na EditTextBox a PreviewViewer
         }
     }
 }

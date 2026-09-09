@@ -17,7 +17,7 @@ namespace Flashcards.Tests.Repositories
         private SqliteConnection _keeperConnection = null!;
         private SqliteTopicRepository _repository = null!;
 
-        public async Task InitializeAsync()
+        public async ValueTask InitializeAsync()
         {
             // keeps in-memory DB alive, otherwise each test would open a new, empty one
             _keeperConnection = new SqliteConnection(_connectionString);
@@ -29,7 +29,7 @@ namespace Flashcards.Tests.Repositories
             _repository = new SqliteTopicRepository(_connectionString);
         }
 
-        public async Task DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
             await _keeperConnection.DisposeAsync();
         }
