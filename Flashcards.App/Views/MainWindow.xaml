@@ -1,0 +1,56 @@
+﻿<Window x:Class="Flashcards.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Flashcards.App"
+        xmlns:converters="clr-namespace:Flashcards.App.Converters"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="650" Width="1000">
+    <Window.Resources>
+        <converters:LanguageToIsCheckedConverter x:Key="LanguageToIsCheckedConverter"/>
+    </Window.Resources>
+    <Grid Background="{StaticResource MainWindowBackgroundBrush}">
+        <DockPanel LastChildFill="False">
+            <StackPanel x:Name="LanguageSelectorPanel"
+                        DockPanel.Dock="Top"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+
+                <RadioButton Style="{StaticResource FlagRadioButtonStyle}"
+                             GroupName="LanguageGroup"
+                             IsChecked="{Binding CurrentLanguage, 
+                                        Converter={StaticResource LanguageToIsCheckedConverter}, 
+                                        ConverterParameter=en-GB}">
+                    <Image Source="{StaticResource GbFlagIcon}" Stretch="Uniform"/>
+                </RadioButton>
+
+                <RadioButton Style="{StaticResource FlagRadioButtonStyle}"
+                             GroupName="LanguageGroup"
+                             IsChecked="{Binding CurrentLanguage, 
+                                        Converter={StaticResource LanguageToIsCheckedConverter}, 
+                                        ConverterParameter=de-DE}">
+                    <Image Source="{StaticResource DeFlagIcon}" Stretch="Uniform"/>
+                </RadioButton>
+
+                <RadioButton Style="{StaticResource FlagRadioButtonStyle}"
+                             GroupName="LanguageGroup"
+                             IsChecked="{Binding CurrentLanguage, 
+                                        Converter={StaticResource LanguageToIsCheckedConverter}, 
+                                        ConverterParameter=sk-SK}">
+                    <Image Source="{StaticResource SkFlagIcon}" Stretch="Uniform"/>
+
+                </RadioButton>
+                <RadioButton Style="{StaticResource FlagRadioButtonStyle}"
+                             GroupName="LanguageGroup"
+                             IsChecked="{Binding CurrentLanguage, 
+                                        Converter={StaticResource LanguageToIsCheckedConverter}, 
+                                        ConverterParameter=cs-CZ}">
+                    <Image Source="{StaticResource CzFlagIcon}" Stretch="Uniform"/>
+                </RadioButton>
+
+            </StackPanel>
+
+        </DockPanel>
+    </Grid>
+</Window>

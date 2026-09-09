@@ -8,4 +8,18 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Strings\" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <Resource Include="Resources\Icons\**\*.ico" />
+	  <Resource Include="Resources\Icons\**\*.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Flashcards.Core\Flashcards.Core.csproj" />
+    <ProjectReference Include="..\Flashcards.Data\Flashcards.Data.csproj" />
+  </ItemGroup>
+
 </Project>

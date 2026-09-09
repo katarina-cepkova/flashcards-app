@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Generic dialog buttons, reused across multiple dialogs -->
+    <system:String x:Key="OKButtonText">OK</system:String>
+    <system:String x:Key="CancelButtonText">Stornieren</system:String>
+    <system:String x:Key="YesButtonText">Ja</system:String>
+    <system:String x:Key="NoButtonText">Nein</system:String>
+
+    <!-- Default name given to a newly created topic before the user renames it -->
+    <system:String x:Key="DefaultTopicName">Thema</system:String>
+
+    <!-- Create new flashcard set dialog -->
+    <system:String x:Key="CreateNewSetTitle">Neues LernKarten-Set erstellen</system:String>
+    <system:String x:Key="CreateNewSetMessage">Wenn Sie ein neues Lernkarten-Set erstellen möchten, \r\ngeben Sie den Namen des Themas in das Feld unten ein.</system:String>
+    <system:String x:Key="CreateSet_InvalidSetTopicMessage">Der Themenname darf nicht leer sein.</system:String>
+    <system:String x:Key="CreateSet_AlreadyExistingTopicMessage">Der Name des Themas '@' existiert bereits.</system:String>
+
+    <!-- Rename topic: shown when the new name collides with an existing topic (offers merge) -->
+    <system:String x:Key="RenameSet_AlreadyExistingTopicMessage">Der Name des Themas '@' existiert bereits. \r\nWenn Sie zustimmen, werden die aktuellen \r\nund ursprünglichen daten bei der nächsten \r\nAbfrage zu einem Satz zusammengeführt.</system:String>
+    <system:String x:Key="RenameSet_AlreadyExistingTopicTitle">Warnung: Namenskonflikt</system:String>
+
+    <!-- Shared error dialog: shown when a topic name is left empty (create or rename) -->
+    <system:String x:Key="InvalidTopicTitle">Fehler: Ungültiger Themenname</system:String>
+
+    <!-- Delete flashcard set confirmation dialog -->
+    <system:String x:Key="DeleteSetTitle">Aktuelles Kartenset löschen</system:String>
+    <system:String x:Key="DeleteSetMessage">Sind Sie sich sicher, dass Sie das Karteikartenset '@' löschen möchten? \r\nDiese Aktion wird es dauerhaft entfernen. \r\nBestätigen Sie das Löschen.</system:String>
+
+    <!-- Open existing flashcard set dialog -->
+    <system:String x:Key="OpenSetTitle">Ein vorhandenes Lernkarten-Set öffnen</system:String>
+
+    <!-- Flashcard side indicator, shown below the card -->
+    <system:String x:Key="FrontOfFlashcardLabelText">Vorderseite</system:String>
+    <system:String x:Key="BackOfFlashcardLabelText">Rückseite</system:String>
+
+    <!-- Per-flashcard sound toggle checkbox, shown in edit mode -->
+    <system:String x:Key="SoundCheckBoxText">der Ton</system:String>
+
+</ResourceDictionary>
